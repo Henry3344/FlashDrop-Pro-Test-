@@ -70,11 +70,10 @@
         .text-zone { border: 1.5px solid var(--border); border-radius: 20px; padding: 20px; background: rgba(15, 23, 42, 0.5); display: flex; flex-direction: column; min-height: 150px; }
         textarea { background: transparent; border: none; color: white; resize: none; width: 100%; flex: 1; font-size: 14px; margin-top: 8px; }
 
-        /* 接收输入框容器 - 核心修改 */
+        /* 接收输入框容器 */
         .receive-input-wrap { position: relative; width: 100%; max-width: 260px; margin-bottom: 15px; }
         input[type="number"] { width: 100%; padding: 20px 85px 20px 20px; border-radius: 22px; border: 2px solid var(--border); background: #0f172a; color: white; font-size: 32px; text-align: left; outline: none; }
         .inline-scan { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: rgba(99, 102, 241, 0.2); color: var(--primary); border: 1px solid var(--primary); padding: 6px 10px; border-radius: 10px; font-size: 11px; font-weight: 900; cursor: pointer; transition: 0.3s; white-space: nowrap; }
-        .inline-scan:active { background: var(--primary); color: white; }
 
         button.action-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 16px; font-size: 14px; cursor: pointer; width: 100%; font-weight: 800; transition: 0.3s; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); text-transform: uppercase; }
         
@@ -160,7 +159,7 @@
                 <div id="panel-receive" class="panel">
                     <div style="display:flex; flex-direction:column; align-items:center;">
                         <div class="receive-input-wrap">
-                            <input type="number" id="targetCode" placeholder="000000">
+                            <input type="number" id="targetCode" placeholder="000000" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6)">
                             <div class="inline-scan" id="label-or-scan" onclick="openScanner()">OR SCAN</div>
                         </div>
                         <button class="action-btn" id="btn-connect" onclick="triggerAd('receive')" style="max-width: 260px;">DOWNLOAD</button>
@@ -233,11 +232,9 @@
     const PREFIX = "fd-pro-", CHUNK_SIZE = 262144;
 
     function applyI18N() {
-        // Henry, 这里重写了检测逻辑，确保非中文系统必回英文
         const langList = navigator.languages || [navigator.language];
         const primaryLang = langList[0].split('-')[0];
         currLang = I18N[primaryLang] ? primaryLang : "en";
-        
         const d = I18N[currLang];
         document.getElementById('currentLangTag').innerText = currLang.toUpperCase();
         document.getElementById('tab-send').innerText = d.tabSend; document.getElementById('tab-receive').innerText = d.tabReceive;
@@ -314,7 +311,29 @@
         });
     }
 
-    async function openScanner() { document.getElementById('scanner-modal').style.display='flex'; try { const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }); const video = document.getElementById('video-preview'); video.srcObject = stream; videoTrack = stream.getVideoTracks()[0]; video.play(); requestAnimationFrame(tickScanner); } catch (e) { alert("Camera failed"); closeScanner(); } }
+    // Henry，这里优化了摄像头调用逻辑，强制请求主摄并提高分辨率以辅助对焦
+    async function openScanner() { 
+        document.getElementById('scanner-modal').style.display='flex'; 
+        try { 
+            const constraints = { 
+                video: { 
+                    facingMode: { ideal: "environment" },
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                } 
+            };
+            const stream = await navigator.mediaDevices.getUserMedia(constraints); 
+            const video = document.getElementById('video-preview'); 
+            video.srcObject = stream; 
+            videoTrack = stream.getVideoTracks()[0]; 
+            video.play(); 
+            requestAnimationFrame(tickScanner); 
+        } catch (e) { 
+            alert("Camera failed: " + e.message); 
+            closeScanner(); 
+        } 
+    }
+    
     function closeScanner() { document.getElementById('scanner-modal').style.display='none'; if(videoTrack) { videoTrack.stop(); videoTrack = null; } }
     function tickScanner() { const v = document.getElementById('video-preview'); if(v.readyState === v.HAVE_ENOUGH_DATA) { const cvs = document.createElement("canvas"); cvs.width = v.videoWidth; cvs.height = v.videoHeight; const ctx = cvs.getContext("2d"); ctx.drawImage(v, 0, 0); const data = jsQR(ctx.getImageData(0,0,cvs.width,cvs.height).data, cvs.width, cvs.height); if(data) { const c = new URL(data.data).searchParams.get("c"); if(c) { document.getElementById('targetCode').value = c; closeScanner(); triggerAd('receive'); return; } } } if(document.getElementById('scanner-modal').style.display === 'flex') requestAnimationFrame(tickScanner); }
 
