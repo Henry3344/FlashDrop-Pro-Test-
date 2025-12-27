@@ -481,7 +481,15 @@
         if(activeConn && activeConn.open) activeConn.send({ type: 'confirm_save' });
         setTimeout(resetReceiver, 500);
     }
-    function detectAdBlock() { const top = document.getElementById('top-ad-zone'); if (top && top.offsetHeight === 0) { document.getElementById('adblock-warning').style.display = 'flex'; return true; } return false; }
+    function detectAdBlock() {
+        const topAd = document.getElementById('top-ad-zone');
+        // 增加双重保险：检查高度，同时检查里面有没有广告脚本生成的 iframe 或内容
+        if (topAd.offsetHeight === 0 || topAd.innerHTML.trim().length < 10) {
+            document.getElementById('adblock-warning').style.display = 'flex';
+            return true;
+        }
+        return false;
+    }
     function startExpiryTimer() { let sec = 600; if(expiryTimerIdx) clearInterval(expiryTimerIdx); expiryTimerIdx = setInterval(() => { sec--; document.getElementById('expiryTimer').innerText = `${I18N[currLang].exp}${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; if(sec <= 0) resetSender(); }, 1000); }
     function resetSender() { if(peer) peer.destroy(); document.getElementById('senderCodeArea').style.display = 'none'; stagedFiles = []; renderStagedList(); document.getElementById('quickText').value = ""; if(expiryTimerIdx) clearInterval(expiryTimerIdx); }
     function resetReceiver() { document.getElementById('targetCode').value = ""; document.getElementById('mobileDownloadArea').style.display = 'none'; document.getElementById('receive-pg-container').style.display = 'none'; document.getElementById('receiveNerdStats').style.display = 'none'; document.getElementById('receivedText-container').style.display = 'none'; document.getElementById('receivedText').innerText = ""; activeConn = null; }
