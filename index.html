@@ -36,12 +36,12 @@
         .app-container { display: flex; flex-direction: column; min-height: 100vh; width: 100%; padding-top: 130px; transition: opacity 0.5s; }
         body.is-blocked .app-container { opacity: 0.15; pointer-events: none; }
 
-        /* 优化后的广告拦截提示 */
-        #adblock-warning { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; display: none; justify-content: center; align-items: center; padding: 20px; background: rgba(3, 7, 18, 0.9); backdrop-filter: blur(8px); }
-        .warning-card { background: #111827; padding: 40px 30px; border-radius: 32px; border: 1px solid var(--border); text-align: center; max-width: 420px; width: 100%; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
-        .warning-card .icon { font-size: 48px; margin-bottom: 20px; }
-        .warning-card h3 { color: var(--text); margin: 0 0 15px 0; font-size: 22px; font-weight: 900; letter-spacing: 1px; }
-        .warning-card p { font-size: 14px; color: var(--text-muted); line-height: 1.8; margin-bottom: 30px; }
+        /* --- 这里的名称全部换了，防止被拦截器识别 --- */
+        #safety-notice-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; display: none; justify-content: center; align-items: center; padding: 20px; background: rgba(3, 7, 18, 0.9); backdrop-filter: blur(8px); }
+        .safety-card { background: #111827; padding: 40px 30px; border-radius: 32px; border: 1px solid var(--border); text-align: center; max-width: 420px; width: 100%; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
+        .safety-card .icon { font-size: 48px; margin-bottom: 20px; }
+        .safety-card h3 { color: var(--text); margin: 0 0 15px 0; font-size: 22px; font-weight: 900; letter-spacing: 1px; }
+        .safety-card p.safety-text { font-size: 14px; color: var(--text-muted); line-height: 1.8; margin-bottom: 30px; display: block !important; visibility: visible !important; }
 
         .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); pointer-events: none; }
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: moveStars linear infinite; }
@@ -140,15 +140,21 @@
         
         @keyframes scanMove { 0% { top: 0%; } 50% { top: 98%; } 100% { top: 0%; } }
         #drop-zone { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; border: 6px dashed var(--primary); background: rgba(99,102,241,0.25); display: none; align-items: center; justify-content: center; pointer-events: none; }
+        /* 按钮悬停发光与步骤条 */
+        button.action-btn:hover { box-shadow: 0 0 30px rgba(99, 102, 241, 0.8); transform: translateY(-3px); filter: brightness(1.1); }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); } 50% { box-shadow: 0 4px 25px rgba(99, 102, 241, 0.6); } }
+        .steps-bar { display: flex; justify-content: space-between; width: 100%; max-width: 500px; margin-bottom: 25px; opacity: 0.8; }
+        .step-item { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); font-weight: 800; }
+        .step-dot { width: 8px; height: 8px; background: var(--border); border-radius: 50%; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
-<div id="adblock-warning">
-    <div class="warning-card">
+<div id="safety-notice-view">
+    <div class="safety-card">
         <div class="icon">🛡️</div>
-        <h3>Keep FlashDrop Free</h3>
-        <p id="ad-block-p">We use minimal ads to keep our P2P servers running for free. Please consider whitelisting us to continue using high-speed transfer.</p>
+        <h3 id="safety-title">Keep FlashDrop Free</h3>
+        <p class="safety-text">FlashDrop is a free P2P tool. We rely on minimal ads to pay for our servers and domain. Please consider disabling your AdBlocker to support us! ❤️</p>
         <button class="action-btn" onclick="location.reload()" style="background:var(--primary); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);">I'VE DISABLED IT, RELOAD</button>
         <div style="margin-top: 20px; font-size: 11px; color: var(--text-muted); opacity: 0.6;">Efficiency & Privacy First.</div>
     </div>
@@ -175,6 +181,13 @@
         </div>
 
         <div class="content-area">
+            <div class="steps-bar">
+                <div class="step-item"><div class="step-dot" style="background:var(--primary); box-shadow:0 0 10px var(--primary);"></div><span>Select Files</span></div>
+                <div style="flex:1; height:1px; background:var(--border); margin-top:4px; opacity:0.3;"></div>
+                <div class="step-item"><div class="step-dot"></div><span>Get Code</span></div>
+                <div style="flex:1; height:1px; background:var(--border); margin-top:4px; opacity:0.3;"></div>
+                <div class="step-item"><div class="step-dot"></div><span>Download</span></div>
+            </div>
             <div class="card">
                 <div class="tab-group"><div id="tab-send" class="tab active" onclick="switchTab('send', event)">Send</div><div id="tab-receive" class="tab" onclick="switchTab('receive', event)">Receive</div></div>
                 <div id="panel-send" class="panel active">
@@ -285,8 +298,8 @@
 
 <script>
     const I18N = {
-        en: { tabSend: "Send", tabReceive: "Receive", badges: ["🔒 P2P", "🕵️ No Logs", "⚡ Direct", "♾️ Unlimited"], drop: "DROP HERE", fileLab: "Drop / Click", shareF: "SHARE FILES", shareT: "SHARE TEXT", connect: "DOWNLOAD", save: "📥 SAVE", exp: "Expires: ", copyLink: "📋 COPY LINK", sendingRemind: "Encrypting...<br>Stay on page.", receivingRemind: "Handshaking...<br>Stay on page.", guide: "Code expires in 10 mins.", coffee: "Buy me a coffee", hPriv: "Privacy", hAboutSite: "About Site", hAboutUs: "About Us", hContact: "Contact", pPriv: "Zero logs. Zero tracking. Everything is encrypted in your browser.", pDisc: "Direct P2P. Files never touch our servers. Close page to wipe data.", pAbout: "© 2025 FlashDrop Pro. Efficiency first.", inputErr: "Enter 6-digit code.", orScan: "or scan 📷", doneRemind: "DONE! Click SAVE below.", histTitle: "Recent History (Local Stored)", fileErr: "Please select files first.", textErr: "Please enter text first." },
-        zh: { tabSend: "发送", tabReceive: "接收", badges: ["🔒 P2P 加密", "🕵️ 零日志", "⚡ 直连", "♾️ 无限次"], drop: "松手上传", fileLab: "拖拽 / 点击", shareF: "分享文件", shareT: "分享文字", connect: "立即下载", save: "📥 保存文件", exp: "有效期: ", copyLink: "📋 复制链接", sendingRemind: "正在加密发送中...<br>请勿关闭页面", receivingRemind: "安全握手中...<br>请勿关闭页面", guide: "请在10分钟内输入验证码。", coffee: "请我喝杯咖啡", hPriv: "关于隐私", hAboutSite: "关于网站", hAboutUs: "关于我们", hContact: "联系信息", pPriv: "咱这儿没后台没日志，所有东西都在浏览器里加密，隐私第一。", pDisc: "直连传输，文件不经服务器，关掉页面数据即刻消失。", pAbout: "© 2025 FlashDrop Pro. 一个追求效率的角落。", inputErr: "请输入6位验证码。", orScan: "或者扫码 📷", doneRemind: "传输完成！点击下方保存按钮", histTitle: "最近记录 (本地保留)", fileErr: "请先选择文件。", textErr: "请先输入文字。" }
+        en: { tabSend: "Send", tabReceive: "Receive", badges: ["🔒 P2P", "🕵️ No Logs", "☁️ CF Secured", "🛠️ GitHub Sync"], drop: "DROP HERE", fileLab: "Drop / Click", shareF: "SHARE FILES", shareT: "SHARE TEXT", connect: "DOWNLOAD", save: "📥 SAVE", exp: "Expires: ", copyLink: "📋 COPY LINK", sendingRemind: "Encrypting...<br>Stay on page.", receivingRemind: "Handshaking...<br>Stay on page.", guide: "Code expires in 10 mins.", coffee: "Buy me a coffee", hPriv: "Privacy", hAboutSite: "About Site", hAboutUs: "About Us", hContact: "Contact", pPriv: "Zero logs. Zero tracking. Everything is encrypted in your browser.", pDisc: "Direct P2P. Files never touch our servers. Close page to wipe data.", pAbout: "© 2025 FlashDrop Pro. Efficiency first.", inputErr: "Enter 6-digit code.", orScan: "or scan 📷", doneRemind: "DONE! Click SAVE below.", histTitle: "Recent History (Local Stored)", fileErr: "Please select files first.", textErr: "Please enter text first." },
+        zh: { tabSend: "发送", tabReceive: "接收", badges: ["🔒 P2P 加密", "🕵️ 零日志", "☁️ CF 加速", "🛠️ GitHub 部署"], drop: "松手上传", fileLab: "拖拽 / 点击", shareF: "分享文件", shareT: "分享文字", connect: "立即下载", save: "📥 保存文件", exp: "有效期: ", copyLink: "📋 复制链接", sendingRemind: "正在加密发送中...<br>请勿关闭页面", receivingRemind: "安全握手中...<br>请勿关闭页面", guide: "请在10分钟内输入验证码。", coffee: "请我喝杯咖啡", hPriv: "关于隐私", hAboutSite: "关于网站", hAboutUs: "关于我们", hContact: "联系信息", pPriv: "咱这儿没后台没日志，所有东西都在浏览器里加密，隐私第一。", pDisc: "直连传输，文件不经服务器，关掉页面数据即刻消失。", pAbout: "© 2025 FlashDrop Pro. 一个追求效率的角落。", inputErr: "请输入6位验证码。", orScan: "或者扫码 📷", doneRemind: "传输完成！点击下方保存按钮", histTitle: "最近记录 (本地保留)", fileErr: "请先选择文件。", textErr: "请先输入文字。" }
     };
 
     let currLang = "en", peer = null, stagedFiles = [], currentDownloads = 0, videoTrack = null, torchOn = false, activeConn = null, expiryTimerIdx = null;
@@ -410,9 +423,9 @@
             const topAd = document.getElementById('top-ad-zone');
             const hasContent = topAd.getElementsByTagName('iframe').length > 0 || topAd.getElementsByTagName('ins').length > 0;
             if (topAd.offsetHeight < 20 || !hasContent) {
-                document.getElementById('adblock-warning').style.display = 'flex';
+                // 这里的 ID 改成新的了
+                document.getElementById('safety-notice-view').style.display = 'flex';
                 document.querySelectorAll('.ad-space, .ad-side').forEach(el => el.style.display = 'none');
-                return true;
             }
         }, 1500);
         return false;
