@@ -264,7 +264,7 @@
         ja: { tabSend: "送信", tabReceive: "受信", badges: ["🔒 P2P", "🕵️ ログなし", "⚡ 直結", "♾️ 無制限"], coffee: "コーヒーを奢る", hPriv: "プライバシー", hAboutSite: "サイトについて", hAboutUs: "運営", hContact: "連絡先", pPriv: "ログなし、追跡なし。すべてブラウザで暗号化されます。", pDisc: "P2P直結。ファイルはサーバーに保存されません。", pAbout: "© 2025 FlashDrop Pro. 効率を追求。", inputErr: "6桁のコードを入力してください。", orScan: "QRコードをスキャン", doneRemind: "完了！保存してください" },
         ko: { tabSend: "보내기", tabReceive: "받기", badges: ["🔒 P2P", "🕵️ 로그 없음", "⚡ 직결", "♾️ 무제한"], coffee: "커피 한 잔 사주기", hPriv: "개인정보 보호", hAboutSite: "사이트 정보", hAboutUs: "회사 정보", hContact: "연락처", pPriv: "로그 없음, 추적 없음. 브라우저 내 암호화 전송.", pDisc: "P2P 전송. 서버에 파일이 저장되지 않습니다.", pAbout: "© 2025 FlashDrop Pro. 효율적인 도구.", inputErr: "6자리 코드를 입력하세요.", orScan: "QR 코드 스캔", doneRemind: "완료! 저장 버튼 클릭" },
         es: { tabSend: "Enviar", tabReceive: "Recibir", badges: ["🔒 P2P", "🕵️ Sin registros", "⚡ Directo", "♾️ Ilimitado"], coffee: "Invítame un café", hPriv: "Privacidad", hAboutSite: "Sobre el sitio", hAboutUs: "Nosotros", hContact: "Contacto", pPriv: "Sin registros ni rastreo. Todo encriptado en tu navegador.", pDisc: "P2P directo. Los archivos no tocan nuestros servidores.", pAbout: "© 2025 FlashDrop Pro. Eficiencia total.", inputErr: "Ingrese el código de 6 dígitos.", orScan: "O escanear QR", doneRemind: "Listo! Haga clic en guardar." },
-        hi: { tabSend: "भेजें", tabReceive: "प्राप्त करें", badges: ["🔒 P2P", "🕵️ कोई लॉग नहीं", "⚡ सीधा", "♾️ असीमित"], coffee: "कॉफी पिलाएं", hPriv: "गोपनीयता", hAboutSite: "साइट के बारे में", hAboutUs: "हमारे बारे में", hContact: "संपर्क", pPriv: "कोई लॉग नहीं, कोई ट्रैकिंग नहीं। सब कुछ सुरक्षित है।", pDisc: "सीधा P2P. फाइलें सर्वर पर नहीं जातीं।", pAbout: "© 2025 FlashDrop Pro. कुशलता पहले।", inputErr: "6 अंकों का कोड दर्ज करें।", orScan: "या क्यूआर स्कैन करें", doneRemind: "हो गया! सहेजें पर क्लिक करें" }
+        hi: { tabSend: "भेजें", tabReceive: "प्राप्त करें", badges: ["🔒 P2P", "🕵️ कोई लॉग नहीं", "⚡ सीधा", "♾️ असीमित"], coffee: "कॉफी पिलाएं", hPriv: "गोपनीयता", hAboutSite: "साइट के बारे में", hAboutUs: "हमारे बारे में", hContact: "संपर्क", pPriv: "कोई लॉग नहीं, कोई ट्रैकिंग नहीं। सब कुछ सुरक्षित है।", pDisc: "सीधा P2P. फाइलें सर्वर पर नहीं जातीं।", pAbout: "© 2025 FlashDrop Pro. कुशलता पहले।", inputErr: "6 अंकों का कोड दर्ज करें।", orScan: "या क्यूআর स्कैन करें", doneRemind: "हो गया! सहेजें पर क्लिक करें" }
     };
 
     let currLang = "en", peer = null, stagedFiles = [], currentDownloads = 0, videoTrack = null, torchOn = false, activeConn = null, expiryTimerIdx = null;
@@ -295,17 +295,14 @@
         if(detectAdBlock()) return;
         if(mode === 'receive' && document.getElementById('targetCode').value.length < 6) { alert(I18N[currLang].inputErr); return; }
         openRandomSmartlink();
-        
         const modal = document.getElementById('adModal');
         const adPg = document.getElementById('ad-pg-bar');
         const timerText = document.getElementById('ad-timer-text');
         const title = document.getElementById('ad-wait-title');
         const msg = mode.startsWith('send') ? I18N[currLang].sendingRemind : I18N[currLang].receivingRemind;
-        
         modal.style.display = 'flex';
         adPg.style.width = '0%';
         title.innerHTML = msg;
-
         let elapsed = 0; 
         const totalMs = 5000;
         const itv = setInterval(() => { 
@@ -371,25 +368,19 @@
         const pgBar = document.getElementById('receive-pg-bar');
         const nerd = document.getElementById('receiveNerdStats');
         const etaText = document.getElementById('nerd-eta');
-
         pgContainer.style.display = 'block';
         nerd.style.display = 'flex';
         pgBar.style.width = '0%';
         etaText.innerText = "ETA: --s";
-
         rPeer.on('open', () => {
             const c = rPeer.connect(PREFIX + code, { reliable: true }); activeConn = c;
             let meta = null, chunks = [], totalRecv = 0, startTime = Date.now();
-            
             c.on('data', d => {
                 if(d.type === 'text') { 
-                    // 修复文字不显示的问题
                     document.getElementById('receivedText').innerText = d.data; 
                     document.getElementById('receivedText-container').style.display = 'block';
                     pgBar.style.width = '100%';
                     etaText.innerText = "ETA: 0s";
-                    // 发送确认信号以销毁
-                    setTimeout(() => { if(c.open) c.send({ type: 'confirm_save' }); }, 500);
                 }
                 else if(d.type === 'meta') { 
                     meta = d; 
@@ -402,10 +393,10 @@
                     if(meta) {
                         const pct = (totalRecv / meta.size) * 100;
                         pgBar.style.width = pct + '%';
-                        const elapsed = (Date.now() - startTime) / 1000;
-                        const speed = totalRecv / elapsed;
-                        const remaining = meta.size - totalRecv;
-                        const eta = Math.ceil(remaining / (speed || 1));
+                        const elapsedSec = (Date.now() - startTime) / 1000;
+                        const speed = totalRecv / elapsedSec;
+                        const remainingBytes = meta.size - totalRecv;
+                        const eta = Math.ceil(remainingBytes / (speed || 1));
                         document.getElementById('nerd-speed').innerText = (speed / 1024 / 1024).toFixed(1) + " MB/s";
                         etaText.innerText = `ETA: ${eta}s`;
                     }
@@ -433,18 +424,35 @@
     function detectAdBlock() { const top = document.getElementById('top-ad-zone'); if (top && top.offsetHeight === 0) { document.getElementById('adblock-warning').style.display = 'flex'; return true; } return false; }
     function startExpiryTimer() { let sec = 600; if(expiryTimerIdx) clearInterval(expiryTimerIdx); expiryTimerIdx = setInterval(() => { sec--; document.getElementById('expiryTimer').innerText = `${I18N[currLang].exp}${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; if(sec <= 0) resetSender(); }, 1000); }
     function resetSender() { if(peer) peer.destroy(); document.getElementById('senderCodeArea').style.display = 'none'; stagedFiles = []; renderStagedList(); if(expiryTimerIdx) clearInterval(expiryTimerIdx); }
+    
+    // 接收方销毁逻辑封装
     function resetReceiver() { 
         document.getElementById('targetCode').value = ""; 
         document.getElementById('mobileDownloadArea').style.display = 'none'; 
         document.getElementById('receive-pg-container').style.display = 'none';
         document.getElementById('receiveNerdStats').style.display = 'none';
         document.getElementById('receivedText-container').style.display = 'none';
+        document.getElementById('receivedText').innerText = "";
         activeConn = null; 
     }
+    
     function switchTab(m, e) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); e.target.classList.add('active'); document.getElementById(`panel-${m}`).classList.add('active'); }
     function handleFiles(files) { stagedFiles = stagedFiles.concat(Array.from(files)); renderStagedList(); }
     function renderStagedList() { const list = document.getElementById('stagedList'); list.style.display = stagedFiles.length ? 'block' : 'none'; list.innerHTML = stagedFiles.map((f, i) => `<div class="staged-item">📄 ${f.name} <span onclick="stagedFiles.splice(${i},1);renderStagedList()">✕</span></div>`).join(''); }
-    function copyReceivedText() { navigator.clipboard.writeText(document.getElementById('receivedText').innerText); alert("Copied!"); }
+    
+    // 接收方复制并阅后即焚
+    function copyReceivedText() { 
+        navigator.clipboard.writeText(document.getElementById('receivedText').innerText); 
+        alert("Copied!"); 
+        // 向发送方发送销毁信号
+        if(activeConn && activeConn.open) {
+            activeConn.send({ type: 'confirm_save' });
+        }
+        // 接收方延迟销毁，确保信号发出
+        setTimeout(() => {
+            resetReceiver();
+        }, 500);
+    }
 
     async function openScanner() {
         document.getElementById('scanner-modal').style.display='flex';
