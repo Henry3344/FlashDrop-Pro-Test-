@@ -253,23 +253,29 @@
         </div>
     </div>
 
-    <footer class="legal-footer">
-        <div class="legal-section">
-            <a href="https://buymeacoffee.com/xiaevan199e" target="_blank" class="coffee-btn">☕ <span id="foot-coffee">Buy me a coffee</span></a>
-            <h4 id="foot-head-priv" class="clickable-footer-link" onclick="showPolicy('priv')">Privacy</h4>
-            <p id="foot-priv-p">Zero logs. WebRTC encrypted. <span style="color:var(--primary); cursor:pointer;" onclick="showPolicy('priv')">[Read More]</span></p>
+    <footer class="legal-footer" style="flex-direction: column; align-items: center;">
+        <div style="width: 100%; text-align: center; margin-bottom: 25px;">
+            <a href="https://buymeacoffee.com/xiaevan199e" target="_blank" class="coffee-btn" style="margin-bottom: 0; font-size: 12px; padding: 10px 20px;">☕ <span id="foot-coffee">Buy me a coffee</span></a>
         </div>
-        <div class="legal-section">
-            <h4 id="foot-head-aboutsite" class="clickable-footer-link" onclick="showPolicy('site')">About Site</h4>
-            <p id="foot-disc-p">No server storage. <span style="color:var(--primary); cursor:pointer;" onclick="showPolicy('site')">[Technical Detail]</span></p>
+
+        <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; width: 100%; text-align: left;">
+            <div class="legal-section">
+                <h4 id="foot-head-priv" class="clickable-footer-link" onclick="showPolicy('priv')">Privacy</h4>
+                <p id="foot-priv-p">Zero logs. WebRTC encrypted. <span style="color:var(--primary); cursor:pointer;" onclick="showPolicy('priv')">[Read More]</span></p>
+            </div>
+            <div class="legal-section">
+                <h4 id="foot-head-aboutsite" class="clickable-footer-link" onclick="showPolicy('site')">About Site</h4>
+                <p id="foot-disc-p">No server storage. <span style="color:var(--primary); cursor:pointer;" onclick="showPolicy('site')">[Technical Detail]</span></p>
+            </div>
+            <div class="legal-section">
+                <h4 id="foot-head-aboutus" class="clickable-footer-link" onclick="showPolicy('us')">About Us</h4>
+                <p id="foot-about-p">© 2025 FlashDrop Pro. <span style="color:var(--primary); cursor:pointer;" onclick="showPolicy('us')">[Identity]</span></p>
+            </div>
         </div>
-        <div class="legal-section">
-            <h4 id="foot-head-aboutus" class="clickable-footer-link" onclick="showPolicy('us')">About Us</h4>
-            <p id="foot-about-p">© 2025 FlashDrop Pro. <span style="color:var(--primary); cursor:pointer;" onclick="showPolicy('us')">[Identity]</span></p>
-        </div>
-        <div class="legal-section" style="width: 100%; max-width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px;">
-            <h4 id="foot-head-contact">Contact</h4>
-            <p>Tel: 9292664485<br>Email: flashdroppro@gmail.com</p>
+
+        <div class="legal-section" style="width: 100%; max-width: 600px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; margin-top: 20px; text-align: center; opacity: 0.7;">
+            <h4 id="foot-head-contact" style="margin-bottom: 5px;">Contact</h4>
+            <p style="margin-top:0;">Tel: 9292664485 | Email: flashdroppro@gmail.com</p>
         </div>
     </footer>
 
