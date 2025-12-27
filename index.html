@@ -1,211 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>FlashDrop Pro – Privacy-First P2P Sharing Tool</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<title>FlashDrop Pro – Private P2P File & Text Sharing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f1115;
+    color: #eaeaea;
+    margin: 0;
+}
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 32px 20px;
+}
+h1, h2, h3 {
+    font-weight: 600;
+}
+.card {
+    background: #161a22;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+input, textarea, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+}
+textarea {
+    min-height: 120px;
+}
+button {
+    background: #4f7cff;
+    color: #fff;
+    cursor: pointer;
+}
+button.secondary {
+    background: #2a2f3a;
+}
+footer {
+    border-top: 1px solid #2a2f3a;
+    padding: 40px 20px;
+    margin-top: 60px;
+}
+.legal-section {
+    margin-bottom: 32px;
+}
+.coffee-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 16px;
+    background: #ffdd57;
+    color: #000;
+    border-radius: 8px;
+    text-decoration: none;
+}
+.badges span {
+    display: inline-block;
+    background: #1f2430;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin: 6px 6px 0 0;
+    font-size: 13px;
+}
+</style>
 </head>
+
 <body>
 
-<!-- =========================
-     FOOTER · FULL VERSION
-========================= -->
+<div class="container">
 
-<footer class="legal-footer">
+<!-- HEADER -->
+<h1>FlashDrop Pro</h1>
+<p>
+Private, temporary peer-to-peer sharing for text and files.<br>
+No accounts. No tracking. No server storage.
+</p>
 
-    <!-- SUPPORT -->
-    <section class="legal-section">
-        <h2>SUPPORT</h2>
-        <p>
-            FlashDrop Pro is free to use with no subscriptions, paywalls, or hidden charges.
-            This project is independently developed and maintained.
-            If FlashDrop Pro saves you time or helps your workflow,
-            your support helps keep the service online and continuously improving.
-        </p>
-        <a href="https://buymeacoffee.com/xiaevan199e" target="_blank" class="coffee-btn">
-            ☕ Buy me a coffee
-        </a>
-    </section>
+<div class="badges">
+    <span>🔒 End-to-End Encrypted</span>
+    <span>🚫 No Server Storage</span>
+    <span>👤 No Account Required</span>
+    <span>🕒 Temporary Sessions</span>
+</div>
 
-    <!-- PRIVACY & SECURITY -->
-    <section class="legal-section">
-        <h2>PRIVACY & SECURITY</h2>
-        <p>
-            FlashDrop Pro is designed with privacy as a core principle.
-            All transfers use direct peer-to-peer connections with end-to-end encryption.
-            Files and messages are transmitted directly between connected users
-            and never pass through, are uploaded to, or stored on FlashDrop Pro servers.
-        </p>
-        <p>
-            Once a session ends or the browser page is closed,
-            all temporary data is immediately destroyed.
-            FlashDrop Pro does not retain backups, logs, or historical records of user activity.
-        </p>
-    </section>
+<!-- HOW TO USE -->
+<div class="card">
+<h2>How to Use</h2>
+<ol>
+    <li>Open this page on two devices</li>
+    <li>Create or join the same session</li>
+    <li>Send text or files directly between devices</li>
+    <li>Close the page to destroy the session</li>
+</ol>
+</div>
 
-    <!-- COMPLIANCE & TRUST -->
-    <section class="legal-section">
-        <h2>COMPLIANCE & TRUST</h2>
-        <p>
-            No account registration is required to use FlashDrop Pro.
-            No user profiles, persistent identifiers, or behavioral tracking mechanisms are created.
-            The service does not collect, store, sell, or monetize personal data.
-        </p>
-        <p>
-            FlashDrop Pro follows privacy-first design and data minimization principles
-            commonly aligned with GDPR-style regulatory requirements.
-            Users remain fully in control of what they share and when sessions end.
-        </p>
-    </section>
+<!-- SESSION -->
+<div class="card">
+<h2>Session</h2>
+<input type="text" placeholder="Enter session code (e.g. 8342)" />
+<button>Connect (Demo)</button>
+<p style="font-size:13px;color:#aaa;">
+This demo shows the user flow.  
+WebRTC signaling should be connected here.
+</p>
+</div>
 
-    <!-- DISCLAIMER -->
-    <section class="legal-section">
-        <h2>DISCLAIMER</h2>
-        <p>
-            FlashDrop Pro is provided as a neutral communication and file-sharing tool
-            on an “as-is” and “as-available” basis.
-            The service does not review, monitor, control,
-            or assume responsibility for any content transmitted by users.
-        </p>
-        <p>
-            Users are solely responsible for the content they share
-            and for ensuring that their use of the service complies with
-            all applicable local, national, and international laws and regulations.
-        </p>
-        <p>
-            Under no circumstances shall FlashDrop Pro or its operators
-            be liable for any direct, indirect, incidental, consequential,
-            or special damages, including but not limited to data loss,
-            service interruption, legal disputes, or claims arising from
-            the use of or inability to use this service.
-        </p>
-    </section>
+<!-- TEXT SHARE -->
+<div class="card">
+<h2>Send Text</h2>
+<textarea placeholder="Type text to send..."></textarea>
+<button>Send Text</button>
+</div>
 
-    <!-- ABOUT -->
-    <section class="legal-section">
-        <h2>ABOUT</h2>
-        <p>
-            FlashDrop Pro is a browser-based tool for fast and temporary sharing
-            of files and text between users.
-            No installation, no registration, and no intermediary storage servers are required.
-            The service is built to prioritize speed, simplicity, and privacy.
-        </p>
-    </section>
+<!-- FILE SHARE -->
+<div class="card">
+<h2>Send File</h2>
+<input type="file" />
+<button>Send File</button>
+<p style="font-size:13px;color:#aaa;">
+Files are sent directly peer-to-peer and are never stored on servers.
+</p>
+</div>
 
-    <!-- CONTACT -->
-    <section class="legal-section">
-        <h2>CONTACT</h2>
-        <p>
-            Phone: 929-266-4485<br>
-            Email: flashdroppro@gmail.com
-        </p>
-    </section>
+</div>
+
+<!-- FOOTER FULL LEGAL -->
+<footer>
+
+<div class="legal-section">
+<h3>SUPPORT</h3>
+<p>
+FlashDrop Pro is free with no subscriptions or hidden charges.
+If this tool helps you, your support helps keep it running and improving.
+</p>
+<a href="https://buymeacoffee.com/xiaevan199e" target="_blank" class="coffee-btn">
+☕ Buy me a coffee
+</a>
+</div>
+
+<div class="legal-section">
+<h3>PRIVACY & SECURITY</h3>
+<p>
+All transfers are designed to occur directly between connected peers
+using encrypted connections.
+FlashDrop Pro does not upload, store, or retain files, messages, or session data.
+Closing the page immediately ends the session and destroys temporary data.
+</p>
+</div>
+
+<div class="legal-section">
+<h3>COMPLIANCE & TRUST</h3>
+<p>
+No registration, no user profiles, and no behavioral tracking.
+FlashDrop Pro does not collect or monetize personal data.
+Designed around privacy-first and data minimization principles
+commonly aligned with GDPR-style requirements.
+</p>
+</div>
+
+<div class="legal-section">
+<h3>DISCLAIMER</h3>
+<p>
+FlashDrop Pro is provided as a neutral communication tool on an “as-is” basis.
+We do not review or control user-generated content.
+Users are solely responsible for ensuring lawful use.
+Under no circumstances shall the service or its operators
+be liable for data loss, damages, or legal disputes.
+</p>
+</div>
+
+<div class="legal-section">
+<h3>ABOUT</h3>
+<p>
+FlashDrop Pro is a browser-based P2P sharing tool
+built for speed, simplicity, and privacy.
+No installation. No registration. No middleman servers.
+</p>
+</div>
+
+<div class="legal-section">
+<h3>CONTACT</h3>
+<p>
+Phone: 929-266-4485<br>
+Email: flashdroppro@gmail.com
+</p>
+</div>
 
 </footer>
-
-<!-- =========================
-     PRIVACY POLICY · FULL TEXT
-========================= -->
-
-<section id="privacy-policy">
-    <h1>Privacy Policy</h1>
-
-    <p>
-        FlashDrop Pro is built with privacy as a fundamental design principle.
-        We do not collect, store, or process personal data.
-    </p>
-
-    <h3>Information We Do Not Collect</h3>
-    <ul>
-        <li>No user accounts or profiles</li>
-        <li>No uploaded or stored files</li>
-        <li>No stored messages or session logs</li>
-        <li>No tracking cookies tied to individuals</li>
-        <li>No behavioral or usage analytics linked to users</li>
-    </ul>
-
-    <h3>How the Service Works</h3>
-    <p>
-        FlashDrop Pro enables encrypted peer-to-peer communication directly between users.
-        Content is transmitted only between connected peers
-        and never stored on FlashDrop Pro servers.
-        When a session ends or a page is closed,
-        all temporary data is automatically destroyed.
-    </p>
-
-    <h3>Third-Party Infrastructure</h3>
-    <p>
-        FlashDrop Pro may use standard infrastructure providers
-        such as hosting, DNS, or CDN services.
-        These providers do not access, inspect, or retain user content.
-    </p>
-
-    <h3>User Responsibility</h3>
-    <p>
-        Users are responsible for ensuring that their use of FlashDrop Pro
-        complies with all applicable laws and regulations.
-    </p>
-
-    <h3>Policy Updates</h3>
-    <p>
-        This Privacy Policy may be updated periodically.
-        Continued use of the service constitutes acceptance of the updated policy.
-    </p>
-</section>
-
-<!-- =========================
-     TERMS OF SERVICE · FULL TEXT
-========================= -->
-
-<section id="terms-of-service">
-    <h1>Terms of Service</h1>
-
-    <p>
-        FlashDrop Pro is provided as a neutral, general-purpose communication tool.
-        By accessing or using this service, you agree to these terms.
-    </p>
-
-    <h3>Service Description</h3>
-    <p>
-        FlashDrop Pro allows users to temporarily share files and text
-        through direct peer-to-peer connections.
-        The service does not store, review, or control transmitted content.
-    </p>
-
-    <h3>User Responsibility</h3>
-    <p>
-        You are solely responsible for the content you transmit
-        and for ensuring compliance with applicable laws,
-        including copyright, data protection, and export regulations.
-    </p>
-
-    <h3>Acceptable Use</h3>
-    <p>
-        You agree not to use FlashDrop Pro for unlawful, abusive,
-        or malicious purposes.
-        The service is intended as a lawful, general-purpose tool.
-    </p>
-
-    <h3>No Warranty</h3>
-    <p>
-        FlashDrop Pro is provided on an “as-is” and “as-available” basis,
-        without warranties of any kind, express or implied.
-    </p>
-
-    <h3>Limitation of Liability</h3>
-    <p>
-        Under no circumstances shall FlashDrop Pro or its operators
-        be liable for any direct or indirect damages,
-        including data loss, service interruption,
-        or legal disputes arising from use of the service.
-    </p>
-
-    <h3>Changes to Terms</h3>
-    <p>
-        These terms may be updated at any time.
-        Continued use of the service constitutes acceptance of the revised terms.
-    </p>
-</section>
 
 </body>
 </html>
