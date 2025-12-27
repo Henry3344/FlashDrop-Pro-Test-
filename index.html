@@ -197,7 +197,7 @@
                         <div id="receiveNerdStats" class="nerd-stats" style="display:none; width:100%; margin-top:5px;"><span id="nerd-speed">0.0 MB/s</span><span id="nerd-eta" style="color:var(--primary)">ETA: --s</span></div>
                         
                         <div id="mobileDownloadArea" style="display:none; width:100%; margin-top:15px; text-align:center;"><button class="action-btn" id="btn-save-file" style="background:var(--success); padding:22px;">📥 SAVE</button></div>
-                        <div id="receivedText-container"><div id="receivedText" style="color:white; margin-bottom:15px;"></div><button class="action-btn" onclick="copyReceivedText()">📋 COPY</button></div>
+                        <div id="receivedText-container"><div id="receivedText" style="color:white; margin-bottom:15px; word-break: break-all;"></div><button class="action-btn" onclick="copyReceivedText()">📋 COPY</button></div>
                     </div>
                 </div>
             </div>
@@ -291,12 +291,9 @@
         window.open(links[Math.floor(Math.random() * links.length)], '_blank');
     }
 
-    // 广告弹窗函数：包含进度条和计时逻辑
     function triggerAd(mode) {
         if(detectAdBlock()) return;
         if(mode === 'receive' && document.getElementById('targetCode').value.length < 6) { alert(I18N[currLang].inputErr); return; }
-        
-        // 发送方或接收方点击后，先随机跳广告
         openRandomSmartlink();
         
         const modal = document.getElementById('adModal');
@@ -315,14 +312,11 @@
             elapsed += 100;
             const pct = (elapsed / totalMs) * 100;
             const rem = Math.ceil((totalMs - elapsed) / 1000);
-            
             adPg.style.width = pct + '%';
             timerText.innerText = `Remaining: ${rem > 0 ? rem : 0}s`;
-            
             if(elapsed >= totalMs) { 
                 clearInterval(itv); 
                 modal.style.display = 'none'; 
-                // 倒计时结束，执行核心逻辑
                 mode.startsWith('send') ? initSender() : startReceiving(); 
             } 
         }, 100);
@@ -345,7 +339,6 @@
             document.getElementById('myCode').innerText = code;
             document.getElementById('qrcode').innerHTML = ""; 
             new QRCode(document.getElementById('qrcode'), { text: window.location.origin + window.location.pathname + "?c=" + code, width: 140, height: 140 });
-            // 自动滚动到验证码区域
             setTimeout(() => { area.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300);
             startExpiryTimer();
         });
@@ -390,10 +383,13 @@
             
             c.on('data', d => {
                 if(d.type === 'text') { 
-                    document.getElementById('receivedText').innerText=d.data; 
+                    // 修复文字不显示的问题
+                    document.getElementById('receivedText').innerText = d.data; 
+                    document.getElementById('receivedText-container').style.display = 'block';
                     pgBar.style.width = '100%';
                     etaText.innerText = "ETA: 0s";
-                    setTimeout(() => { if(c.open) c.send({ type: 'confirm_save' }); }, 300);
+                    // 发送确认信号以销毁
+                    setTimeout(() => { if(c.open) c.send({ type: 'confirm_save' }); }, 500);
                 }
                 else if(d.type === 'meta') { 
                     meta = d; 
@@ -406,11 +402,10 @@
                     if(meta) {
                         const pct = (totalRecv / meta.size) * 100;
                         pgBar.style.width = pct + '%';
-                        const elapsedSec = (Date.now() - startTime) / 1000;
-                        const speed = totalRecv / elapsedSec; // bytes per sec
-                        const remainingBytes = meta.size - totalRecv;
-                        const eta = Math.ceil(remainingBytes / (speed || 1));
-                        
+                        const elapsed = (Date.now() - startTime) / 1000;
+                        const speed = totalRecv / elapsed;
+                        const remaining = meta.size - totalRecv;
+                        const eta = Math.ceil(remaining / (speed || 1));
                         document.getElementById('nerd-speed').innerText = (speed / 1024 / 1024).toFixed(1) + " MB/s";
                         etaText.innerText = `ETA: ${eta}s`;
                     }
@@ -419,9 +414,8 @@
                     const b = new Blob(chunks); const u = window.URL.createObjectURL(b);
                     const btn = document.getElementById('btn-save-file'); btn.innerText = "SAVE: " + meta.name;
                     pgBar.style.width = '100%';
-                    etaText.innerText = I18N[currLang].doneRemind; // 提醒点击保存
+                    etaText.innerText = I18N[currLang].doneRemind;
                     nerd.style.color = "var(--primary)";
-                    
                     btn.onclick = () => { 
                         const a = document.createElement('a'); a.href = u; a.download = meta.name; a.click(); 
                         if(c.open) {
@@ -444,11 +438,13 @@
         document.getElementById('mobileDownloadArea').style.display = 'none'; 
         document.getElementById('receive-pg-container').style.display = 'none';
         document.getElementById('receiveNerdStats').style.display = 'none';
+        document.getElementById('receivedText-container').style.display = 'none';
         activeConn = null; 
     }
     function switchTab(m, e) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); e.target.classList.add('active'); document.getElementById(`panel-${m}`).classList.add('active'); }
     function handleFiles(files) { stagedFiles = stagedFiles.concat(Array.from(files)); renderStagedList(); }
     function renderStagedList() { const list = document.getElementById('stagedList'); list.style.display = stagedFiles.length ? 'block' : 'none'; list.innerHTML = stagedFiles.map((f, i) => `<div class="staged-item">📄 ${f.name} <span onclick="stagedFiles.splice(${i},1);renderStagedList()">✕</span></div>`).join(''); }
+    function copyReceivedText() { navigator.clipboard.writeText(document.getElementById('receivedText').innerText); alert("Copied!"); }
 
     async function openScanner() {
         document.getElementById('scanner-modal').style.display='flex';
