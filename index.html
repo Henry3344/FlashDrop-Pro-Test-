@@ -298,7 +298,7 @@
 
     async function initSender() {
         if(peer) peer.destroy();
-        currentDownloads = 0; // 重置计数
+        currentDownloads = 0; 
         const code = Math.floor(100000 + Math.random() * 900000);
         peer = new Peer(PREFIX + code);
         peer.on('open', () => {
@@ -311,12 +311,14 @@
             startExpiryTimer();
         });
         peer.on('connection', c => {
-            // 监听接收方的确认下载信号
             c.on('data', async d => { 
                 if(d.type === 'confirm_save') { 
                     currentDownloads++; 
                     const limit = parseInt(document.getElementById('downloadLimit').value);
-                    if(currentDownloads >= limit) { resetSender(); } 
+                    if(currentDownloads >= limit) { 
+                        // 确保销毁前先断开所有连接
+                        setTimeout(() => { resetSender(); }, 200);
+                    } 
                 } 
             });
             c.on('open', async () => {
@@ -337,13 +339,13 @@
         const code = document.getElementById('targetCode').value;
         const rPeer = new Peer();
         rPeer.on('open', () => {
-            const c = rPeer.connect(PREFIX + code); activeConn = c;
+            const c = rPeer.connect(PREFIX + code, { reliable: true }); activeConn = c;
             let meta = null, chunks = [];
             c.on('data', d => {
                 if(d.type === 'text') { 
                     document.getElementById('receivedText').innerText=d.data; 
-                    // 接收文本后也算作一次下载
-                    setTimeout(() => { c.send({ type: 'confirm_save' }); }, 500);
+                    // 接收文本后发送销毁信号并预留时间
+                    setTimeout(() => { c.send({ type: 'confirm_save' }); }, 300);
                 }
                 else if(d.type === 'meta') { meta = d; document.getElementById('mobileDownloadArea').style.display='block'; }
                 else if(d.type === 'chunk') { chunks[d.index] = d.data; }
@@ -352,9 +354,9 @@
                     const btn = document.getElementById('btn-save-file'); btn.innerText = "SAVE: " + meta.name;
                     btn.onclick = () => { 
                         const a = document.createElement('a'); a.href = u; a.download = meta.name; a.click(); 
-                        // 点完保存发送销毁信号
+                        // 发送销毁信号并等待确保发送成功
                         c.send({ type: 'confirm_save' });
-                        resetReceiver(); 
+                        setTimeout(() => { resetReceiver(); rPeer.destroy(); }, 500);
                     };
                 }
             });
