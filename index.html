@@ -53,13 +53,10 @@
         .staged-item { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 10px 15px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05); }
         button.action-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 16px; font-size: 14px; cursor: pointer; width: 100%; font-weight: 800; transition: 0.3s; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); text-transform: uppercase; }
         
-        /* 接收输入框容器优化 */
+        /* 接收输入框 */
         .receive-input-wrap { position: relative; width: 100%; max-width: 280px; margin-bottom: 15px; }
-        input[type="number"] { width: 100%; padding: 20px 105px 20px 20px; border-radius: 22px; border: 2px solid var(--border); background: #0f172a; color: white; font-size: 32px; text-align: left; outline: none; }
-        .controls-group { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: flex; gap: 5px; align-items: center; }
-        .icon-btn { background: rgba(99, 102, 241, 0.2); color: var(--primary); border: 1.5px solid var(--primary); padding: 8px; border-radius: 12px; font-size: 16px; cursor: pointer; transition: 0.3s; line-height: 1; }
-        .icon-btn:active { background: var(--primary); color: white; }
-        .inline-scan-text { font-size: 10px; font-weight: 900; background: rgba(99, 102, 241, 0.2); color: var(--primary); border: 1.5px solid var(--primary); padding: 8px 10px; border-radius: 12px; cursor: pointer; }
+        input[type="number"] { width: 100%; padding: 20px 85px 20px 20px; border-radius: 22px; border: 2px solid var(--border); background: #0f172a; color: white; font-size: 32px; text-align: left; outline: none; }
+        .inline-scan-text { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 900; background: rgba(99, 102, 241, 0.2); color: var(--primary); border: 1.5px solid var(--primary); padding: 8px 10px; border-radius: 12px; cursor: pointer; }
 
         #senderCodeArea { margin-top: 30px; border-top: 1px solid var(--border); padding-top: 30px; display: none; text-align: center; }
         .code-display { font-size: 72px; letter-spacing: 12px; font-weight: 900; color: #a5b4fc; margin: 20px 0; text-shadow: 0 0 40px rgba(99, 102, 241, 0.7); }
@@ -67,12 +64,18 @@
         .legal-footer { padding: 60px 20px 100px 20px; font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); background: #030712; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; text-align: left; }
         .legal-section { flex: 1; min-width: 240px; max-width: 320px; margin-bottom: 20px; }
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.97); z-index: 5000; display: none; justify-content: center; align-items: center; flex-direction: column; padding: 20px; backdrop-filter: blur(15px); }
+        
+        /* 扫码模态框优化 */
         #scanner-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; padding-top: 80px; }
-        .scanner-container { position: relative; width: 280px; height: 280px; background: #111; border-radius: 24px; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); }
+        .scanner-container { position: relative; width: 300px; height: 300px; background: #111; border-radius: 24px; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); }
         #video-preview { width: 100%; height: 100%; object-fit: cover; }
         .scan-frame { position: absolute; inset: 0; border: 2px solid var(--primary); border-radius: 24px; pointer-events: none; }
         .scan-line { position: absolute; width: 100%; height: 3px; background: var(--primary); top: 0; left: 0; box-shadow: 0 0 15px var(--primary); animation: scanMove 2.5s infinite ease-in-out; }
         @keyframes scanMove { 0% { top: 0%; } 50% { top: 98%; } 100% { top: 0%; } }
+        
+        /* 扫码界面内的闪光灯按钮 */
+        .torch-overlay { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); border: 1.5px solid #fff; color: #fff; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; z-index: 10; }
+
         .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); pointer-events: none; }
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: moveStars linear infinite; }
         @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-1000px); } }
@@ -87,10 +90,7 @@
         <div class="trust-badges" id="trust-badges"></div>
     </nav>
 
-    <div class="ad-space ad-top">
-        <script type="text/javascript">atOptions={'key':'fabada29768bc51cc0a6a76937a99ba9','format':'iframe','height':90,'width':728,'params':{}};</script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/fabada29768bc51cc0a6a76937a99ba9/invoke.js"></script>
-    </div>
+    <div class="ad-space ad-top"><script type="text/javascript">atOptions={'key':'fabada29768bc51cc0a6a76937a99ba9','format':'iframe','height':90,'width':728,'params':{}};</script><script type="text/javascript" src="https://www.highperformanceformat.com/fabada29768bc51cc0a6a76937a99ba9/invoke.js"></script></div>
 
     <div class="main-wrapper">
         <div class="ad-side" id="left-ad-zone"><script type="text/javascript">atOptions={'key':'bd9abdb5a8bd5a53648a9afb54343727','format':'iframe','height':600,'width':160,'params':{}};</script><script type="text/javascript" src="https://www.highperformanceformat.com/bd9abdb5a8bd5a53648a9afb54343727/invoke.js"></script></div>
@@ -99,15 +99,8 @@
                 <div class="tab-group"><div id="tab-send" class="tab active" onclick="switchTab('send', event)">Send</div><div id="tab-receive" class="tab" onclick="switchTab('receive', event)">Receive</div></div>
                 <div id="panel-send" class="panel active">
                     <div class="share-grid">
-                        <div class="column-box">
-                            <label class="file-zone" for="fileInput"><div style="font-size: 42px;">📂</div><div id="label-files" style="font-size:13px; margin-top:10px; font-weight:900;">Drop / Click</div></label>
-                            <div id="stagedList"></div>
-                            <button class="action-btn" id="btn-share-files" onclick="triggerAd('send-file')">SHARE FILES</button>
-                        </div>
-                        <div class="column-box">
-                            <div class="text-zone"><div id="label-text-hint" style="font-size:12px; color:var(--text-muted); font-weight:900;">Quick Text</div><textarea id="quickText" placeholder="Paste..."></textarea></div>
-                            <button class="action-btn" id="btn-share-text" onclick="triggerAd('send-text')">SHARE TEXT</button>
-                        </div>
+                        <div class="column-box"><label class="file-zone" for="fileInput"><div style="font-size: 42px;">📂</div><div id="label-files" style="font-size:13px; margin-top:10px; font-weight:900;">Drop / Click</div></label><div id="stagedList"></div><button class="action-btn" id="btn-share-files" onclick="triggerAd('send-file')">SHARE FILES</button></div>
+                        <div class="column-box"><div class="text-zone"><div id="label-text-hint" style="font-size:12px; color:var(--text-muted); font-weight:900;">Quick Text</div><textarea id="quickText" placeholder="Paste..."></textarea></div><button class="action-btn" id="btn-share-text" onclick="triggerAd('send-text')">SHARE TEXT</button></div>
                     </div>
                     <div style="margin: 12px 0; font-size:12px; color:var(--text-muted); text-align:center;"><span id="label-limit">Limit:</span> <select id="downloadLimit" style="background:#0f172a; color:#fff; border:1.5px solid var(--border); padding:6px 12px; border-radius:8px;"><option value="1">1 Time</option><option value="3">3 Times</option><option value="5">5 Times</option><option value="999">Unlimited</option></select></div>
                     <input type="file" id="fileInput" multiple style="display:none;" onchange="handleFiles(this.files)">
@@ -125,16 +118,10 @@
                     <div style="display:flex; flex-direction:column; align-items:center;">
                         <div class="receive-input-wrap">
                             <input type="number" id="targetCode" placeholder="000000" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6)">
-                            <div class="controls-group">
-                                <div class="icon-btn" id="torch-btn" onclick="toggleTorch()">⚡</div>
-                                <div class="inline-scan-text" id="label-or-scan" onclick="openScanner()">SCAN</div>
-                            </div>
+                            <div class="inline-scan-text" id="label-or-scan" onclick="openScanner()">SCAN</div>
                         </div>
                         <button class="action-btn" id="btn-connect" onclick="triggerAd('receive')" style="max-width: 260px;">DOWNLOAD</button>
-                        <div id="mobileDownloadArea" style="display:none; width:100%; margin-top:15px; text-align:center;">
-                            <div id="receiveProgress" style="width:100%; height:10px; background:rgba(255,255,255,0.1); border-radius:12px; overflow:hidden; margin-bottom:15px;"><div id="receiveProgressBar" style="width:0%; height:100%; background:var(--success); transition:0.1s;"></div></div>
-                            <button class="action-btn" id="btn-save-file" style="background:var(--success); padding:22px; font-size:18px;">📥 DOWNLOAD FILE NOW</button>
-                        </div>
+                        <div id="mobileDownloadArea" style="display:none; width:100%; margin-top:15px; text-align:center;"><div id="receiveProgress" style="width:100%; height:10px; background:rgba(255,255,255,0.1); border-radius:12px; overflow:hidden; margin-bottom:15px;"><div id="receiveProgressBar" style="width:0%; height:100%; background:var(--success); transition:0.1s;"></div></div><button class="action-btn" id="btn-save-file" style="background:var(--success); padding:22px; font-size:18px;">📥 DOWNLOAD FILE NOW</button></div>
                     </div>
                 </div>
             </div>
@@ -152,7 +139,15 @@
 </div>
 
 <div class="modal-overlay" id="adModal"><div id="ad-wait-title">Handshaking...</div><div id="ad-container" style="width:300px; height:250px; background:white; border-radius:20px; overflow:hidden;"><script type="text/javascript">atOptions={'key':'05aeca9dfc228cb50e7ad828813cd55b','format':'iframe','height':250,'width':300,'params':{}};</script><script type="text/javascript" src="https://www.highperformanceformat.com/05aeca9dfc228cb50e7ad828813cd55b/invoke.js"></script></div></div>
-<div id="scanner-modal"><div class="scanner-container"><video id="video-preview" playsinline></video><div class="scan-frame"><div class="scan-line"></div></div></div><button class="action-btn" style="width:180px; background:#334155; margin-top:20px;" onclick="closeScanner()">CLOSE</button></div>
+
+<div id="scanner-modal">
+    <div class="scanner-container">
+        <video id="video-preview" playsinline></video>
+        <div class="scan-frame"><div class="scan-line"></div></div>
+        <div class="torch-overlay" id="torch-overlay" onclick="toggleTorch()">🔦</div>
+    </div>
+    <button class="action-btn" style="width:180px; background:#334155; margin-top:20px;" onclick="closeScanner()">CLOSE</button>
+</div>
 
 <script>
     const I18N = {
@@ -248,22 +243,36 @@
         });
     }
 
-    // Henry，优化后的主摄调用逻辑：遍历设备列表避开广角
+    // Henry，极致的主摄抓取逻辑：预请求权限 -> 过滤广角头 -> 启动
     async function openScanner() { 
         document.getElementById('scanner-modal').style.display='flex'; 
         try { 
+            // 1. 先简单请求一个视频流，触发浏览器权限弹窗，否则拿不到设备标签名
+            const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            tempStream.getTracks().forEach(t => t.stop());
+
+            // 2. 遍历设备，找寻“正主”
             const devices = await navigator.mediaDevices.enumerateDevices();
-            const videoDevices = devices.filter(d => d.kind === 'videoinput');
+            const backCameras = devices.filter(d => 
+                d.kind === 'videoinput' && 
+                (d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('rear'))
+            );
+
             let targetId = null;
-            // 找到包含后置字样且不包含 wide/广角 的摄像头
-            const backCameras = videoDevices.filter(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('rear'));
             if (backCameras.length > 0) {
-                const main = backCameras.filter(d => !d.label.toLowerCase().includes('wide') && !d.label.toLowerCase().includes('0.5'));
-                targetId = main.length > 0 ? main[0].deviceId : backCameras[0].deviceId;
+                // 过滤掉带“wide”、“ultra”、“0.5”字样的广角镜头
+                const mainCandidates = backCameras.filter(d => 
+                    !d.label.toLowerCase().includes('wide') && 
+                    !d.label.toLowerCase().includes('0.5') &&
+                    !d.label.toLowerCase().includes('ultra')
+                );
+                targetId = mainCandidates.length > 0 ? mainCandidates[0].deviceId : backCameras[0].deviceId;
             }
+
             const constraints = { 
-                video: targetId ? { deviceId: { exact: targetId }, width: { ideal: 1280 }, height: { ideal: 720 } } : { facingMode: { ideal: "environment" } }
+                video: targetId ? { deviceId: { exact: targetId }, width: { ideal: 1920 }, height: { ideal: 1080 } } : { facingMode: "environment" }
             };
+            
             const stream = await navigator.mediaDevices.getUserMedia(constraints); 
             const video = document.getElementById('video-preview'); 
             video.srcObject = stream; 
@@ -274,20 +283,19 @@
             alert("Camera error: " + e.message); closeScanner(); 
         } 
     }
-    
-    // 手电筒开关逻辑
+
     async function toggleTorch() {
-        if (!videoTrack) { alert("Please open scan first!"); return; }
+        if (!videoTrack) return;
         try {
             const caps = videoTrack.getCapabilities();
-            if (!caps.torch) { alert("Your device doesn't support torch."); return; }
+            if (!caps.torch) { alert("Flashlight not supported on this lens."); return; }
             isTorchOn = !isTorchOn;
             await videoTrack.applyConstraints({ advanced: [{ torch: isTorchOn }] });
-            document.getElementById('torch-btn').style.color = isTorchOn ? "#fbbf24" : "#6366f1";
+            document.getElementById('torch-overlay').innerHTML = isTorchOn ? "💡" : "🔦";
         } catch (e) { console.error(e); }
     }
-
-    function closeScanner() { document.getElementById('scanner-modal').style.display='none'; if(videoTrack) { videoTrack.stop(); videoTrack = null; isTorchOn = false; document.getElementById('torch-btn').style.color = "#6366f1"; } }
+    
+    function closeScanner() { document.getElementById('scanner-modal').style.display='none'; if(videoTrack) { videoTrack.stop(); videoTrack = null; isTorchOn = false; document.getElementById('torch-overlay').innerHTML = "🔦"; } }
     function tickScanner() { const v = document.getElementById('video-preview'); if(v.readyState === v.HAVE_ENOUGH_DATA) { const cvs = document.createElement("canvas"); cvs.width = v.videoWidth; cvs.height = v.videoHeight; const ctx = cvs.getContext("2d"); ctx.drawImage(v, 0, 0); const data = jsQR(ctx.getImageData(0,0,cvs.width,cvs.height).data, cvs.width, cvs.height); if(data) { const c = new URL(data.data).searchParams.get("c"); if(c) { document.getElementById('targetCode').value = c; closeScanner(); triggerAd('receive'); return; } } } if(document.getElementById('scanner-modal').style.display === 'flex') requestAnimationFrame(tickScanner); }
     function copyMyLink() { navigator.clipboard.writeText(window.location.origin + window.location.pathname + "?c=" + document.getElementById('myCode').innerText); alert("Link Copied!"); }
     function startExpiryTimer() { let sec = 600; if(expiryTimerIdx) clearInterval(expiryTimerIdx); expiryTimerIdx = setInterval(() => { sec--; document.getElementById('expiryTimer').innerText = `Expires: ${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; if(sec <= 0) resetSender(); }, 1000); }
