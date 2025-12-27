@@ -19,52 +19,60 @@
         * { box-sizing: border-box; outline: none; }
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
         
-        .app-container { display: flex; flex-direction: column; min-height: 100vh; width: 100%; padding-top: 100px; transition: opacity 0.5s; }
+        /* 压缩容器间距 */
+        .app-container { display: flex; flex-direction: column; min-height: 100vh; width: 100%; padding-top: 80px; transition: opacity 0.5s; }
         
-        /* Hero & Navbar */
-        .navbar { position: fixed; top: 0; left: 0; right: 0; height: 80px; background: var(--nav-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; z-index: 1000; padding: 0 30px; backdrop-filter: blur(20px); }
-        .logo { font-size: 22px; font-weight: 900; color: white; }
+        /* 导航 */
+        .navbar { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: var(--nav-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; z-index: 1000; padding: 0 20px; backdrop-filter: blur(20px); }
+        .logo { font-size: 20px; font-weight: 900; color: white; }
         .logo span { color: var(--primary); }
-        .hero-section { text-align: center; padding: 20px; max-width: 800px; margin: 0 auto; }
-        .safety-promise { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); border-radius: 12px; padding: 8px 15px; display: inline-flex; gap: 10px; font-size: 11px; font-weight: 700; color: var(--success); margin-bottom: 15px; }
 
-        /* 广告布局 */
-        .main-wrapper { display: flex; width: 100%; margin: 0 auto; justify-content: center; align-items: flex-start; gap: 20px; padding: 0 15px; }
-        .ad-side { width: 160px; min-width: 160px; position: sticky; top: 100px; display: flex; flex-direction: column; gap: 20px; }
-        @media (max-width: 950px) { .ad-side { display: none !important; } }
-        .ad-space { background: transparent; display: flex; justify-content: center; overflow: hidden; margin: 15px 0; }
+        /* 强制显示 Hero 特性区 */
+        .hero-section { text-align: center; padding: 15px 10px; max-width: 600px; margin: 0 auto; width: 100%; }
+        .safety-promise { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); border-radius: 10px; padding: 6px 12px; display: inline-flex; gap: 8px; font-size: 10px; font-weight: 700; color: var(--success); margin-bottom: 10px; }
+        
+        .hero-title { font-size: 22px; font-weight: 900; margin: 0 0 5px 0; line-height: 1.2; }
+        .hero-title span { color: var(--primary); }
+        .hero-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 15px; line-height: 1.4; padding: 0 15px; }
 
-        /* 核心卡片 */
-        .content-area { flex: 1; min-width: 300px; max-width: 600px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: var(--card); padding: 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); width: 100%; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
-        .tab-group { display: flex; background: rgba(51, 65, 85, 0.7); padding: 5px; border-radius: 18px; margin-bottom: 15px; }
-        .tab { flex: 1; padding: 12px; cursor: pointer; border-radius: 14px; font-size: 14px; text-align: center; color: var(--text-muted); font-weight: 800; }
+        /* 三大优势回归 */
+        .advantage-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; padding: 0 10px; }
+        .adv-card { background: rgba(99, 102, 241, 0.1); border: 1px solid var(--border); border-radius: 12px; padding: 10px 5px; text-align: center; }
+        .adv-card .tit { font-size: 11px; font-weight: 800; color: white; display: block; }
+        .adv-card .desc { font-size: 9px; color: var(--text-muted); margin-top: 3px; display: block; }
+
+        /* 广告布局优化 */
+        .main-wrapper { display: flex; width: 100%; margin: 0 auto; justify-content: center; align-items: flex-start; gap: 10px; padding: 0 10px; flex: 1; }
+        .ad-side { width: 140px; min-width: 140px; display: flex; flex-direction: column; gap: 15px; }
+        @media (max-width: 900px) { .ad-side { display: none !important; } }
+
+        /* 核心内容区 */
+        .content-area { flex: 1; min-width: 300px; max-width: 550px; display: flex; flex-direction: column; align-items: center; }
+        .card { background: var(--card); padding: 15px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        
+        /* 选项卡 */
+        .tab-group { display: flex; background: rgba(51, 65, 85, 0.7); padding: 4px; border-radius: 15px; margin-bottom: 12px; }
+        .tab { flex: 1; padding: 10px; cursor: pointer; border-radius: 11px; font-size: 13px; text-align: center; color: var(--text-muted); font-weight: 800; }
         .tab.active { background: var(--primary); color: white; }
         .panel { display: none; }
         .panel.active { display: block; }
 
-        /* 修复后的虚线框 */
-        .file-zone { border: 2.5px dashed var(--border); border-radius: 20px; padding: 25px; background: rgba(15, 23, 42, 0.5); cursor: pointer; display: block; text-align: center; margin-bottom: 15px; width: 100%; }
-        .text-zone { border: 1.5px solid var(--border); border-radius: 20px; padding: 12px; background: rgba(15, 23, 42, 0.5); height: 120px; margin-bottom: 15px; }
-        textarea { background: transparent; border: none; color: white; resize: none; width: 100%; height: 100%; font-size: 14px; }
-
-        /* 恢复的暂存区 */
-        #stagedList { display: none; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 8px; margin-bottom: 15px; max-height: 120px; overflow-y: auto; width: 100%; }
-        .staged-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 6px 10px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 5px; }
-
-        button.action-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 16px; font-size: 14px; cursor: pointer; width: 100%; font-weight: 800; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); text-transform: uppercase; }
+        /* 功能区修正 */
+        .file-zone { border: 2px dashed var(--border); border-radius: 18px; padding: 20px; background: rgba(15, 23, 42, 0.5); cursor: pointer; text-align: center; margin-bottom: 12px; width: 100%; transition: 0.3s; }
+        #stagedList { display: none; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 12px; max-height: 100px; overflow-y: auto; width: 100%; }
+        .staged-item { display: flex; justify-content: space-between; align-items: center; font-size: 11px; padding: 5px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 4px; }
+        .text-zone { border: 1px solid var(--border); border-radius: 18px; padding: 10px; background: rgba(15, 23, 42, 0.5); height: 100px; margin-bottom: 12px; }
+        textarea { background: transparent; border: none; color: white; resize: none; width: 100%; height: 100%; font-size: 13px; }
         
-        #senderCodeArea { margin-top: 20px; border: 2px solid var(--success); border-radius: 24px; padding: 20px; display: none; text-align: center; background: rgba(16, 185, 129, 0.05); }
-        .code-display { font-size: 50px; letter-spacing: 6px; font-weight: 900; color: #a5b4fc; margin: 10px 0; }
-        #qrcode { background: white; padding: 10px; border-radius: 12px; display: inline-block; }
+        button.action-btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 14px; font-size: 13px; cursor: pointer; width: 100%; font-weight: 800; text-transform: uppercase; }
+        
+        #senderCodeArea { margin-top: 15px; border: 2px solid var(--success); border-radius: 20px; padding: 15px; display: none; text-align: center; background: rgba(16, 185, 129, 0.05); }
+        .code-display { font-size: 40px; letter-spacing: 4px; font-weight: 900; color: #a5b4fc; margin: 8px 0; }
+        #qrcode { background: white; padding: 8px; border-radius: 10px; display: inline-block; }
 
-        .pg-container { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin: 15px 0; display: none; }
-        .pg-bar { height: 100%; width: 0%; background: var(--primary); }
-
-        .legal-footer { padding: 30px 20px; background: #030712; color: var(--text-muted); text-align: center; font-size: 11px; border-top: 1px solid var(--border); margin-top: auto; }
+        /* 页脚压缩 */
+        .legal-footer { padding: 20px; background: #030712; color: var(--text-muted); text-align: center; font-size: 11px; border-top: 1px solid var(--border); margin-top: 20px; }
         .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); }
-        
-        #scanner-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 5000; display: none; justify-content: center; align-items: center; flex-direction: column; }
     </style>
 </head>
@@ -81,7 +89,23 @@
         <div class="safety-promise">
             <span id="prom-1">✓ No Signup</span><span id="prom-2">✓ No Storage</span><span id="prom-3">✓ No Logs</span>
         </div>
-        <h1 id="h-title" style="font-size:24px; font-weight:900; margin-bottom:10px;">Temporary & <span>Vanishing</span></h1>
+        <h1 class="hero-title" id="h-title">Temporary & <span>Vanishing</span></h1>
+        <p class="hero-subtitle" id="h-sub">Direct P2P transfer. No servers. Data is wiped when session ends.</p>
+        
+        <div class="advantage-grid">
+            <div class="adv-card">
+                <div class="tit" id="adv-1-t">10m Auto-Kill</div>
+                <div class="desc" id="adv-1-d">Expires automatically</div>
+            </div>
+            <div class="adv-card">
+                <div class="tit" id="adv-2-t">Visit Limit</div>
+                <div class="desc" id="adv-2-d">1 / 3 / 5 / Max</div>
+            </div>
+            <div class="adv-card">
+                <div class="tit" id="adv-3-t">Instant Stop</div>
+                <div class="desc" id="adv-3-d">Terminate anytime</div>
+            </div>
+        </div>
     </header>
 
     <div class="ad-space ad-top">
@@ -105,42 +129,36 @@
                 <div id="panel-send" class="panel active">
                     <label class="file-zone" for="fileInput">
                         <div style="font-size: 32px;">📂</div>
-                        <div id="label-files" style="font-size:13px; margin-top:8px; font-weight:900;">Drop / Click</div>
+                        <div id="label-files" style="font-size:12px; margin-top:5px; font-weight:900;">Drop / Click</div>
                     </label>
                     <input type="file" id="fileInput" multiple style="display:none;" onchange="handleFiles(this.files)">
-                    
                     <div id="stagedList"></div>
-
-                    <div class="text-zone">
-                        <textarea id="quickText" placeholder="Paste text here..."></textarea>
-                    </div>
-
-                    <div style="margin-bottom:15px; text-align:center;">
-                        <span id="label-limit" style="font-size:12px; color:var(--text-muted);">Limit: </span>
-                        <select id="downloadLimit" style="background:#0f172a; color:#fff; border:1.5px solid var(--border); padding:5px; border-radius:8px;">
+                    <div class="text-zone"><textarea id="quickText" placeholder="Paste text here..."></textarea></div>
+                    <div style="margin-bottom:12px; text-align:center;">
+                        <span id="label-limit" style="font-size:11px; color:var(--text-muted);">Limit: </span>
+                        <select id="downloadLimit" style="background:#0f172a; color:#fff; border:1.5px solid var(--border); padding:4px; border-radius:8px; font-size:11px;">
                             <option value="1">1 Time</option><option value="3">3 Times</option><option value="5">5 Times</option><option value="999">Unlimited</option>
                         </select>
                     </div>
-
                     <button class="action-btn" id="btn-share-main" onclick="triggerAd('send')">START SHARING</button>
 
                     <div id="senderCodeArea">
                         <div id="qrcode"></div>
                         <div class="code-display" id="myCode">000000</div>
-                        <div id="expiryTimer" style="font-size:14px; color:var(--danger); font-weight:900;">Expires: 10:00</div>
-                        <button class="action-btn" onclick="resetSender()" style="background:var(--danger); margin-top:15px;">STOP & DESTROY</button>
+                        <div id="expiryTimer" style="font-size:13px; color:var(--danger); font-weight:900;">Expires: 10:00</div>
+                        <button class="action-btn" onclick="resetSender()" style="background:var(--danger); margin-top:10px;">STOP & DESTROY</button>
                     </div>
                 </div>
 
                 <div id="panel-receive" class="panel">
-                    <input type="number" id="targetCode" placeholder="000000" style="width:100%; padding:15px; font-size:28px; text-align:center; background:#0f172a; border:2.5px solid var(--border); border-radius:15px; color:white; margin-bottom:15px;">
+                    <input type="number" id="targetCode" placeholder="000000" style="width:100%; padding:12px; font-size:24px; text-align:center; background:#0f172a; border:2.5px solid var(--border); border-radius:12px; color:white; margin-bottom:12px;">
                     <button class="action-btn" id="btn-receive-main" onclick="triggerAd('receive')">DOWNLOAD</button>
                     <div id="receive-pg-container" class="pg-container"><div id="receive-pg-bar" class="pg-bar"></div></div>
-                    <div id="receivedText-container" style="display:none; margin-top:15px; padding:12px; background:rgba(255,255,255,0.05); border-radius:15px;">
-                        <div id="receivedText" style="word-break:break-all; font-size:13px; margin-bottom:10px;"></div>
+                    <div id="receivedText-container" style="display:none; margin-top:10px; padding:10px; background:rgba(255,255,255,0.05); border-radius:12px;">
+                        <div id="receivedText" style="word-break:break-all; font-size:12px; margin-bottom:8px;"></div>
                         <button class="action-btn" onclick="copyText()">COPY</button>
                     </div>
-                    <div id="mobileDownloadArea" style="display:none; margin-top:15px;"><button class="action-btn" id="btn-save-file" style="background:var(--success);">SAVE FILE</button></div>
+                    <div id="mobileDownloadArea" style="display:none; margin-top:10px;"><button class="action-btn" id="btn-save-file" style="background:var(--success);">SAVE FILE</button></div>
                 </div>
             </div>
 
@@ -148,7 +166,8 @@
                 <script>atOptions={'key':'fabada29768bc51cc0a6a76937a99ba9','format':'iframe','height':90,'width':728,'params':{}};</script>
                 <script src="https://www.highperformanceformat.com/fabada29768bc51cc0a6a76937a99ba9/invoke.js"></script>
             </div>
-            <div style="width:100%; margin-top:20px;"><div id="history-list"></div></div>
+            <div style="width:100%; margin-top:15px; font-size:10px; color:var(--text-muted); text-align:center;" id="history-title">HISTORY (LOCAL)</div>
+            <div style="width:100%;" id="history-list"></div>
         </main>
 
         <aside class="ad-side">
@@ -164,8 +183,8 @@
 </div>
 
 <div class="modal-overlay" id="adModal">
-    <div id="ad-wait-title" style="color:white; margin-bottom:10px; font-weight:bold;">Checking...</div>
-    <div style="width: 280px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 20px;">
+    <div id="ad-wait-title" style="color:white; margin-bottom:10px; font-weight:bold; font-size:14px;">Security Checking...</div>
+    <div style="width: 250px; height: 5px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 15px;">
         <div id="ad-pg-bar" style="height: 100%; width: 0%; background: var(--primary);"></div>
     </div>
     <div style="width:300px; height:250px; background:white; border-radius:15px; overflow:hidden;">
@@ -176,12 +195,12 @@
 
 <script>
     const I18N = {
-        en: { send: "SEND", receive: "RECEIVE", drop: "Drop / Click", start: "START SHARING", dl: "DOWNLOAD", prom1: "✓ No Signup", prom2: "✓ No Storage", prom3: "✓ No Logs", limit: "Limit: ", exp: "Expires: ", save: "SAVE FILE", copy: "COPY" },
-        zh: { send: "发送", receive: "接收", drop: "拖拽 / 点击", start: "开始分享", dl: "立即下载", prom1: "✓ 无需注册", prom2: "✓ 不做存储", prom3: "✓ 零日志", limit: "限制: ", exp: "到期: ", save: "保存文件", copy: "复制文字" },
-        ja: { send: "送信", receive: "受信", drop: "クリック/ドロップ", start: "共有開始", dl: "ダウンロード", prom1: "✓ 登録不要", prom2: "✓ 保存なし", prom3: "✓ ログなし", limit: "制限: ", exp: "期限: " },
-        ko: { send: "보내기", receive: "받기", drop: "클릭/드롭", start: "공유 시작", dl: "다운로드", prom1: "✓ 가입 없음", prom2: "✓ 저장 없음", prom3: "✓ 로그 없음", limit: "제한: ", exp: "만료: " },
-        es: { send: "ENVIAR", receive: "RECIBIR", drop: "Soltar / Click", start: "INICIAR", dl: "DESCARGAR", prom1: "✓ Sin registro", prom2: "✓ Sin almacenamiento", prom3: "✓ Sin registros", limit: "Límite: ", exp: "Expira: " },
-        hi: { send: "भेजें", receive: "प्राप्त करें", drop: "ड्रॉप / क्लिक", start: "साझा करें", dl: "डाउनलोड", prom1: "✓ कोई पंजीकरण नहीं", prom2: "✓ कोई स्टोरेज नहीं", prom3: "✓ कोई लॉग नहीं", limit: "सीमा: ", exp: "समाप्ति: " }
+        en: { send: "SEND", receive: "RECEIVE", drop: "Drop / Click", start: "START SHARING", dl: "DOWNLOAD", prom1: "✓ No Signup", prom2: "✓ No Storage", prom3: "✓ No Logs", title: "Temporary & <span>Vanishing</span>", sub: "Direct P2P transfer. No servers. Data is wiped when session ends.", adv1t: "10m Auto-Kill", adv1d: "Expires automatically", adv2t: "Visit Limit", adv2d: "1 / 3 / 5 / Max", adv3t: "Instant Stop", adv3d: "Terminate anytime", limit: "Limit: ", exp: "Expires: ", save: "SAVE FILE", copy: "COPY" },
+        zh: { send: "发送", receive: "接收", drop: "拖拽 / 点击", start: "开始分享", dl: "立即下载", prom1: "✓ 无需注册", prom2: "✓ 不做存储", prom3: "✓ 零日志", title: "瞬时、<span>阅后即毁</span>的传输", sub: "直连 P2P 传输。完成或关闭页面后，数据即刻物理抹除。", adv1t: "10分钟自动销毁", adv1d: "会话到期自动失效", adv2t: "访问次数可选", adv2d: "支持 1/3/5/无限次", adv3t: "随时手动终止", adv3d: "一键切断所有传输", limit: "限制: ", exp: "到期: ", save: "保存文件", copy: "复制文字" },
+        ja: { send: "送信", receive: "受信", drop: "クリック/ドロップ", start: "共有開始", dl: "ダウンロード", prom1: "✓ 登録不要", prom2: "✓ 保存なし", prom3: "✓ ログなし", title: "一時的な<span>消える</span>転送", sub: "直接P2P転送。終了または閉じるとデータは完全に消去されます。", adv1t: "10分で自動消去", adv2t: "回数制限", adv3t: "即時停止", limit: "制限: ", exp: "期限: " },
+        ko: { send: "보내기", receive: "받기", drop: "클릭/드롭", start: "공유 시작", dl: "다운로드", prom1: "✓ 가입 없음", prom2: "✓ 저장 없음", prom3: "✓ 로그 없음", title: "임시 및 <span>사라지는</span> 전송", sub: "직접 P2P 전송. 완료되거나 닫히면 데이터가 완전히 삭제됩니다.", adv1t: "10분 자동 파기", adv2t: "방문 제한", adv3t: "즉시 중단", limit: "제한: ", exp: "만료: " },
+        es: { send: "ENVIAR", receive: "RECIBIR", drop: "Soltar / Click", start: "INICIAR", dl: "DESCARGAR", prom1: "✓ Sin registro", prom2: "✓ Sin almacenamiento", prom3: "✓ Sin registros", title: "Transferencia <span>Efímera</span>", sub: "P2P directo. Una vez cerrado, los datos se borran físicamente.", adv1t: "10m Auto-destrucción", adv2t: "Límite visitas", adv3t: "Corte instantáneo", limit: "Límite: ", exp: "Expira: " },
+        hi: { send: "भेजें", receive: "प्राप्त करें", drop: "ड्रॉप / क्लिक", start: "साझा करें", dl: "डाउनलोड", prom1: "✓ कोई पंजीकरण नहीं", prom2: "✓ कोई स्टोरेज नहीं", prom3: "✓ कोई लॉग नहीं", title: "अस्थायी और <span>गायब</span> होने वाला ट्रांसफर", sub: "सीधा P2P ट्रांसफर। बंद होने पर डेटा नष्ट हो जाता है।", adv1t: "10 मिनट में नष्ट", adv2t: "विजिट सीमा", adv3t: "तुरंत रोकें", limit: "सीमा: ", exp: "समाप्ति: " }
     };
 
     let currLang = "en", peer = null, stagedFiles = [], expiryTimerIdx = null, activeConn = null, downloads = 0;
@@ -196,25 +215,19 @@
         document.getElementById('label-files').innerText = d.drop; document.getElementById('btn-share-main').innerText = d.start;
         document.getElementById('btn-receive-main').innerText = d.dl; document.getElementById('label-limit').innerText = d.limit;
         document.getElementById('prom-1').innerText = d.prom1; document.getElementById('prom-2').innerText = d.prom2; document.getElementById('prom-3').innerText = d.prom3;
+        document.getElementById('h-title').innerHTML = d.title; document.getElementById('h-sub').innerText = d.sub;
+        document.getElementById('adv1t').innerText = d.adv1t; document.getElementById('adv1d').innerText = d.adv1d;
+        document.getElementById('adv2t').innerText = d.adv2t; document.getElementById('adv2d').innerText = d.adv2d;
+        document.getElementById('adv3t').innerText = d.adv3t; document.getElementById('adv3d').innerText = d.adv3d;
     }
 
-    function handleFiles(files) { 
-        stagedFiles = stagedFiles.concat(Array.from(files)); 
-        renderStagedList(); 
-    }
-
+    function handleFiles(files) { stagedFiles = stagedFiles.concat(Array.from(files)); renderStagedList(); }
     function renderStagedList() {
         const list = document.getElementById('stagedList');
         if (stagedFiles.length === 0) { list.style.display = 'none'; return; }
         list.style.display = 'block';
-        list.innerHTML = stagedFiles.map((f, i) => `
-            <div class="staged-item">
-                <span>📄 ${f.name.length > 20 ? f.name.substring(0,17)+'...' : f.name}</span>
-                <span style="color:var(--danger); cursor:pointer; font-weight:bold;" onclick="removeFile(${i})">✕</span>
-            </div>
-        `).join('');
+        list.innerHTML = stagedFiles.map((f, i) => `<div class="staged-item"><span>📄 ${f.name.length > 20 ? f.name.substring(0,17)+'...' : f.name}</span><span style="color:var(--danger); cursor:pointer;" onclick="removeFile(${i})">✕</span></div>`).join('');
     }
-
     function removeFile(index) { stagedFiles.splice(index, 1); renderStagedList(); }
 
     function triggerAd(mode) {
