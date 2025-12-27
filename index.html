@@ -8,82 +8,65 @@
     
     <script>(function(s){s.dataset.zone='10380251',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
     <script>(function(s){s.dataset.zone='10380245',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-    
     <script src="https://pl28342028.effectivegatecpm.com/a2/19/f7/a219f7c4a8d2e3bbeea9d014e51bb043.js"></script>
+    <script>(function(ctxj){var d=document,s=d.createElement('script'),l=d.scripts[d.scripts.length-1];s.settings=ctxj||{};s.src="\/\/big-brief.com\/bCXiVts.dFG-l\/0pYpWucG\/me_mb9BucZCUfl\/kTP-T\/Ya3PMhzuQB5XNnTGARtBNfjycvzdNND\/ki1NM\/Qe";s.async=true;s.referrerPolicy='no-referrer-when-downgrade';l.parentNode.insertBefore(s,l);})({})</script>
 
-    <script>
-    (function(ctxj){
-    var d = document, s = d.createElement('script'), l = d.scripts[d.scripts.length - 1];
-    s.settings = ctxj || {};
-    s.src = "\/\/big-brief.com\/bCXiVts.dFG-l\/0pYpWucG\/me_mb9BucZCUfl\/kTP-T\/Ya3PMhzuQB5XNnTGARtBNfjycvzdNND\/ki1NM\/Qe";
-    s.async = true;
-    s.referrerPolicy = 'no-referrer-when-downgrade';
-    l.parentNode.insertBefore(s, l);
-    })({})
-    </script>
-    
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     
     <style>
         :root { --primary: #6366f1; --bg: #030712; --card: rgba(30, 41, 59, 0.85); --text: #f8fafc; --text-muted: #94a3b8; --border: #4f46e5; --nav-bg: rgba(15, 23, 42, 0.98); --danger: #ef4444; --success: #10b981; }
-        * { box-sizing: border-box; outline: none; }
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
         
-        .app-container { display: flex; flex-direction: column; min-height: 100vh; width: 100%; padding-top: 120px; transition: opacity 0.5s; }
-        body.is-blocked .app-container { opacity: 0.15; pointer-events: none; }
+        /* 1. 广告拦截警告 - 初始必须隐藏 */
+        #adblock-warning { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; padding: 20px; text-align: center; }
+        .warning-card { background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid var(--danger); max-width: 400px; }
 
-        .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); pointer-events: none; }
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: moveStars linear infinite; }
-        @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-1000px); } }
+        .app-container { display: flex; flex-direction: column; min-height: 100vh; width: 100%; padding-top: 120px; }
+        .stars-container { position: fixed; inset: 0; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); }
         
-        .navbar { position: fixed; top: 0; left: 0; right: 0; height: 110px; background: var(--nav-bg); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(25px); padding: 10px; }
-        .logo-wrap { display: flex; align-items: center; gap: 12px; }
-        .logo { font-size: 30px; font-weight: 900; color: white; letter-spacing: 2px; }
+        .navbar { position: fixed; top: 0; inset-x: 0; height: 110px; background: var(--nav-bg); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(25px); }
+        .logo { font-size: 30px; font-weight: 900; color: white; }
         .logo span { color: var(--primary); }
-        
-        .status-dot { width: 14px; height: 14px; border-radius: 50%; background: #666; transition: 0.3s; }
-        .status-dot.online { background: var(--success); box-shadow: 0 0 15px var(--success); }
-        .status-dot.offline { background: var(--danger); box-shadow: 0 0 15px var(--danger); }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; background: #666; margin-right: 8px; }
+        .status-dot.online { background: var(--success); box-shadow: 0 0 10px var(--success); }
 
-        .trust-badges { display: flex; gap: 8px; margin-top: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); }
-        .trust-badges span { background: rgba(99, 102, 241, 0.2); padding: 4px 8px; border-radius: 6px; border: 1.5px solid var(--border); color: #c7d2fe; white-space: nowrap; }
-
-        .main-wrapper { display: flex; width: 100%; margin: 0 auto; justify-content: center; align-items: flex-start; gap: 20px; padding: 0 15px; }
-        .content-area { flex: 1; min-width: 300px; max-width: 600px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
+        .main-wrapper { display: flex; width: 100%; max-width: 1200px; margin: 0 auto; justify-content: center; gap: 20px; padding: 0 15px; }
+        .content-area { flex: 1; max-width: 600px; display: flex; flex-direction: column; align-items: center; }
         .ad-side { width: 160px; height: 600px; position: sticky; top: 130px; border: 1px dashed var(--border); border-radius: 12px; overflow: hidden; background: rgba(30, 41, 59, 0.2); }
-        @media (max-width: 880px) { .ad-side { display: none !important; } }
+        @media (max-width: 950px) { .ad-side { display: none; } }
+
+        /* 2. 发送代码区 - 初始必须隐藏 */
+        #senderCodeArea { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; text-align: center; }
         
-        .ad-space { background: rgba(30, 41, 59, 0.5); display: flex; justify-content: center; align-items: center; border: 1px dashed var(--border); border-radius: 12px; overflow: hidden; width: 100%; min-height: 90px; }
-        .github-ad-box { width: 100%; margin-bottom: 15px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #0f172a; display: block; text-decoration: none; }
-        .github-ad-box img { width: 100%; display: block; transition: 0.3s; }
+        /* 3. 接收文字区 - 初始必须隐藏 */
+        #receivedText-container { display: none; margin-top: 20px; background: rgba(99,102,241,0.1); border: 1px solid var(--primary); padding: 15px; border-radius: 18px; width: 100%; }
 
-        /* 核心修复：文字接收区默认隐藏 */
-        #receivedText-container { display: none; margin-top: 20px; background: rgba(99, 102, 241, 0.15); border: 1px solid var(--primary); padding: 15px; border-radius: 18px; }
-
-        .card { background: var(--card); padding: 25px; border-radius: 30px; backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.9); }
-        .tab-group { display: flex; background: rgba(51, 65, 85, 0.7); padding: 5px; border-radius: 18px; margin-bottom: 25px; }
-        .tab { flex: 1; padding: 14px; cursor: pointer; border-radius: 14px; font-size: 14px; text-align: center; color: var(--text-muted); font-weight: 800; transition: 0.3s; }
+        .card { background: var(--card); padding: 25px; border-radius: 30px; backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .ad-space { background: rgba(30, 41, 59, 0.5); display: flex; justify-content: center; align-items: center; border: 1px dashed var(--border); border-radius: 12px; width: 100%; min-height: 90px; margin: 15px 0; }
+        
+        .legal-footer { padding: 40px 20px 80px 20px; font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); background: #030712; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 40px; }
+        .legal-section { flex: 1; min-width: 200px; max-width: 300px; }
+        .legal-section h4 { color: white; font-size: 12px; margin-bottom: 10px; font-weight: 900; }
+        .coffee-btn { border: 1.5px solid var(--primary); padding: 8px 16px; border-radius: 10px; color: var(--primary); text-decoration: none; font-weight: 900; display: inline-block; margin-bottom: 20px; }
+        .contact-pill { background: rgba(99,102,241,0.1); color: var(--primary); padding: 4px 8px; border-radius: 5px; margin-right: 10px; text-decoration: none; font-size: 10px; }
+        
+        .tab-group { display: flex; background: rgba(51, 65, 85, 0.5); padding: 5px; border-radius: 15px; margin-bottom: 20px; }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; border-radius: 12px; font-weight: 800; color: var(--text-muted); }
         .tab.active { background: var(--primary); color: white; }
-        .panel { display: none; width: 100%; }
+        .panel { display: none; }
         .panel.active { display: block; }
-        
-        .legal-footer { padding: 60px 20px 100px 20px; font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); background: #030712; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; text-align: left; margin-top: auto; }
-        .legal-section { flex: 1; min-width: 240px; max-width: 320px; margin-bottom: 20px; }
-        .legal-section h4 { color: var(--text); font-size: 12px; margin-bottom: 12px; font-weight: 900; letter-spacing: 1px; }
-        .contact-pill { display: inline-block; background: rgba(99, 102, 241, 0.1); color: var(--primary); padding: 4px 10px; border-radius: 6px; margin-top: 8px; text-decoration: none; border: 1px solid rgba(99, 102, 241, 0.3); font-weight: 800; }
-        .coffee-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 1.5px solid var(--primary); border-radius: 12px; color: var(--primary); text-decoration: none; font-weight: 900; font-size: 12px; transition: 0.3s; }
-        
-        /* 保持原有交互样式 */
-        button.action-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 16px; font-size: 14px; cursor: pointer; width: 100%; font-weight: 800; transition: 0.3s; text-transform: uppercase; }
-        .code-display { font-size: 72px; letter-spacing: 12px; font-weight: 900; color: #a5b4fc; text-align: center; margin: 20px 0; }
-        input[type="number"] { width: 100%; max-width: 260px; padding: 20px; border-radius: 22px; border: 2px solid var(--border); background: #0f172a; color: white; font-size: 38px; text-align: center; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.97); z-index: 5000; display: none; justify-content: center; align-items: center; flex-direction: column; }
+        .share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media (max-width: 500px) { .share-grid { grid-template-columns: 1fr; } }
+        .file-zone { border: 2px dashed var(--border); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; background: rgba(15,23,42,0.4); }
+        .text-zone { border: 1px solid var(--border); border-radius: 15px; padding: 15px; background: rgba(15,23,42,0.4); }
+        textarea { background: transparent; border: none; color: white; width: 100%; height: 60px; resize: none; }
+        .action-btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 14px; width: 100%; font-weight: 800; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+        .code-display { font-size: 50px; letter-spacing: 8px; font-weight: 900; color: #a5b4fc; margin: 15px 0; }
     </style>
 </head>
-<body>
+
 
 <div id="adblock-warning">
     <div class="warning-card">
