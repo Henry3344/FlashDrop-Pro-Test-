@@ -492,32 +492,21 @@
         const h = JSON.parse(localStorage.getItem('fd_history') || "[]");
         list.innerHTML = h.map(i => `<div class="history-item"><span>${i.type==='file'?'📄':'🔤'} ${i.name}</span><span style="opacity:0.5">${i.time}</span></div>`).join('');
     }
-    // 1. 复制文本并弹出紫色小气泡
+    // 最稳的复制函数，直接用回系统提示
     function copyReceivedText() { 
         const txt = document.getElementById('receivedText').innerText;
         if(txt) {
             navigator.clipboard.writeText(txt); 
-            showToast("Copied! ❤️"); 
-            setTimeout(resetReceiver, 1000); 
+            alert("Copied!"); 
+            resetReceiver(); 
         }
     }
 
-    // 2. 气泡提示助手（核心逻辑）
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        if(t) {
-            t.innerText = msg;
-            t.style.display = 'block';
-            setTimeout(() => { t.style.display = 'none'; }, 2500);
-        }
-    }
-
-    // 3. 广告拦截检测
+    // 广告检测（保留你辛苦改好的温和版 ID）
     function detectAdBlock() {
         setTimeout(() => {
             const topAd = document.getElementById('top-ad-zone');
-            const hasContent = topAd && (topAd.getElementsByTagName('iframe').length > 0 || topAd.getElementsByTagName('ins').length > 0);
-            if (!topAd || topAd.offsetHeight < 20 || !hasContent) {
+            if (!topAd || topAd.offsetHeight < 20) {
                 const notice = document.getElementById('safety-notice-view');
                 if(notice) notice.style.display = 'flex';
                 document.querySelectorAll('.ad-space, .ad-side').forEach(el => el.style.display = 'none');
@@ -525,9 +514,9 @@
         }, 1500);
     }
 
-    // 4. 初始化（一定要保留这一块！）
+    // 初始化：确保所有按钮点击都能生效
     window.onload = () => { 
-        initStars(); 
+        if(typeof initStars === 'function') initStars(); 
         applyI18N(); 
         renderHistory(); 
         detectAdBlock(); 
