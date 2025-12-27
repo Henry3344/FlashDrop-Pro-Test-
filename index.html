@@ -17,53 +17,41 @@
     
     <style>
         :root { --primary: #6366f1; --bg: #030712; --card: rgba(30, 41, 59, 0.85); --text: #f8fafc; --text-muted: #94a3b8; --border: #4f46e5; --nav-bg: rgba(15, 23, 42, 0.98); --danger: #ef4444; --success: #10b981; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+        * { box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* 1. 广告拦截警告 - 初始必须隐藏 */
-        #adblock-warning { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; padding: 20px; text-align: center; }
-        .warning-card { background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid var(--danger); max-width: 400px; }
+        /* 强制隐藏初始组件 */
+        #adblock-warning, #senderCodeArea, #receivedText-container, #stagedList { display: none !important; }
 
-        .app-container { display: flex; flex-direction: column; min-height: 100vh; width: 100%; padding-top: 120px; }
+        .app-container { flex: 1; padding-top: 130px; width: 100%; position: relative; }
         .stars-container { position: fixed; inset: 0; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); }
         
-        .navbar { position: fixed; top: 0; inset-x: 0; height: 110px; background: var(--nav-bg); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(25px); }
-        .logo { font-size: 30px; font-weight: 900; color: white; }
+        .navbar { position: fixed; top: 0; inset-x: 0; height: 110px; background: var(--nav-bg); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(20px); }
+        .logo { font-size: 28px; font-weight: 900; }
         .logo span { color: var(--primary); }
-        .status-dot { width: 12px; height: 12px; border-radius: 50%; background: #666; margin-right: 8px; }
-        .status-dot.online { background: var(--success); box-shadow: 0 0 10px var(--success); }
 
         .main-wrapper { display: flex; width: 100%; max-width: 1200px; margin: 0 auto; justify-content: center; gap: 20px; padding: 0 15px; }
-        .content-area { flex: 1; max-width: 600px; display: flex; flex-direction: column; align-items: center; }
-        .ad-side { width: 160px; height: 600px; position: sticky; top: 130px; border: 1px dashed var(--border); border-radius: 12px; overflow: hidden; background: rgba(30, 41, 59, 0.2); }
-        @media (max-width: 950px) { .ad-side { display: none; } }
+        .content-area { flex: 1; max-width: 550px; display: flex; flex-direction: column; align-items: center; }
+        
+        .card { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .ad-space { width: 100%; min-height: 90px; margin: 20px 0; border: 1px dashed var(--border); border-radius: 12px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
-        /* 2. 发送代码区 - 初始必须隐藏 */
-        #senderCodeArea { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; text-align: center; }
+        /* 页脚样式：确保只显示一份 */
+        .legal-footer { padding: 50px 20px; border-top: 1px solid var(--border); background: #030712; display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-top: 50px; }
+        .legal-section { flex: 1; min-width: 200px; max-width: 280px; font-size: 11px; color: var(--text-muted); }
+        .legal-section h4 { color: white; margin-bottom: 10px; font-size: 12px; text-transform: uppercase; }
+        .coffee-btn { border: 1.5px solid var(--primary); padding: 8px 16px; border-radius: 10px; color: var(--primary); text-decoration: none; font-weight: 900; display: inline-block; margin-bottom: 15px; }
         
-        /* 3. 接收文字区 - 初始必须隐藏 */
-        #receivedText-container { display: none; margin-top: 20px; background: rgba(99,102,241,0.1); border: 1px solid var(--primary); padding: 15px; border-radius: 18px; width: 100%; }
-
-        .card { background: var(--card); padding: 25px; border-radius: 30px; backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        .ad-space { background: rgba(30, 41, 59, 0.5); display: flex; justify-content: center; align-items: center; border: 1px dashed var(--border); border-radius: 12px; width: 100%; min-height: 90px; margin: 15px 0; }
-        
-        .legal-footer { padding: 40px 20px 80px 20px; font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); background: #030712; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 40px; }
-        .legal-section { flex: 1; min-width: 200px; max-width: 300px; }
-        .legal-section h4 { color: white; font-size: 12px; margin-bottom: 10px; font-weight: 900; }
-        .coffee-btn { border: 1.5px solid var(--primary); padding: 8px 16px; border-radius: 10px; color: var(--primary); text-decoration: none; font-weight: 900; display: inline-block; margin-bottom: 20px; }
-        .contact-pill { background: rgba(99,102,241,0.1); color: var(--primary); padding: 4px 8px; border-radius: 5px; margin-right: 10px; text-decoration: none; font-size: 10px; }
-        
-        .tab-group { display: flex; background: rgba(51, 65, 85, 0.5); padding: 5px; border-radius: 15px; margin-bottom: 20px; }
-        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; border-radius: 12px; font-weight: 800; color: var(--text-muted); }
+        /* 交互组件样式 */
+        .tab-group { display: flex; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 15px; margin-bottom: 20px; }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; border-radius: 10px; font-weight: 800; color: var(--text-muted); transition: 0.3s; }
         .tab.active { background: var(--primary); color: white; }
         .panel { display: none; }
         .panel.active { display: block; }
         .share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         @media (max-width: 500px) { .share-grid { grid-template-columns: 1fr; } }
-        .file-zone { border: 2px dashed var(--border); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; background: rgba(15,23,42,0.4); }
-        .text-zone { border: 1px solid var(--border); border-radius: 15px; padding: 15px; background: rgba(15,23,42,0.4); }
-        textarea { background: transparent; border: none; color: white; width: 100%; height: 60px; resize: none; }
-        .action-btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 14px; width: 100%; font-weight: 800; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
-        .code-display { font-size: 50px; letter-spacing: 8px; font-weight: 900; color: #a5b4fc; margin: 15px 0; }
+        .action-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; width: 100%; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        .code-display { font-size: 52px; letter-spacing: 6px; font-weight: 900; color: #a5b4fc; text-align: center; margin: 15px 0; }
     </style>
 </head>
 
