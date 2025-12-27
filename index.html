@@ -44,7 +44,6 @@
         .main-wrapper { display: flex; width: 100%; margin: 0 auto; justify-content: center; align-items: flex-start; gap: 20px; padding: 0 15px; }
         .content-area { flex: 1; min-width: 300px; max-width: 600px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
         
-        /* 侧边广告 */
         .ad-side { width: 160px; min-width: 160px; height: 600px; position: sticky; top: 130px; display: flex; flex-direction: column; align-items: center; border: 1px dashed var(--border); border-radius: 12px; background: rgba(30, 41, 59, 0.2); overflow: hidden; }
         @media (max-width: 880px) { .ad-side { display: none !important; } }
         .ad-space { background: rgba(30, 41, 59, 0.5); display: flex; justify-content: center; align-items: center; border: 1px dashed var(--border); border-radius: 12px; overflow: hidden; width: 100%; }
@@ -60,19 +59,22 @@
 
         .share-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 15px; margin-bottom: 15px; }
         @media (max-width: 550px) { .share-grid { grid-template-columns: 1fr; } }
-        .column-box { display: flex; flex-direction: column; gap: 10px; }
         
-        /* 暂存区样式还原 - 核心修改 */
         .file-zone { border: 2.5px dashed var(--border); border-radius: 20px; padding: 25px; background: rgba(15, 23, 42, 0.5); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 150px; text-align: center; }
         #stagedList { display: none; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); border-radius: 15px; padding: 10px; margin-bottom: 10px; max-height: 160px; overflow-y: auto; }
-        .staged-item { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 10px 15px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05); transition: 0.2s; }
-        .staged-item:hover { background: rgba(255,255,255,0.1); }
+        .staged-item { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 10px 15px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05); }
         .staged-item .file-info { display: flex; align-items: center; gap: 10px; overflow: hidden; }
         .staged-item .file-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
-        .staged-item .remove-btn { color: var(--danger); cursor: pointer; font-weight: 900; padding: 5px; font-size: 16px; line-height: 1; }
+        .staged-item .remove-btn { color: var(--danger); cursor: pointer; font-weight: 900; padding: 5px; font-size: 16px; }
 
         .text-zone { border: 1.5px solid var(--border); border-radius: 20px; padding: 20px; background: rgba(15, 23, 42, 0.5); display: flex; flex-direction: column; min-height: 150px; }
         textarea { background: transparent; border: none; color: white; resize: none; width: 100%; flex: 1; font-size: 14px; margin-top: 8px; }
+
+        /* 接收输入框容器 - 核心修改 */
+        .receive-input-wrap { position: relative; width: 100%; max-width: 260px; margin-bottom: 15px; }
+        input[type="number"] { width: 100%; padding: 20px 85px 20px 20px; border-radius: 22px; border: 2px solid var(--border); background: #0f172a; color: white; font-size: 32px; text-align: left; outline: none; }
+        .inline-scan { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: rgba(99, 102, 241, 0.2); color: var(--primary); border: 1px solid var(--primary); padding: 6px 10px; border-radius: 10px; font-size: 11px; font-weight: 900; cursor: pointer; transition: 0.3s; white-space: nowrap; }
+        .inline-scan:active { background: var(--primary); color: white; }
 
         button.action-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 16px; font-size: 14px; cursor: pointer; width: 100%; font-weight: 800; transition: 0.3s; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); text-transform: uppercase; }
         
@@ -86,6 +88,13 @@
         .coffee-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 1px solid var(--primary); border-radius: 12px; color: var(--primary); text-decoration: none; font-weight: 800; margin-top: 15px; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.97); z-index: 5000; display: none; justify-content: center; align-items: center; flex-direction: column; padding: 20px; backdrop-filter: blur(15px); }
+        #scanner-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; padding-top: 80px; }
+        .scanner-container { position: relative; width: 280px; height: 280px; background: #111; border-radius: 24px; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); }
+        #video-preview { width: 100%; height: 100%; object-fit: cover; }
+        .scan-frame { position: absolute; inset: 0; border: 2px solid var(--primary); border-radius: 24px; pointer-events: none; }
+        .scan-line { position: absolute; width: 100%; height: 3px; background: var(--primary); top: 0; left: 0; box-shadow: 0 0 15px var(--primary); animation: scanMove 2.5s infinite ease-in-out; }
+        @keyframes scanMove { 0% { top: 0%; } 50% { top: 98%; } 100% { top: 0%; } }
+
         .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); pointer-events: none; }
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: moveStars linear infinite; }
         @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-1000px); } }
@@ -96,7 +105,6 @@
 <div id="adblock-warning" style="display:none;">
     <div class="warning-card">
         <h3 style="color:var(--danger);">AD-BLOCK DETECTED</h3>
-        <p>FlashDrop needs ad revenue to maintain free servers.</p>
         <button class="action-btn" onclick="location.reload()" style="background:var(--danger)">REFRESH</button>
     </div>
 </div>
@@ -151,8 +159,11 @@
 
                 <div id="panel-receive" class="panel">
                     <div style="display:flex; flex-direction:column; align-items:center;">
-                        <input type="number" id="targetCode" placeholder="000000" style="width:100%; max-width:260px; padding:20px; border-radius:22px; border:2px solid var(--border); background:#0f172a; color:white; font-size:38px; text-align:center; margin-bottom:15px;">
-                        <button class="action-btn" id="btn-connect" onclick="triggerAd('receive')" style="max-width:260px;">DOWNLOAD</button>
+                        <div class="receive-input-wrap">
+                            <input type="number" id="targetCode" placeholder="000000">
+                            <div class="inline-scan" id="label-or-scan" onclick="openScanner()">OR SCAN</div>
+                        </div>
+                        <button class="action-btn" id="btn-connect" onclick="triggerAd('receive')" style="max-width: 260px;">DOWNLOAD</button>
                         <div id="mobileDownloadArea" style="display:none; width:100%; margin-top:15px; text-align:center;">
                             <div id="receiveProgress" style="width:100%; height:10px; background:rgba(255,255,255,0.1); border-radius:12px; overflow:hidden; margin-bottom:15px;"><div id="receiveProgressBar" style="width:0%; height:100%; background:var(--success); transition:0.1s;"></div></div>
                             <button class="action-btn" id="btn-save-file" style="background:var(--success); padding:22px; font-size:18px;">📥 DOWNLOAD FILE NOW</button>
@@ -176,12 +187,12 @@
     <footer class="legal-footer">
         <div class="legal-section">
             <h4 id="h4-about">ABOUT US</h4>
-            <p id="foot-about-p">受够了限速网盘？FlashDrop Pro 是纯粹的点对点工具。文件直传，不经过我，我也懒得看。</p>
+            <p id="foot-about-p"></p>
             <a href="https://buymeacoffee.com/xiaevan199e" target="_blank" class="coffee-btn" id="btn-coffee">☕ Buy me a coffee</a>
         </div>
         <div class="legal-section">
             <h4 id="h4-privacy">PRIVACY POLICY</h4>
-            <p id="foot-priv-p">全程加密直连，不存日志，没跟踪。你的隐私就是你的，我也看不见。</p>
+            <p id="foot-priv-p"></p>
         </div>
         <div class="legal-section"><h4 id="h4-copyright">COPYRIGHT</h4><p>© 2025 FlashDrop Pro.</p></div>
         <div class="legal-section" style="width: 100%; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center;">
@@ -199,23 +210,34 @@
     </div>
 </div>
 
+<div id="scanner-modal">
+    <div class="scanner-container">
+        <video id="video-preview" playsinline></video>
+        <div class="scan-frame"><div class="scan-line"></div></div>
+    </div>
+    <button class="action-btn" style="width:180px; background:#334155; margin-top:20px;" onclick="closeScanner()">CLOSE</button>
+</div>
+
 <script>
     const I18N = {
-        en: { tabSend: "Send", tabReceive: "Receive", badges: ["🔒 P2P Encrypted", "🕵️ No Logs", "♾️ Unlimited", "⚡ Direct"], drop: "DROP TO STAGE", fileLab: "Drop / Click", shareF: "SHARE FILES", shareT: "SHARE TEXT", connect: "DOWNLOAD", save: "📥 DOWNLOAD", guide: "Inform the other party within 10 minutes; it will self-destruct after.", aboutH4: "ABOUT US", privH4: "PRIVACY POLICY", coffee: "☕ Buy me a coffee", contactH4: "CONTACT INFO", inputErr: "Enter code please", sendingRemind: "Securing & Sending...<br>Don't close the page.", receivingRemind: "Handshaking & Downloading...<br>Don't close the page." },
-        zh: { tabSend: "发送", tabReceive: "接收", badges: ["🔒 P2P 加密", "🕵️ 零日志", "♾️ 无限次", "⚡ 直连传输"], drop: "松手即可添加", fileLab: "拖拽 / 点击", shareF: "分享文件", shareT: "分享文字", connect: "立即下载", save: "📥 下载文件", guide: "请在10分钟内将此码告知对方，10分钟后该传输将自動销毀。", aboutH4: "关于我们", privH4: "隐私政策", coffee: "☕ 请我喝杯咖啡", contactH4: "联系信息", inputErr: "请输入验证码", sendingRemind: "正在加密发送中...<br>请勿关闭当前页面", receivingRemind: "正在安全下載中...<br>请勿关闭当前页面" },
-        ja: { tabSend: "送信", tabReceive: "受信", badges: ["🔒 P2P暗号化", "🕵️ ログなし", "♾️ 無制限", "⚡ 直接転送"], aboutH4: "私たちについて", privH4: "プライバシー", coffee: "☕ コーヒーを奢る", contactH4: "連絡先情報", inputErr: "コードを入力してください" },
-        ko: { tabSend: "보내기", tabReceive: "받기", badges: ["🔒 P2P 암호화", "🕵️ 로그 없음", "♾️ 무제한", "⚡ 직거래"], aboutH4: "회사 소개", privH4: "개인정보", coffee: "☕ 커피 한 잔 사기", contactH4: "연락처 정보", inputErr: "코드를 입력하세요" },
-        es: { tabSend: "Enviar", tabReceive: "Recibir", badges: ["🔒 P2P Cifrado", "🕵️ Sin registros", "♾️ Ilimitado", "⚡ Directo"], aboutH4: "SOBRE NOSOTROS", privH4: "PRIVACIDAD", coffee: "☕ Invítame a un café", contactH4: "CONTACTO", inputErr: "Ingresa el código" },
-        hi: { tabSend: "भेजें", tabReceive: "प्राप्त करें", badges: ["🔒 P2P एन्क्रिप्टेड", "🕵️ कोई लॉग नहीं", "♾️ असीमित", "⚡ सीधा"], aboutH4: "हमारे बारे में", privH4: "गोपनीयता", coffee: "☕ मेरे लिए कॉफी खरीदें", contactH4: "संपर्क जानकारी", inputErr: "कोड दर्ज करें" }
+        en: { tabSend: "Send", tabReceive: "Receive", badges: ["🔒 P2P Encrypted", "🕵️ No Logs", "♾️ Unlimited", "⚡ Direct"], drop: "DROP TO STAGE", fileLab: "Drop / Click", shareF: "SHARE FILES", shareT: "SHARE TEXT", connect: "DOWNLOAD", save: "📥 DOWNLOAD", guide: "Inform the other party within 10 minutes; it will self-destruct after.", aboutH4: "ABOUT US", privH4: "PRIVACY POLICY", coffee: "☕ Buy me a coffee", contactH4: "CONTACT INFO", inputErr: "Enter code please", sendingRemind: "Securing & Sending...<br>Don't close the page.", receivingRemind: "Handshaking & Downloading...<br>Don't close the page.", orScan: "OR SCAN", aboutP: "Tired of slow cloud drives? FlashDrop Pro is built for speed. Direct transfers, no server storage, no snooping.", privP: "End-to-end encrypted. No logs, no tracking. Your privacy stays yours—I can't see a thing." },
+        zh: { tabSend: "发送", tabReceive: "接收", badges: ["🔒 P2P 加密", "🕵️ 零日志", "♾️ 无限次", "⚡ 直连传输"], drop: "松手即可添加", fileLab: "拖拽 / 点击", shareF: "分享文件", shareT: "分享文字", connect: "立即下载", save: "📥 下载文件", guide: "请在10分钟内将此码告知对方，10分钟后该传输将自動销毀。", aboutH4: "关于我们", privH4: "隐私政策", coffee: "☕ 请我喝杯咖啡", contactH4: "联系信息", inputErr: "请输入验证码", sendingRemind: "正在加密发送中...<br>请勿关闭当前页面", receivingRemind: "正在安全下載中...<br>请勿关闭当前页面", orScan: "扫码接收", aboutP: "受够了限速网盘？FlashDrop Pro 是为了快和稳而生的工具。文件直传，不经过我，我也懒得看。", privP: "全程加密直连，不存日志，没跟踪。你的隐私就是你的，我也看不见，大可放心用。" },
+        ja: { tabSend: "送信", tabReceive: "受信", badges: ["🔒 P2P暗号化", "🕵️ ログなし", "♾️ 無制限", "⚡ 直接転送"], aboutH4: "私たちについて", privH4: "プライバシー", coffee: "☕ コーヒーを奢る", contactH4: "連絡先情報", inputErr: "コードを入力してください", orScan: "スキャン" },
+        ko: { tabSend: "보내기", tabReceive: "받기", badges: ["🔒 P2P 암호화", "🕵️ 로그 없음", "♾️ 무제한", "⚡ 직거래"], aboutH4: "회사 소개", privH4: "개인정보", coffee: "☕ 커피 한 잔 사기", contactH4: "연락처 정보", inputErr: "코드를 입력하세요", orScan: "스캔하기" },
+        es: { tabSend: "Enviar", tabReceive: "Recibir", badges: ["🔒 P2P Cifrado", "🕵️ Sin registros", "♾️ Ilimitado", "⚡ Directo"], aboutH4: "SOBRE NOSOTROS", privH4: "PRIVACIDAD", coffee: "☕ Invítame a un café", contactH4: "CONTACTO", inputErr: "Ingresa el código", orScan: "ESCANEAR" },
+        hi: { tabSend: "भेजें", tabReceive: "प्राप्त करें", badges: ["🔒 P2P एन्क्रिप्टेड", "🕵️ कोई लॉग नहीं", "♾️ असीमित", "⚡ सीधा"], aboutH4: "हमारे बारे में", privH4: "गोपनीयता", coffee: "☕ मेरे लिए कॉफी खरीदें", contactH4: "संपर्क जानकारी", inputErr: "कोड दर्ज करें", orScan: "स्कैन" }
     };
 
     const smartLinks = ["https://limpfeel.com/MFoqkO", "https://www.effectivegatecpm.com/p5akr5b1e?key=f3d45de493bf7cfb65c663950a6dfc8d", "https://otieu.com/4/10380243"];
-    let currLang = "en", peer = null, stagedFiles = [], expiryTimerIdx = null;
+    let currLang = "en", peer = null, stagedFiles = [], expiryTimerIdx = null, videoTrack = null;
     const PREFIX = "fd-pro-", CHUNK_SIZE = 262144;
 
     function applyI18N() {
-        const userLang = navigator.language.split('-')[0];
-        currLang = I18N[userLang] ? userLang : "en";
+        // Henry, 这里重写了检测逻辑，确保非中文系统必回英文
+        const langList = navigator.languages || [navigator.language];
+        const primaryLang = langList[0].split('-')[0];
+        currLang = I18N[primaryLang] ? primaryLang : "en";
+        
         const d = I18N[currLang];
         document.getElementById('currentLangTag').innerText = currLang.toUpperCase();
         document.getElementById('tab-send').innerText = d.tabSend; document.getElementById('tab-receive').innerText = d.tabReceive;
@@ -225,12 +247,14 @@
         document.getElementById('h4-about').innerText = d.aboutH4; document.getElementById('h4-privacy').innerText = d.privH4;
         document.getElementById('h4-contact').innerText = d.contactH4; document.getElementById('btn-coffee').innerHTML = d.coffee;
         document.getElementById('guideText').innerText = d.guide || "";
+        document.getElementById('label-or-scan').innerText = d.orScan;
+        if(d.aboutP) document.getElementById('foot-about-p').innerText = d.aboutP;
+        if(d.privP) document.getElementById('foot-priv-p').innerText = d.privP;
     }
 
     function triggerAd(mode) {
         if (mode === 'receive' && !document.getElementById('targetCode').value) { alert(I18N[currLang].inputErr); return; }
         if (mode.startsWith('send') && stagedFiles.length === 0 && !document.getElementById('quickText').value) return;
-
         window.open(smartLinks[Math.floor(Math.random() * smartLinks.length)], '_blank');
         const modal = document.getElementById('adModal');
         const title = document.getElementById('ad-wait-title');
@@ -240,10 +264,7 @@
         const itv = setInterval(() => {
             cd--;
             title.innerHTML = `${msg}<br><span style="color:var(--primary); font-size:26px;">${cd}s</span>`;
-            if(cd <= 0) { 
-                clearInterval(itv); modal.style.display = 'none'; 
-                mode.startsWith('send') ? initSender() : startReceiving(); 
-            }
+            if(cd <= 0) { clearInterval(itv); modal.style.display = 'none'; mode.startsWith('send') ? initSender() : startReceiving(); }
         }, 1000);
     }
 
@@ -293,41 +314,20 @@
         });
     }
 
-    function copyMyLink() {
-        const code = document.getElementById('myCode').innerText;
-        navigator.clipboard.writeText(window.location.origin + window.location.pathname + "?c=" + code);
-        alert("Link Copied!");
-    }
+    async function openScanner() { document.getElementById('scanner-modal').style.display='flex'; try { const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }); const video = document.getElementById('video-preview'); video.srcObject = stream; videoTrack = stream.getVideoTracks()[0]; video.play(); requestAnimationFrame(tickScanner); } catch (e) { alert("Camera failed"); closeScanner(); } }
+    function closeScanner() { document.getElementById('scanner-modal').style.display='none'; if(videoTrack) { videoTrack.stop(); videoTrack = null; } }
+    function tickScanner() { const v = document.getElementById('video-preview'); if(v.readyState === v.HAVE_ENOUGH_DATA) { const cvs = document.createElement("canvas"); cvs.width = v.videoWidth; cvs.height = v.videoHeight; const ctx = cvs.getContext("2d"); ctx.drawImage(v, 0, 0); const data = jsQR(ctx.getImageData(0,0,cvs.width,cvs.height).data, cvs.width, cvs.height); if(data) { const c = new URL(data.data).searchParams.get("c"); if(c) { document.getElementById('targetCode').value = c; closeScanner(); triggerAd('receive'); return; } } } if(document.getElementById('scanner-modal').style.display === 'flex') requestAnimationFrame(tickScanner); }
 
+    function copyMyLink() { navigator.clipboard.writeText(window.location.origin + window.location.pathname + "?c=" + document.getElementById('myCode').innerText); alert("Link Copied!"); }
     function startExpiryTimer() { let sec = 600; if(expiryTimerIdx) clearInterval(expiryTimerIdx); expiryTimerIdx = setInterval(() => { sec--; document.getElementById('expiryTimer').innerText = `Expires: ${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; if(sec <= 0) resetSender(); }, 1000); }
     function resetSender() { if(peer) peer.destroy(); document.getElementById('senderCodeArea').style.display = 'none'; stagedFiles = []; renderStagedList(); }
     function switchTab(m, e) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); e.currentTarget.classList.add('active'); document.getElementById(`panel-${m}`).classList.add('active'); }
     function handleFiles(fs) { stagedFiles = stagedFiles.concat(Array.from(fs)); renderStagedList(); }
-    
-    // Henry，还原漂亮的暂存区逻辑
-    function renderStagedList() { 
-        const l = document.getElementById('stagedList'); 
-        if (stagedFiles.length === 0) { l.style.display = 'none'; return; } 
-        l.style.display = 'block'; 
-        l.innerHTML = stagedFiles.map((f, i) => `
-            <div class="staged-item">
-                <div class="file-info">
-                    <span>📄</span>
-                    <span class="file-name">${f.name}</span>
-                </div>
-                <div class="remove-btn" onclick="removeStagedFile(${i})">✕</div>
-            </div>`).join(''); 
-    }
-    function removeStagedFile(index) { stagedFiles.splice(index, 1); renderStagedList(); }
-
+    function renderStagedList() { const l = document.getElementById('stagedList'); if (!stagedFiles.length) { l.style.display = 'none'; return; } l.style.display = 'block'; l.innerHTML = stagedFiles.map((f, i) => `<div class="staged-item"><div class="file-info"><span>📄</span><span class="file-name">${f.name}</span></div><div class="remove-btn" onclick="removeStagedFile(${i})">✕</div></div>`).join(''); }
+    function removeStagedFile(i) { stagedFiles.splice(i, 1); renderStagedList(); }
     function initStars() { const c = document.getElementById('stars'); for(let i=0; i<60; i++) { const s = document.createElement('div'); s.className = 'star'; s.style.width = s.style.height = Math.random()*2+'px'; s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%'; s.style.animationDuration = (Math.random()*20+15)+'s'; c.appendChild(s); } }
 
-    window.onload = () => {
-        applyI18N(); initStars();
-        const c = new URLSearchParams(window.location.search).get('c');
-        if(c) { switchTab('receive', {currentTarget: document.getElementById('tab-receive')}); document.getElementById('targetCode').value = c; }
-        if (navigator.onLine) document.getElementById('status-dot').classList.add('online');
-    };
+    window.onload = () => { applyI18N(); initStars(); const c = new URLSearchParams(window.location.search).get('c'); if(c) { switchTab('receive', {currentTarget: document.getElementById('tab-receive')}); document.getElementById('targetCode').value = c; } if (navigator.onLine) document.getElementById('status-dot').classList.add('online'); };
 </script>
 </body>
 </html>
