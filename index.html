@@ -58,18 +58,19 @@
         .staged-item .file-name { color: #f8fafc; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
         .staged-item .remove-btn { color: #f87171; cursor: pointer; font-size: 20px; font-weight: bold; padding: 0 5px; }
 
+        /* 发送区间距拉开 */
         .file-zone { border: 2.5px dashed var(--border); border-radius: 20px; padding: 30px; background: rgba(15, 23, 42, 0.5); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 160px; text-align: center; margin-bottom: 30px; }
         #btn-share-files { margin-bottom: 40px; }
         .text-zone { border: 1.5px solid var(--border); border-radius: 20px; padding: 20px; background: rgba(15, 23, 42, 0.5); display: flex; flex-direction: column; min-height: 160px; margin-bottom: 30px; }
         #btn-share-text { margin-bottom: 30px; }
         textarea { background: transparent; border: none; color: white; resize: none; width: 100%; flex: 1; font-size: 14px; margin-top: 8px; }
 
+        /* 接收方布局 */
         .receive-input-wrap { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; max-width: 320px; margin: 0 auto 25px auto; background: #0f172a; border: 2px solid var(--border); border-radius: 22px; padding: 12px 15px; }
         input[type="number"] { width: auto; max-width: 140px; border: none; background: transparent; color: white; font-size: 32px; text-align: center; outline: none; flex-grow: 1; }
         .inline-scan-text { font-size: 10px; font-weight: 900; background: rgba(99, 102, 241, 0.2); color: var(--primary); border: 1.5px solid var(--primary); padding: 8px 12px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
 
         button.action-btn { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 16px; font-size: 14px; cursor: pointer; width: 100%; font-weight: 800; transition: 0.3s; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); text-transform: uppercase; }
-        
         #senderCodeArea { margin-top: 30px; border-top: 1px solid var(--border); padding-top: 30px; display: none; text-align: center; }
         .code-display { font-size: 72px; letter-spacing: 12px; font-weight: 900; color: #a5b4fc; margin: 20px 0; text-shadow: 0 0 40px rgba(99, 102, 241, 0.7); }
         #qrcode { background: white; padding: 15px; border-radius: 18px; display: inline-block; }
@@ -91,13 +92,12 @@
         
         .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); pointer-events: none; }
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: moveStars linear infinite; }
-        @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-1000px); } }
-        
-        /* 接收进度展示 */
+
+        /* 极速进度展示 */
         #receiveProgressContainer { width: 100%; margin-top: 15px; text-align: center; }
-        #receiveProgressBar { width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
-        #receiveProgressFill { width: 0%; height: 100%; background: var(--primary); transition: width 0.2s; box-shadow: 0 0 10px var(--primary); }
-        #receivePercent { font-size: 14px; font-weight: 900; color: var(--primary); margin-bottom: 15px; }
+        #receiveProgressBar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+        #receiveProgressFill { width: 0%; height: 100%; background: var(--success); transition: width 0.1s; }
+        #receivePercent { font-size: 13px; font-weight: 900; color: var(--success); margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -125,6 +125,7 @@
                     </div>
                     <div style="margin: 12px 0; font-size:12px; color:var(--text-muted); text-align:center;"><span id="label-limit">Limit:</span> <select id="downloadLimit" style="background:#0f172a; color:#fff; border:1.5px solid var(--border); padding:6px 12px; border-radius:8px;"><option value="1">1 Time</option><option value="3">3 Times</option><option value="999">Unlimited</option></select></div>
                     <input type="file" id="fileInput" multiple style="display:none;" onchange="handleFiles(this.files)">
+                    
                     <div id="senderCodeArea">
                         <div style="font-size:12px; color:var(--success); font-weight:900; margin-bottom:15px; text-align:center;">🛡️ P2P ENCRYPTED</div>
                         <p id="guideText" style="font-size:13px; color:var(--primary); font-weight:800; margin-bottom:18px; line-height:1.5; text-align:center;"></p>
@@ -135,6 +136,7 @@
                         <button class="action-btn" id="btn-stop" onclick="resetSender()" style="background:var(--danger); margin-top:15px;">STOP</button>
                     </div>
                 </div>
+
                 <div id="panel-receive" class="panel">
                     <div style="display:flex; flex-direction:column; align-items:center;">
                         <div class="receive-input-wrap"><input type="number" id="targetCode" placeholder="000000" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6)"><div class="inline-scan-text" id="label-or-scan" onclick="openScanner()">OR SCAN</div></div>
@@ -143,7 +145,7 @@
                         <div id="receiveProgressContainer" style="display:none;">
                             <div id="receiveProgressBar"><div id="receiveProgressFill"></div></div>
                             <div id="receivePercent">0%</div>
-                            <button class="action-btn" id="btn-save-file" style="display:none; background:var(--success); padding:22px; font-size:18px;">📥 DOWNLOAD FILES NOW</button>
+                            <button class="action-btn" id="btn-save-file" style="display:none; background:var(--success); padding:22px; font-size:18px;">📥 SAVE FILES NOW</button>
                         </div>
                     </div>
                 </div>
@@ -166,13 +168,13 @@
 
 <script>
     const I18N = {
-        en: { tabSend: "Send", tabReceive: "Receive", badges: ["🔒 P2P Encrypted", "🕵️ No Logs", "♾️ Unlimited", "⚡ Direct"], drop: "DROP TO STAGE", fileLab: "Drop / Click", shareF: "SHARE FILES", shareT: "SHARE TEXT", connect: "DOWNLOAD", save: "📥 DOWNLOAD FILES NOW", guide: "Inform the other party within 10 minutes; it will self-destruct after.", aboutH4: "ABOUT US", privH4: "PRIVACY POLICY", coffee: "☕ Buy me a coffee", contactH4: "CONTACT INFO", inputErr: "Enter code please", sendingRemind: "Securing & Sending...<br>Don't close the page.", receivingRemind: "Handshaking & Downloading...<br>Don't close the page.", orScan: "OR SCAN", aboutP: "Built for speed. Direct transfers, no server storage.", privP: "End-to-end encrypted. Your privacy stays yours." },
-        zh: { tabSend: "发送", tabReceive: "接收", badges: ["🔒 P2P 加密", "🕵️ 零日志", "♾️ 无限次", "⚡ 直连传输"], drop: "松手即可添加", fileLab: "拖拽 / 点击", shareF: "分享文件", shareT: "分享文字", connect: "立即下载", save: "📥 下载文件", guide: "请在10分钟内将此码告知对方，10分钟后该传输将自動销毀。", aboutH4: "关于我们", privH4: "隐私政策", coffee: "☕ 请我喝杯咖啡", contactH4: "联系信息", inputErr: "请输入验证码", sendingRemind: "正在加密发送中...<br>请勿关闭当前页面", receivingRemind: "正在安全下載中...<br>请勿关闭当前页面", orScan: "扫码接收", aboutP: "受够了限速网盘？FlashDrop Pro 是为了快和稳而生的工具。文件直传，不经过我，我也懒得看。", privP: "全程加密直连，不存日志，没跟踪。你的隐私就是你的，我也看不见，大可放心用。" }
+        en: { tabSend: "Send", tabReceive: "Receive", badges: ["🔒 P2P Encrypted", "🕵️ No Logs", "♾️ Unlimited", "⚡ Direct"], drop: "DROP TO STAGE", fileLab: "Drop / Click", shareF: "SHARE FILES", shareT: "SHARE TEXT", connect: "DOWNLOAD", save: "📥 SAVE FILES NOW", guide: "Inform the other party within 10 minutes; it will self-destruct after.", aboutH4: "ABOUT US", privH4: "PRIVACY POLICY", coffee: "☕ Buy me a coffee", contactH4: "CONTACT INFO", inputErr: "Enter code please", sendingRemind: "Securing & Sending...<br>Don't close the page.", receivingRemind: "Handshaking & Downloading...<br>Don't close the page.", orScan: "OR SCAN", aboutP: "Built for speed. Direct transfers, no server storage.", privP: "End-to-end encrypted. Your privacy stays yours." },
+        zh: { tabSend: "发送", tabReceive: "接收", badges: ["🔒 P2P 加密", "🕵️ 零日志", "♾️ 无限次", "⚡ 直连传输"], drop: "松手即可添加", fileLab: "拖拽 / 点击", shareF: "分享文件", shareT: "分享文字", connect: "立即下载", save: "📥 立即保存文件", guide: "请在10分钟内将此码告知对方，10分钟后该传输将自動销毀。", aboutH4: "关于我们", privH4: "隐私政策", coffee: "☕ 请我喝杯咖啡", contactH4: "联系信息", inputErr: "请输入验证码", sendingRemind: "正在加密发送中...<br>请勿关闭当前页面", receivingRemind: "正在安全下載中...<br>请勿关闭当前页面", orScan: "扫码接收", aboutP: "受够了限速网盘？FlashDrop Pro 是为了快和稳而生的工具。文件直传，不经过我，我也懒得看。", privP: "全程加密直连，不存日志，没跟踪。你的隐私就是你的，我也看不见，大可放心用。" }
     };
 
     const smartLinks = ["https://limpfeel.com/MFoqkO", "https://www.effectivegatecpm.com/p5akr5b1e?key=f3d45de493bf7cfb65c663950a6dfc8d", "https://otieu.com/4/10380243"];
     let currLang = "en", peer = null, stagedFiles = [], expiryTimerIdx = null, videoTrack = null, isTorchOn = false, currentDownloads = 0, activeConn = null;
-    const PREFIX = "fd-pro-", CHUNK_SIZE = 524288; // Henry, 增大分片到 512KB 提升速度
+    const PREFIX = "fd-pro-", CHUNK_SIZE = 1024 * 512; // Henry, 极致优化的 512KB 分片
 
     function applyI18N() {
         const lang = (navigator.languages ? navigator.languages[0] : navigator.language).split('-')[0];
@@ -222,20 +224,24 @@
                 if(d.type === 'confirm_save') {
                     currentDownloads++;
                     const limit = parseInt(document.getElementById('downloadLimit').value);
-                    if(currentDownloads >= limit) { resetSender(); }
+                    if(currentDownloads >= limit) resetSender();
                 }
             });
             c.on('open', async () => {
                 const txt = document.getElementById('quickText').value; if(txt) c.send({ type: 'text', data: txt });
                 if(stagedFiles.length > 0) {
                     let fb, fn;
-                    if(stagedFiles.length === 1) { fb = stagedFiles[0]; fn = stagedFiles[0].name; }
-                    else { const zip = new JSZip(); stagedFiles.forEach(f => zip.file(f.name, f)); fb = await zip.generateAsync({type:"blob", compression:"STORE"}); fn="Bundle.zip"; }
+                    // Henry, 极致优化：单文件直接发，不打包压缩
+                    if(stagedFiles.length === 1) { 
+                        fb = stagedFiles[0]; fn = stagedFiles[0].name; 
+                    } else { 
+                        const zip = new JSZip(); stagedFiles.forEach(f => zip.file(f.name, f)); 
+                        fb = await zip.generateAsync({type:"blob", compression:"STORE"}); fn="FlashDrop_Bundle.zip"; 
+                    }
                     const totalChunks = Math.ceil(fb.size / CHUNK_SIZE);
                     c.send({ type: 'meta', name: fn, size: fb.size, total: totalChunks });
                     for (let i = 0; i < fb.size; i += CHUNK_SIZE) {
-                        const chunk = await fb.slice(i, i + CHUNK_SIZE).arrayBuffer();
-                        c.send({ type: 'chunk', index: i / CHUNK_SIZE, data: chunk });
+                        c.send({ type: 'chunk', index: i / CHUNK_SIZE, data: await fb.slice(i, i + CHUNK_SIZE).arrayBuffer() });
                     }
                     c.send({ type: 'done' });
                 }
@@ -253,30 +259,27 @@
             const fill = document.getElementById('receiveProgressFill');
             const percentText = document.getElementById('receivePercent');
             const saveBtn = document.getElementById('btn-save-file');
-            
+
             c.on('data', d => {
                 if(d.type === 'text') { document.getElementById('receivedText-container').style.display='block'; document.getElementById('receivedText').innerText=d.data; }
                 else if(d.type === 'meta') { 
                     meta = d; chunks = new Array(d.total); receivedCount = 0; 
-                    container.style.display = 'block'; 
-                    saveBtn.style.display = 'none'; // 确保下载中按钮不显示
+                    container.style.display = 'block'; saveBtn.style.display = 'none';
                 }
                 else if(d.type === 'chunk') {
                     chunks[d.index] = d.data; receivedCount++;
                     const pct = Math.floor((receivedCount / meta.total) * 100);
-                    fill.style.width = pct + '%';
-                    percentText.innerText = pct + '%';
+                    fill.style.width = pct + '%'; percentText.innerText = pct + '%';
                 }
                 else if(d.type === 'done') {
-                    // Henry, 核心：100% 收齐后再准备 Blob 和按钮
+                    // Henry, 只有进度到 100% 才显示按钮
                     if(receivedCount >= meta.total) {
-                        const b = new Blob(chunks);
-                        const url = URL.createObjectURL(b);
-                        saveBtn.style.display = 'block'; // 弹出下载按钮
+                        const b = new Blob(chunks); const u = URL.createObjectURL(b);
+                        saveBtn.style.display = 'block';
                         saveBtn.onclick = () => {
-                            const dl = document.createElement('a'); dl.href = url; dl.download = meta.name;
-                            document.body.appendChild(dl); dl.click(); document.body.removeChild(dl);
-                            setTimeout(() => { if(activeConn) activeConn.send({type: 'confirm_save'}); resetReceiver(); }, 600);
+                            const a = document.createElement('a'); a.href = u; a.download = meta.name;
+                            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                            setTimeout(() => { if(activeConn) activeConn.send({type: 'confirm_save'}); resetReceiver(); }, 500);
                         };
                     }
                 }
@@ -288,7 +291,7 @@
         document.getElementById('scanner-modal').style.display='flex'; 
         try { 
             const devices = await navigator.mediaDevices.enumerateDevices();
-            const backCameras = devices.filter(d => d.kind === 'videoinput' && (d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('rear')));
+            const videoDevices = devices.filter(d => d.kind === 'videoinput' && (d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('rear')));
             let targetId = null;
             if(backCameras.length > 0) {
                 const main = backCameras.filter(d => !d.label.toLowerCase().includes('wide') && !d.label.toLowerCase().includes('0.5') && !d.label.toLowerCase().includes('ultra'));
@@ -297,7 +300,7 @@
             const stream = await navigator.mediaDevices.getUserMedia({ video: targetId ? { deviceId: { exact: targetId }, width: { ideal: 1920 }, height: { ideal: 1080 } } : { facingMode: "environment" } }); 
             const video = document.getElementById('video-preview'); video.srcObject = stream; 
             videoTrack = stream.getVideoTracks()[0]; video.play(); requestAnimationFrame(tickScanner); 
-        } catch (e) { alert("Camera failed"); closeScanner(); } 
+        } catch (e) { alert("Camera error"); closeScanner(); } 
     }
 
     async function toggleTorch() {
