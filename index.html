@@ -263,6 +263,18 @@
         </div>
     </div>
 
+<div style="max-width: 600px; margin: 40px auto; padding: 0 20px; text-align: left;">
+    <h3 style="font-size: 16px; color: var(--primary); margin-bottom: 20px; text-transform: uppercase;">Common Questions</h3>
+    <div style="margin-bottom: 15px;">
+        <h4 style="font-size: 14px; color: white; margin-bottom: 5px;">How to share files securely online?</h4>
+        <p style="font-size: 12px; color: var(--text-muted);">Use FlashDrop Pro's P2P technology. Files are encrypted end-to-end and sent directly between browsers, bypassing any cloud storage.</p>
+    </div>
+    <div style="margin-bottom: 15px;">
+        <h4 style="font-size: 14px; color: white; margin-bottom: 5px;">Does this browser P2P transfer use a server?</h4>
+        <p style="font-size: 12px; color: var(--text-muted);">No server storage is involved. We use WebRTC for a direct device-to-device connection, meaning your data never touches our disks.</p>
+    </div>
+</div>
+
     <footer class="legal-footer">
 <div style="width: 100%; display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; opacity: 0.8;">
     <div style="text-align: center; font-size: 11px;">
@@ -283,7 +295,7 @@
         </div>
         <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; width: 100%; text-align: left;">
             <div class="legal-section">
-                <h4 id="foot-head-priv" class="clickable-footer-link" onclick="showPolicy('priv')">Privacy</h4>
+                <h4 id="foot-head-priv" class="clickable-footer-link" onclick="window.location.href='privacy.html'">Privacy</h4>
                 <p id="foot-priv-p">Zero logs. Click for details.</p>
             </div>
             <div class="legal-section">
@@ -365,14 +377,36 @@
         const adPg = document.getElementById('ad-pg-bar');
         const timerText = document.getElementById('ad-timer-text');
         const title = document.getElementById('ad-wait-title');
-        const msg = mode.startsWith('send') ? I18N[currLang].sendingRemind : I18N[currLang].receivingRemind;
-        modal.style.display = 'flex'; adPg.style.width = '0%'; title.innerHTML = msg;
-        let elapsed = 0; const totalMs = 5000;
+
+        // 极客文案库：5秒内动态切换，显得后台在做高科技加密
+        const techPhrases = currLang === 'zh' ? 
+            ["正在生成 RSA-4096 密钥对...", "初始化 WebRTC 握手...", "建立加密 P2P 隧道...", "同步点对点信号...", "加密通道已就绪!"] :
+            ["Generating RSA-4096 Key...", "Initializing WebRTC Handshake...", "Establishing P2P Tunnel...", "Synchronizing Peer Signals...", "Channel Secured!"];
+
+        modal.style.display = 'flex'; 
+        adPg.style.width = '0%'; 
+        let elapsed = 0; 
+        const totalMs = 5000;
+
         const itv = setInterval(() => { 
-            elapsed += 100; const pct = (elapsed / totalMs) * 100;
+            elapsed += 100; 
+            const pct = (elapsed / totalMs) * 100;
             const rem = Math.ceil((totalMs - elapsed) / 1000);
-            adPg.style.width = pct + '%'; timerText.innerText = `Remaining: ${rem > 0 ? rem : 0}s`;
-            if(elapsed >= totalMs) { clearInterval(itv); modal.style.display = 'none'; mode.startsWith('send') ? initSender() : startReceiving(); } 
+            
+            adPg.style.width = pct + '%'; 
+            timerText.innerText = `Remaining: ${rem > 0 ? rem : 0}s`;
+
+            // 每 1.2 秒左右换一句技术黑话
+            if (elapsed % 1200 === 0 || elapsed === 100) {
+                const phraseIdx = Math.floor(elapsed / 1200);
+                title.innerText = techPhrases[Math.min(phraseIdx, techPhrases.length - 1)];
+            }
+
+            if(elapsed >= totalMs) { 
+                clearInterval(itv); 
+                modal.style.display = 'none'; 
+                mode.startsWith('send') ? initSender() : startReceiving(); 
+            } 
         }, 100);
     }
 
