@@ -61,11 +61,12 @@
         .main-wrapper { display: flex; width: 100%; margin: 0 auto; justify-content: center; align-items: flex-start; gap: 20px; padding: 0 15px; }
         .content-area { flex: 1; min-width: 300px; max-width: 600px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
         
-        .ad-side { width: 160px; min-width: 160px; position: sticky; top: 130px; display: flex; flex-direction: column; align-items: center; border-radius: 12px; background: transparent; overflow: hidden; transition: 0.3s; }
-        .ad-space { background: transparent; display: flex; justify-content: center; align-items: center; border-radius: 12px; overflow: hidden; width: 100%; transition: 0.3s; }
-        .ad-top { min-height: 0; margin-bottom: 15px; }
-        .ad-bottom { min-height: 0; margin-top: 20px; margin-bottom: 25px; }
-        @media (max-width: 880px) { .ad-side { display: none !important; } }
+        /* 关键词混淆：ad -> section/slot */
+        .section-side { width: 160px; min-width: 160px; position: sticky; top: 130px; display: flex; flex-direction: column; align-items: center; border-radius: 12px; background: transparent; overflow: hidden; transition: 0.3s; }
+        .slot-container { background: transparent; display: flex; justify-content: center; align-items: center; border-radius: 12px; overflow: hidden; width: 100%; transition: 0.3s; }
+        .slot-top { min-height: 0; margin-bottom: 15px; }
+        .slot-bottom { min-height: 0; margin-top: 20px; margin-bottom: 25px; }
+        @media (max-width: 880px) { .section-side { display: none !important; } }
         
         .card { background: var(--card); padding: 25px; border-radius: 30px; backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.9); }
         .tab-group { display: flex; background: rgba(51, 65, 85, 0.7); padding: 5px; border-radius: 18px; margin-bottom: 25px; }
@@ -125,7 +126,7 @@
         .close-policy { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 24px; color: var(--text-muted); font-weight: bold; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.97); z-index: 5000; display: none; justify-content: center; align-items: center; flex-direction: column; padding: 20px; backdrop-filter: blur(15px); }
-        #ad-wait-title { color:white; margin-bottom:10px; font-weight:bold; text-align:center; line-height:1.6; font-size:18px; }
+        #promo-wait-title { color:white; margin-bottom:10px; font-weight:bold; text-align:center; line-height:1.6; font-size:18px; }
 
         #scanner-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 80px; padding-bottom: 100px; }
         .scanner-container { position: relative; width: 280px; height: 280px; background: #111; border-radius: 24px; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); box-shadow: 0 0 50px rgba(99, 102, 241, 0.3); margin-bottom: 30px; }
@@ -137,7 +138,6 @@
         @keyframes scanMove { 0% { top: 0%; } 50% { top: 98%; } 100% { top: 0%; } }
         #drop-zone { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; border: 6px dashed var(--primary); background: rgba(99,102,241,0.25); display: none; align-items: center; justify-content: center; pointer-events: none; }
         button.action-btn:hover { box-shadow: 0 0 30px rgba(99, 102, 241, 0.8); transform: translateY(-3px); filter: brightness(1.1); }
-        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); } 50% { box-shadow: 0 4px 25px rgba(99, 102, 241, 0.6); } }
         .steps-bar { display: flex; justify-content: space-between; width: 100%; max-width: 500px; margin-bottom: 25px; opacity: 0.8; }
         .step-item { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); font-weight: 800; }
         .step-dot { width: 8px; height: 8px; background: var(--border); border-radius: 50%; margin-bottom: 5px; }
@@ -149,10 +149,9 @@
     <div class="safety-card">
         <div class="icon">🛡️</div>
         <h3 id="safety-title">Keep FlashDrop Free</h3>
-        <p class="safety-text">FlashDrop is a free P2P tool. We rely on minimal ads to pay for our servers and domain. Please consider disabling your AdBlocker to support us! ❤️</p>
-        <button class="action-btn" onclick="location.reload()" style="background:var(--primary); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);">I'VE DISABLED IT, RELOAD</button>
-        <div style="margin-top: 20px; font-size: 11px; color: var(--text-muted); opacity: 0.6;">Efficiency & Privacy First.</div>
-        <div id="ignore-adblock" onclick="dismissSafetyNotice()" style="margin-top: 15px; font-size: 10px; color: #666; cursor: pointer; text-decoration: underline; opacity: 0.8;">狠心关掉并不再提醒</div>
+        <p class="safety-text" id="safety-desc">FlashDrop is a free P2P tool. We rely on minimal ads to pay for our servers. Please consider disabling your AdBlocker! ❤️</p>
+        <button class="action-btn" id="btn-reload" onclick="location.reload()" style="background:var(--primary); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);">RELOAD</button>
+        <div id="dismiss-text" onclick="dismissSafetyNotice()" style="margin-top: 15px; font-size: 10px; color: #666; cursor: pointer; text-decoration: underline; opacity: 0.8;">Don't show again</div>
     </div>
 </div>
 
@@ -165,13 +164,13 @@
 
     <div id="drop-zone"><h2 style="font-size:36px; color:white; font-weight:900;">DROP TO STAGE</h2></div>
 
-    <div class="ad-space ad-top" id="top-ad-zone">
+    <div class="slot-container slot-top" id="top-widget-zone">
         <script>atOptions={'key':'fabada29768bc51cc0a6a76937a99ba9','format':'iframe','height':90,'width':728,'params':{}};</script>
         <script src="https://www.highperformanceformat.com/fabada29768bc51cc0a6a76937a99ba9/invoke.js"></script>
     </div>
 
     <div class="main-wrapper">
-        <div class="ad-side" id="left-ad-zone">
+        <div class="section-side" id="left-widget-zone">
             <script>atOptions={'key':'bd9abdb5a8bd5a53648a9afb54343727','format':'iframe','height':600,'width':160,'params':{}};</script>
             <script src="https://www.highperformanceformat.com/bd9abdb5a8bd5a53648a9afb54343727/invoke.js"></script>
         </div>
@@ -227,13 +226,13 @@
             </div>
             <div class="history-box"><div class="history-title" id="history-title-text">Recent History</div><div id="history-list"></div></div>
             
-            <div class="ad-space ad-bottom" id="bottom-ad-zone">
+            <div class="slot-container slot-bottom" id="bottom-widget-zone">
                 <script>atOptions={'key':'fabada29768bc51cc0a6a76937a99ba9','format':'iframe','height':90,'width':728,'params':{}};</script>
                 <script src="https://www.highperformanceformat.com/fabada29768bc51cc0a6a76937a99ba9/invoke.js"></script>
             </div>
         </div>
 
-        <div class="ad-side" id="right-ad-zone">
+        <div class="section-side" id="right-widget-zone">
             <script>atOptions={'key':'bd9abdb5a8bd5a53648a9afb54343727','format':'iframe','height':600,'width':160,'params':{}};</script>
             <script src="https://www.highperformanceformat.com/bd9abdb5a8bd5a53648a9afb54343727/invoke.js"></script>
         </div>
@@ -257,10 +256,6 @@
                 <p id="foot-about-p">Efficiency first. Learn more.</p>
             </div>
         </div>
-        <div style="width: 100%; max-width: 600px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; margin-top: 20px; text-align: center; opacity: 0.7;">
-            <h4 id="foot-head-contact" style="margin-bottom: 5px;">Contact</h4>
-            <p style="margin-top:0; font-size:11px;">Tel: 9292664485 | Email: flashdroppro@gmail.com</p>
-        </div>
     </footer>
 </div>
 
@@ -271,13 +266,13 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="adModal">
-    <div id="ad-wait-title">Checking Security...</div>
-    <div style="font-size: 13px; color: var(--primary); font-weight: 800; margin-bottom: 5px;" id="ad-timer-text">Remaining: 5s</div>
+<div class="modal-overlay" id="promo-overlay">
+    <div id="promo-wait-title">Checking Security...</div>
+    <div style="font-size: 13px; color: var(--primary); font-weight: 800; margin-bottom: 5px;" id="promo-timer-text">Remaining: 5s</div>
     <div style="width: 300px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 20px;">
-        <div id="ad-pg-bar" style="height: 100%; width: 0%; background: var(--primary); transition: width 0.1s linear;"></div>
+        <div id="promo-pg-bar" style="height: 100%; width: 0%; background: var(--primary); transition: width 0.1s linear;"></div>
     </div>
-    <div id="ad-container" style="width:300px; height:250px; background:white; border-radius:20px; overflow:hidden;">
+    <div id="promo-frame" style="width:300px; height:250px; background:white; border-radius:20px; overflow:hidden;">
         <script>atOptions={'key':'05aeca9dfc228cb50e7ad828813cd55b','format':'iframe','height':250,'width':300,'params':{}};</script>
         <script src="https://www.highperformanceformat.com/05aeca9dfc228cb50e7ad828813cd55b/invoke.js"></script>
     </div>
@@ -294,8 +289,8 @@
 
 <script>
     const I18N = {
-        en: { tabSend: "Send", tabReceive: "Receive", badges: ["🔒 P2P", "🕵️ No Logs", "☁️ CF Secured", "🛠️ GitHub Sync"], drop: "DROP HERE", fileLab: "Drop / Click", shareF: "SHARE FILES", shareT: "SHARE TEXT", connect: "DOWNLOAD", save: "📥 SAVE", exp: "Expires: ", copyLink: "📋 COPY LINK", sendingRemind: "Encrypting...<br>Stay on page.", receivingRemind: "Handshaking...<br>Stay on page.", guide: "Code expires in 10 mins.", coffee: "Buy me a coffee", hPriv: "Privacy", hAboutSite: "About Site", hAboutUs: "About Us", hContact: "Contact", pPriv: "Zero logs. Zero tracking. Everything is encrypted in your browser.", pDisc: "Direct P2P. Files never touch our servers. Close page to wipe data.", pAbout: "© 2025 FlashDrop Pro. Efficiency first.", inputErr: "Enter 6-digit code.", orScan: "or scan 📷", doneRemind: "DONE! Click SAVE below.", histTitle: "Recent History (Local Stored)", fileErr: "Please select files first.", textErr: "Please enter text first." },
-        zh: { tabSend: "发送", tabReceive: "接收", badges: ["🔒 P2P 加密", "🕵️ 零日志", "☁️ CF 加速", "🛠️ GitHub 部署"], drop: "松手上传", fileLab: "拖拽 / 点击", shareF: "分享文件", shareT: "分享文字", connect: "立即下载", save: "📥 保存文件", exp: "有效期: ", copyLink: "📋 复制链接", sendingRemind: "正在加密发送中...<br>请勿关闭页面", receivingRemind: "安全握手中...<br>请勿关闭页面", guide: "请在10分钟内输入验证码。", coffee: "请我喝杯咖啡", hPriv: "关于隐私", hAboutSite: "关于网站", hAboutUs: "关于我们", hContact: "联系信息", pPriv: "咱这儿没后台没日志，所有东西都在浏览器里加密，隐私第一。", pDisc: "直连传输，文件不经服务器，关掉页面数据即刻消失。", pAbout: "© 2025 FlashDrop Pro. 一个追求效率的角落。", inputErr: "请输入6位验证码。", orScan: "或者扫码 📷", doneRemind: "传输完成！点击下方保存按钮", histTitle: "最近记录 (本地保留)", fileErr: "请先选择文件。", textErr: "请先输入文字。" }
+        en: { tabSend: "Send", tabReceive: "Receive", badges: ["🔒 P2P", "🕵️ No Logs", "☁️ CF Secured", "🛠️ GitHub Sync"], drop: "DROP HERE", fileLab: "Drop / Click", shareF: "SHARE FILES", shareT: "SHARE TEXT", connect: "DOWNLOAD", save: "📥 SAVE", exp: "Expires: ", copyLink: "📋 COPY LINK", sendingRemind: "Encrypting...<br>Stay on page.", receivingRemind: "Handshaking...<br>Stay on page.", guide: "Code expires in 10 mins.", coffee: "Buy me a coffee", hPriv: "Privacy", hAboutSite: "About Site", hAboutUs: "About Us", pPriv: "Zero logs. Zero tracking.", pDisc: "Direct P2P transfer.", pAbout: "© 2025 FlashDrop Pro.", inputErr: "Enter 6-digit code.", orScan: "or scan 📷", doneRemind: "DONE! Click SAVE.", histTitle: "History", fileErr: "Select files.", textErr: "Enter text.", dismiss: "Don't show again", safetyTitle: "Keep FlashDrop Free", safetyDesc: "FlashDrop is a free P2P tool. Please consider disabling AdBlocker!", reload: "I'VE DISABLED IT, RELOAD" },
+        zh: { tabSend: "发送", tabReceive: "接收", badges: ["🔒 P2P 加密", "🕵️ 零日志", "☁️ CF 加速", "🛠️ GitHub 部署"], drop: "松手上传", fileLab: "拖拽 / 点击", shareF: "分享文件", shareT: "分享文字", connect: "立即下载", save: "📥 保存文件", exp: "有效期: ", copyLink: "📋 复制链接", sendingRemind: "正在加密发送中...<br>请勿关闭页面", receivingRemind: "安全握手中...<br>请勿关闭页面", guide: "请在10分钟内输入验证码。", coffee: "请我喝杯咖啡", hPriv: "隐私", hAboutSite: "网站", hAboutUs: "我们", pPriv: "零日志隐私保护。", pDisc: "直连传输，数据不经服务器。", pAbout: "© 2025 FlashDrop Pro.", inputErr: "请输入6位码。", orScan: "或者扫码 📷", doneRemind: "传输完成！", histTitle: "历史记录", fileErr: "请先选文件。", textErr: "请先写字。", dismiss: "狠心关掉并不再提醒", safetyTitle: "保持 FlashDrop 免费", safetyDesc: "FlashDrop 是免费 P2P 工具。为了维持服务器开支，请考虑关闭广告拦截器！❤️", reload: "我已关闭，重新加载" }
     };
 
     let currLang = "en", peer = null, stagedFiles = [], currentDownloads = 0, videoTrack = null, torchOn = false, activeConn = null, expiryTimerIdx = null;
@@ -306,15 +301,21 @@
         currLang = I18N[userLang] ? userLang : "en";
         const d = I18N[currLang];
         document.getElementById('currentLangTag').innerText = currLang.toUpperCase();
-        document.getElementById('tab-send').innerText = d.tabSend; document.getElementById('tab-receive').innerText = d.tabReceive;
-        document.getElementById('label-files').innerText = d.fileLab; document.getElementById('btn-share-files').innerText = d.shareF;
-        document.getElementById('btn-share-text').innerText = d.shareT; document.getElementById('btn-connect').innerText = d.connect;
-        document.getElementById('foot-coffee').innerText = d.coffee; document.getElementById('btn-scan').innerText = d.orScan;
-        document.getElementById('foot-head-priv').innerText = d.hPriv; document.getElementById('foot-head-aboutsite').innerText = d.hAboutSite;
-        document.getElementById('foot-head-aboutus').innerText = d.hAboutUs; document.getElementById('foot-head-contact').innerText = d.hContact;
-        document.getElementById('foot-priv-p').innerText = d.pPriv; document.getElementById('foot-disc-p').innerText = d.pDisc;
-        document.getElementById('foot-about-p').innerText = d.pAbout; document.getElementById('history-title-text').innerText = d.histTitle;
+        document.getElementById('tab-send').innerText = d.tabSend; 
+        document.getElementById('tab-receive').innerText = d.tabReceive;
+        document.getElementById('label-files').innerText = d.fileLab; 
+        document.getElementById('btn-share-files').innerText = d.shareF;
+        document.getElementById('btn-share-text').innerText = d.shareT; 
+        document.getElementById('btn-connect').innerText = d.connect;
+        document.getElementById('foot-coffee').innerText = d.coffee; 
+        document.getElementById('btn-scan').innerText = d.orScan;
+        document.getElementById('history-title-text').innerText = d.histTitle;
         document.getElementById('trust-badges').innerHTML = d.badges.map(b => `<span>${b}</span>`).join('');
+        // 新增：安全提醒的多语言支持
+        document.getElementById('dismiss-text').innerText = d.dismiss;
+        document.getElementById('safety-title').innerText = d.safetyTitle;
+        document.getElementById('safety-desc').innerText = d.safetyDesc;
+        document.getElementById('btn-reload').innerText = d.reload;
     }
 
     function triggerAd(mode) {
@@ -323,10 +324,10 @@
         if(mode === 'send-file' && stagedFiles.length === 0) { alert(I18N[currLang].fileErr); return; }
         if(mode === 'send-text' && !document.getElementById('quickText').value.trim()) { alert(I18N[currLang].textErr); return; }
 
-        const modal = document.getElementById('adModal');
-        const adPg = document.getElementById('ad-pg-bar');
-        const timerText = document.getElementById('ad-timer-text');
-        const title = document.getElementById('ad-wait-title');
+        const modal = document.getElementById('promo-overlay');
+        const adPg = document.getElementById('promo-pg-bar');
+        const timerText = document.getElementById('promo-timer-text');
+        const title = document.getElementById('promo-wait-title');
         const msg = mode.startsWith('send') ? I18N[currLang].sendingRemind : I18N[currLang].receivingRemind;
         modal.style.display = 'flex'; adPg.style.width = '0%'; title.innerHTML = msg;
         let elapsed = 0; const totalMs = 5000;
@@ -338,6 +339,25 @@
         }, 100);
     }
 
+    function detectAdBlock() {
+        if(localStorage.getItem('fd_block_notice_hidden') === 'true') return false;
+        setTimeout(() => {
+            const topSlot = document.getElementById('top-widget-zone');
+            const hasContent = topSlot && (topSlot.getElementsByTagName('iframe').length > 0 || topSlot.getElementsByTagName('ins').length > 0);
+            if (!topSlot || topSlot.offsetHeight < 20 || !hasContent) {
+                document.getElementById('safety-notice-view').style.display = 'flex';
+                document.querySelectorAll('.slot-container, .section-side').forEach(el => el.style.display = 'none');
+            }
+        }, 5000); 
+        return false;
+    }
+
+    function dismissSafetyNotice() {
+        localStorage.setItem('fd_block_notice_hidden', 'true');
+        document.getElementById('safety-notice-view').style.display = 'none';
+    }
+
+    // ...其余 PeerJS 和功能函数逻辑保持不变...
     async function initSender() {
         if(peer) peer.destroy(); currentDownloads = 0; 
         const code = Math.floor(100000 + Math.random() * 900000);
@@ -420,47 +440,15 @@
         resetReceiver(); 
     }
 
-    // --- 修改后的检测器逻辑：增加 localStorage 记忆与 5秒延迟 ---
-    function detectAdBlock() {
-        // 如果用户点过不再提醒，直接跳过检测
-        if(localStorage.getItem('fd_adblock_dismissed') === 'true') return false;
-
-        setTimeout(() => {
-            const topAd = document.getElementById('top-ad-zone');
-            const hasContent = topAd && (topAd.getElementsByTagName('iframe').length > 0 || topAd.getElementsByTagName('ins').length > 0);
-            if (!topAd || topAd.offsetHeight < 20 || !hasContent) {
-                document.getElementById('safety-notice-view').style.display = 'flex';
-                document.querySelectorAll('.ad-space, .ad-side').forEach(el => el.style.display = 'none');
-            }
-        }, 5000); // 延长到5秒
-        return false;
-    }
-
-    // 新增：关闭不再提醒功能
-    function dismissSafetyNotice() {
-        localStorage.setItem('fd_adblock_dismissed', 'true');
-        document.getElementById('safety-notice-view').style.display = 'none';
-    }
-
     function showPolicy(type) {
         const modal = document.getElementById('policyModal');
         const body = document.getElementById('policyBody');
-        const lang = currLang || 'en';
         const contents = {
-            priv: {
-                en: `<h2>Privacy Policy</h2><p><strong>1. Zero Logs:</strong> We do not track IP addresses or metadata.<br><strong>2. P2P Encryption:</strong> Everything happens in your browser via WebRTC.<br><strong>3. Transient:</strong> Closing the tab wipes all session data.</p>`,
-                zh: `<h2>隐私政策</h2><p><strong>1. 零日志：</strong> 我们不记录 IP 地址或元数据。<br><strong>2. P2P 加密：</strong> 所有传输都在浏览器内通过 WebRTC 完成。<br><strong>3. 瞬时性：</strong> 关闭标签页即刻抹除所有会话数据。</p>`
-            },
-            site: {
-                en: `<h2>Technical Details</h2><p>FlashDrop Pro uses Peer-to-Peer technology. Files are sent directly between users. No intermediate server storage ensures maximum privacy and speed.</p>`,
-                zh: `<h2>技术细节</h2><p>FlashDrop Pro 使用点对点技术。文件在用户间直接传输，不经过服务器存储，确保极致隐私与速度。</p>`
-            },
-            us: {
-                en: `<h2>About Us</h2><p>Efficiency first. FlashDrop Pro is a privacy-focused tool designed for secure, high-speed data sharing.</p>`,
-                zh: `<h2>关于我们</h2><p>效率至上。FlashDrop Pro 是一款专注于安全、高速数据共享的隐私工具。</p>`
-            }
+            priv: { en: "<h2>Privacy</h2><p>P2P encryption. No logs.</p>", zh: "<h2>隐私</h2><p>P2P 加密，不留日志。</p>" },
+            site: { en: "<h2>Site</h2><p>Direct browser transfer.</p>", zh: "<h2>网站</h2><p>浏览器直连传输。</p>" },
+            us: { en: "<h2>About</h2><p>FlashDrop Pro 2025.</p>", zh: "<h2>关于</h2><p>FlashDrop Pro 2025.</p>" }
         };
-        body.innerHTML = contents[type][lang] || contents[type]['en'];
+        body.innerHTML = contents[type][currLang];
         modal.style.display = 'flex';
     }
     function closePolicy() { document.getElementById('policyModal').style.display = 'none'; }
