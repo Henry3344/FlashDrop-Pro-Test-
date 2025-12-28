@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FlashDrop Pro - Workspace</title>
+    <title>FlashDrop Pro — Secure P2P File Transfer with Zero Server Storage</title>
+    <meta name="description" content="FlashDrop Pro is a browser-based P2P workspace for secure file and text sharing. Zero server storage, zero logs, and self-destructing sessions. FlashDrop Pro 是纯 P2P 安全文件传输工具，零服务器存储、零日志、全程 WebRTC 加密直连。">
+    <meta name="keywords" content="P2P file transfer, secure file sharing, zero storage, WebRTC, anonymous, browser based file transfer, 零日志文件分享, 匿名文件传输, FlashDrop Pro">
+    <meta name="author" content="Henry">
     <meta name="referrer" content="no-referrer-when-downgrade" />
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://flashdrop-pro.com/">
+    <meta property="og:title" content="FlashDrop Pro — Secure P2P File Transfer">
+    <meta property="og:description" content="Browser-based P2P file sharing with zero server storage. Privacy first.">
+    <meta property="og:image" content="https://flashdrop-pro.com/og-image.jpg">
     
     <script>(function(s){s.dataset.zone='10380251',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
     <script src="https://pl28342028.effectivegatecpm.com/a2/19/f7/a219f7c4a8d2e3bbeea9d014e51bb043.js"></script>
@@ -62,29 +71,12 @@
         .main-wrapper { display: flex; width: 100%; margin: 0 auto; justify-content: center; align-items: flex-start; gap: 20px; padding: 0 15px; }
         .content-area { flex: 1; min-width: 300px; max-width: 600px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
         
-        /* --- 强制上下广告位常驻 --- */
-        .ad-top, .ad-bottom {
-            display: flex !important;
-            visibility: visible !important;
-            width: 100% !important;
-            max-width: 728px !important; /* 宽度上限 */
-            height: 90px !important;     /* 必须给高度 */
-            min-height: 90px !important; /* 强制最低高度，防止被压扁 */
-            margin: 20px auto !important;
-            background: rgba(255, 255, 255, 0.05) !important; /* 占位底色 */
-            border: 1px dashed #4f46e5 !important;           /* 虚线边框 */
-            flex-shrink: 0 !important;   /* 不允许被压缩 */
-            overflow: visible !important;
-        }
-
-        /* 移动端自动缩放，防止溢出屏幕 */
-        @media (max-width: 768px) {
-            .ad-top, .ad-bottom {
-                max-width: 95% !important;
-                height: auto !important;
-                min-height: 60px !important;
-            }
-        }
+        /* 优化广告位样式，防止检测失效 */
+        .ad-side { width: 160px; min-width: 160px; position: sticky; top: 130px; display: flex; flex-direction: column; align-items: center; border-radius: 12px; background: transparent; overflow: hidden; transition: 0.3s; }
+        .ad-space { background: transparent; display: flex; justify-content: center; align-items: center; border-radius: 12px; overflow: hidden; width: 100%; transition: 0.3s; }
+        .ad-top { min-height: 0; margin-bottom: 15px; }
+        .ad-bottom { min-height: 0; margin-top: 20px; margin-bottom: 25px; }
+        @media (max-width: 880px) { .ad-side { display: none !important; } }
         
         .card { background: var(--card); padding: 25px; border-radius: 30px; backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.9); }
         .tab-group { display: flex; background: rgba(51, 65, 85, 0.7); padding: 5px; border-radius: 18px; margin-bottom: 25px; }
@@ -163,44 +155,6 @@
         .steps-bar { display: flex; justify-content: space-between; width: 100%; max-width: 500px; margin-bottom: 25px; opacity: 0.8; }
         .step-item { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); font-weight: 800; }
         .step-dot { width: 8px; height: 8px; background: var(--border); border-radius: 50%; margin-bottom: 5px; }
-/* --- 强制显示所有广告位 --- */
-.main-wrapper {
-    max-width: 1400px !important; /* 调大总宽度，给侧边留位置 */
-    display: flex !important;
-    justify-content: center !important;
-}
-
-.content-area {
-    flex: 0 1 600px !important; /* 固定中间宽度，不让它乱挤 */
-    min-width: 350px !important;
-}
-
-.ad-side {
-    display: flex !important; /* 强制唤醒 */
-    width: 160px !important;
-    min-width: 160px !important;
-    height: 600px !important;
-    background: rgba(255, 255, 255, 0.05) !important; /* 没广告时的底色 */
-    border: 1px dashed #4f46e5 !important;
-    flex-shrink: 0 !important; /* 绝对不许收缩 */
-}
-
-.ad-top, .ad-bottom {
-    display: flex !important;
-    width: 728px !important;
-    height: 90px !important;
-    min-height: 90px !important;
-    margin: 20px auto !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px dashed #4f46e5 !important;
-    clear: both;
-}
-
-/* 屏幕太小时的特殊处理 */
-@media (max-width: 1100px) {
-    .ad-side { display: none !important; } /* 侧边还是藏起来吧，不然重叠了 */
-    .main-wrapper { flex-direction: column; align-items: center; }
-}
     </style>
 </head>
 <body>
@@ -491,8 +445,9 @@
             const topAd = document.getElementById('top-ad-zone');
             const hasContent = topAd.getElementsByTagName('iframe').length > 0 || topAd.getElementsByTagName('ins').length > 0;
             if (topAd.offsetHeight < 20 || !hasContent) {
-                // 只显示求助弹窗，不再隐藏广告位框架
+                // 这里的 ID 改成新的了
                 document.getElementById('safety-notice-view').style.display = 'flex';
+                document.querySelectorAll('.ad-space, .ad-side').forEach(el => el.style.display = 'none');
             }
         }, 1500);
         return false;
