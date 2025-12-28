@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>About FlashDrop Pro | Secure P2P Workspace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root { --primary: #6366f1; --bg: #030712; --card: rgba(30, 41, 59, 0.7); --text: #f8fafc; --text-muted: #94a3b8; --border: #4f46e5; --nav-bg: rgba(15, 23, 42, 0.95); }
+    body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; line-height: 1.7; min-height: 100vh; overflow-x: hidden; }
+    .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); pointer-events: none; }
+    .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: moveStars linear infinite; }
+    @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-1000px); } }
+    header { position: sticky; top: 0; background: var(--nav-bg); border-bottom: 1px solid var(--border); padding: 15px 25px; display: flex; align-items: center; justify-content: space-between; z-index: 100; backdrop-filter: blur(20px); }
+    header strong { font-size: 20px; font-weight: 900; color: white; }
+    header strong span { color: var(--primary); }
+    select { background: rgba(15, 23, 42, 0.8); color: white; border: 1.5px solid var(--border); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+    main { max-width: 900px; margin: 40px auto; padding: 0 20px 80px; position: relative; z-index: 10; }
+    .card { background: var(--card); padding: 40px; border-radius: 30px; backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.9); }
+    h1 { font-size: 32px; color: var(--primary); margin-top: 0; font-weight: 900; }
+    h2 { font-size: 22px; color: white; margin-top: 30px; font-weight: 800; }
+    p { color: var(--text-muted); font-size: 15px; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 10px 0; padding-left: 25px; position: relative; color: var(--text); }
+    li::before { content: "⚡"; position: absolute; left: 0; color: var(--primary); font-size: 12px; }
+    .back-btn { display: inline-block; margin-bottom: 20px; color: var(--primary); text-decoration: none; font-weight: 800; }
+    .lang { display: none; animation: fadeIn 0.5s ease; }
+    .lang.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    footer { border-top: 1px solid var(--border); padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="stars-container" id="stars"></div>
+  <header>
+    <strong>⚡ Flash<span>Drop</span> Pro</strong>
+    <select onchange="switchLang(this.value)">
+      <option value="en">English</option>
+      <option value="zh">中文</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="es">Español</option>
+      <option value="hi">हिन्दी</option>
+    </select>
+  </header>
+  <main>
+    <a href="index.html" class="back-btn">← Back to Workspace</a>
+    <div class="card">
+      <section class="lang active" id="en">
+        <h1>About FlashDrop Pro</h1>
+        <p>FlashDrop Pro is a privacy-first, browser-based P2P workspace designed for fast, secure file and text transfer — without servers, accounts, or tracking.</p>
+        <p>Built on modern WebRTC technology, FlashDrop Pro enables direct peer-to-peer connections between devices. Your files and messages never touch our servers, are never stored, and are never logged.</p>
+        <p>There are no uploads to the cloud, no user profiles, and no hidden data collection. Once a transfer session ends or the browser tab is closed, all data is destroyed automatically.</p>
+        <p>FlashDrop Pro is built for people who value speed, simplicity, and privacy.</p>
+        <h2>Key principles we follow:</h2>
+        <ul>
+          <li>Zero server storage</li>
+          <li>Zero logs</li>
+          <li>No registration required</li>
+          <li>Browser-to-browser encryption</li>
+          <li>Temporary, self-destructing sessions</li>
+        </ul>
+        <p style="margin-top:30px; font-weight:800; color:white;">Privacy isn’t a feature here — it’s the foundation.</p>
+      </section>
+      <section class="lang" id="zh">
+        <h1>关于 FlashDrop Pro</h1>
+        <p>FlashDrop Pro 是一个隐私至上的浏览器 P2P 工作空间，旨在实现快速、安全的文件和文本传输 —— 无需服务器、账户或追踪。</p>
+        <p>基于现代 WebRTC 技术，FlashDrop Pro 实现了设备之间的直接点对点连接。您的文件和信息绝不会接触我们的服务器，从不存储，也从不记录。</p>
+        <p>没有云端上传，没有用户配置，也没有隐藏的数据收集。一旦传输会话结束或浏览器标签关闭，所有数据都会自动销毁。</p>
+        <p>FlashDrop Pro 为重视速度、简单和隐私的用户而生。</p>
+        <h2>我们遵循的核心原则：</h2>
+        <ul>
+          <li>零服务器存储</li>
+          <li>零日志记录</li>
+          <li>无需注册</li>
+          <li>浏览器间加密传输</li>
+          <li>临时、自毁式会话</li>
+        </ul>
+        <p style="margin-top:30px; font-weight:800; color:white;">在这里，隐私不是一种功能 —— 而是基石。</p>
+      </section>
+      <section class="lang" id="ja">
+        <h1>FlashDrop Pro について</h1>
+        <p>FlashDrop Proは、サーバー、アカウント、または追跡を必要とせず、高速で安全なファイルおよびテキスト転送のために設計された、プライバシー優先のブラウザベースのP2Pワークスペースです。</p>
+        <p>最新のWebRTCテクノロジーに基づいて構築されたFlashDrop Proは、デバイス間の直接ピアツーピア接続を可能にします。ファイルやメッセージが当社のサーバーに触れることはなく、保存もログ記録もされません。</p>
+        <p>クラウドへのアップロード、ユーザープロファイル、隠れたデータ収集はありません。転送セッションが終了するかブラウザのタブを閉じると、すべてのデータは自動的に破棄されます。</p>
+        <h2>私たちが従う主要な原則：</h2>
+        <ul>
+          <li>サーバー保存ゼロ</li>
+          <li>ログ記録ゼロ</li>
+          <li>登録不要</li>
+          <li>ブラウザ間暗号化</li>
+          <li>一時的な自己破壊セッション</li>
+        </ul>
+        <p style="margin-top:30px; font-weight:800; color:white;">プライバシーは単なる機能ではなく、基盤です。</p>
+      </section>
+      <section class="lang" id="ko">
+        <h1>FlashDrop Pro 소개</h1>
+        <p>FlashDrop Pro는 서버, 계정 또는 추적 없이 빠르고 안전한 파일 및 텍스트 전송을 위해 설계된 프라이버시 우선 브라우저 기반 P2P 워크스페이스입니다.</p>
+        <p>현대적인 WebRTC 기술을 기반으로 구축된 FlashDrop Pro는 장치 간의 직접적인 피어 투 피어 연결을 지원합니다. 귀하의 파일과 메시지는 당사의 서버를 거치지 않으며, 저장되거나 기록되지 않습니다.</p>
+        <p>클라우드 업로드, 사용자 프로필, 숨겨진 데이터 수집이 없습니다. 전송 세션이 종료되거나 브라우저 탭을 닫으면 모든 데이터가 자동으로 소멸됩니다.</p>
+        <h2>우리가 따르는 핵심 원칙:</h2>
+        <ul>
+          <li>서버 저장소 제로</li>
+          <li>로그 기록 제로</li>
+          <li>가입 불필요</li>
+          <li>브라우저 간 암호화</li>
+          <li>임시 자가 소멸 세션</li>
+        </ul>
+        <p style="margin-top:30px; font-weight:800; color:white;">프라이버시는 기능이 아니라 기반입니다.</p>
+      </section>
+      <section class="lang" id="es">
+        <h1>Sobre FlashDrop Pro</h1>
+        <p>FlashDrop Pro es un espacio de trabajo P2P basado en el navegador, diseñado para transferencias rápidas y seguras de archivos y texto, sin servidores, cuentas ni rastreo.</p>
+        <p>Basado en la tecnología WebRTC, permite conexiones directas entre dispositivos. Sus archivos nunca tocan nuestros servidores, nunca se almacenan y nunca se registran.</p>
+        <p>No hay cargas a la nube ni perfiles de usuario. Una vez que finaliza la sesión o se cierra la pestaña, todos los datos se destruyen automáticamente.</p>
+        <h2>Principios clave:</h2>
+        <ul>
+          <li>Almacenamiento cero en el servidor</li>
+          <li>Cero registros (logs)</li>
+          <li>No requiere registro</li>
+          <li>Cifrado de navegador a navegador</li>
+          <li>Sesiones temporales autodestructivas</li>
+        </ul>
+        <p style="margin-top:30px; font-weight:800; color:white;">La privacidad no es una característica, es la base.</p>
+      </section>
+      <section class="lang" id="hi">
+        <h1>FlashDrop Pro के बारे में</h1>
+        <p>FlashDrop Pro एक गोपनीयता-प्रथम, ब्राउज़र-आधारित P2P वर्कस्पेस है जिसे तेज़, सुरक्षित फ़ाइल और टेक्स्ट ट्रांसफ़र के लिए डिज़ाइन किया गया है।</p>
+        <p>WebRTC तकनीक पर निर्मित, यह उपकरणों के बीच सीधी पीयर-टू-पीयर कनेक्शन सक्षम करता है। आपकी फ़ाइलें हमारे सर्वर को कभी नहीं छूती हैं और न ही स्टोर की जाती हैं।</p>
+        <p>कोई क्लाउड अपलोड या उपयोगकर्ता प्रोफ़ाइल नहीं है। सत्र समाप्त होने पर सारा डेटा स्वतः नष्ट हो जाता है।</p>
+        <h2>मुख्य सिद्धांत:</h2>
+        <ul>
+          <li>ज़ीरो सर्वर स्टोरेज</li>
+          <li>ज़ीरो लॉग्स</li>
+          <li>कोई पंजीकरण आवश्यक नहीं</li>
+          <li>ब्राउज़र-टू-ब्राउज़र एन्क्रिप्शन</li>
+          <li>अस्थायी सत्र</li>
+        </ul>
+      </section>
+    </div>
+  </main>
+  <footer>© 2025-2026 FlashDrop Pro · Privacy-First P2P Workspace</footer>
+  <script>
+    function switchLang(lang) {
+      document.querySelectorAll('.lang').forEach(el => el.classList.remove('active'));
+      document.getElementById(lang).classList.add('active');
+    }
+    function initStars() {
+      const c = document.getElementById('stars');
+      for(let i=0; i<80; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        s.style.width = s.style.height = Math.random()*2+'px';
+        s.style.left = Math.random()*100+'%';
+        s.style.top = Math.random()*100+'%';
+        s.style.animationDuration = Math.random()*20+20+'s';
+        c.appendChild(s);
+      }
+    }
+    window.onload = initStars;
+  </script>
+</body>
+</html>
