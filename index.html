@@ -62,38 +62,28 @@
         .main-wrapper { display: flex; width: 100%; margin: 0 auto; justify-content: center; align-items: flex-start; gap: 20px; padding: 0 15px; }
         .content-area { flex: 1; min-width: 300px; max-width: 600px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
         
-        /* --- 强制外壳加宽，给侧边留位置 --- */
-        .main-wrapper { 
-            display: flex; 
-            width: 100%; 
-            max-width: 1200px; /* 调大总宽度，确保能放下 160+600+160 */
-            margin: 0 auto; 
-            justify-content: center; 
-            align-items: flex-start; 
-            gap: 20px; 
-            padding: 0 15px; 
+        /* --- 强制上下广告位常驻 --- */
+        .ad-top, .ad-bottom {
+            display: flex !important;
+            visibility: visible !important;
+            width: 100% !important;
+            max-width: 728px !important; /* 宽度上限 */
+            height: 90px !important;     /* 必须给高度 */
+            min-height: 90px !important; /* 强制最低高度，防止被压扁 */
+            margin: 20px auto !important;
+            background: rgba(255, 255, 255, 0.05) !important; /* 占位底色 */
+            border: 1px dashed #4f46e5 !important;           /* 虚线边框 */
+            flex-shrink: 0 !important;   /* 不允许被压缩 */
+            overflow: visible !important;
         }
 
-        /* --- 侧边栏：强制物理占位 --- */
-        .ad-side { 
-            width: 160px !important; 
-            min-width: 160px !important; /* 强制最小宽度 */
-            height: 600px !important; 
-            flex-shrink: 0 !important; /* 禁止被中间区域挤压 */
-            position: sticky; 
-            top: 130px; 
-            display: flex !important; 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px dashed #4f46e5; 
-            justify-content: center; 
-            align-items: center;
-            z-index: 10;
-        }
-
-        /* --- 重点：检查你的媒体查询 --- */
-        /* 如果你的浏览器窗口小于 1000px，侧边栏会自动隐藏，你可以先把这个关掉测试 */
-        @media (max-width: 1000px) { 
-            /* .ad-side { display: none !important; } */ /* 先注释掉这行测试 */
+        /* 移动端自动缩放，防止溢出屏幕 */
+        @media (max-width: 768px) {
+            .ad-top, .ad-bottom {
+                max-width: 95% !important;
+                height: auto !important;
+                min-height: 60px !important;
+            }
         }
         
         .card { background: var(--card); padding: 25px; border-radius: 30px; backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.9); }
