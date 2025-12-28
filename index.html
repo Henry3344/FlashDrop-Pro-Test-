@@ -123,80 +123,74 @@ summary::after { content: '+'; color: var(--primary); font-size: 18px; transitio
 details[open] summary::after { content: '-'; transform: rotate(90deg); }
 .faq-answer { font-size: 13px; color: var(--text-muted); margin-top: 10px; line-height: 1.6; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.1); }
 
-/* --- 强制横向排布 + 增强紫色辉光 --- */
+/* --- 撑满空间版：大字号 + 宽间距 + 强效辉光 --- */
 .legal-footer { 
-    padding: 20px 10px 30px 10px; 
+    padding: 25px 0 40px 0; /* 增加上下留白，更有呼吸感 */
     background: #030712; 
     border-top: 1px solid var(--border);
     display: flex; 
     flex-direction: column; 
     align-items: center; 
-    gap: 25px; 
+    gap: 30px; 
 }
 
-/* 特性图标：强制横向 row，不换行 */
+/* 特性图标：稍微放大一点，更显眼 */
 .trust-signals-grid {
     display: flex;
-    flex-direction: row; /* 强制横着 */
+    flex-direction: row;
     justify-content: space-around; 
-    align-items: flex-start;
-    width: 100%;
-    max-width: 500px;
-    gap: 5px; /* 间距缩小，防止挤爆 */
-}
-
-.signal-item {
-    flex: 1;
-    text-align: center;
+    align-items: center;
+    width: 95%; /* 占用更多横向空间 */
+    max-width: 650px;
 }
 
 .signal-item div { 
-    font-size: 20px; /* 稍微缩小一点图标，给文字留空间 */
-    margin-bottom: 5px; 
-    /* 灵魂紫色辉光 */
-    filter: drop-shadow(0 0 8px #6366f1) drop-shadow(0 0 12px rgba(99, 102, 241, 0.6));
+    font-size: 26px; /* 稍微放大图标 */
+    margin-bottom: 8px; 
+    /* 强力紫色辉光 */
+    filter: drop-shadow(0 0 10px #6366f1) drop-shadow(0 0 15px rgba(99, 102, 241, 0.7));
 }
 
 .signal-item p {
-    font-size: 10px; /* 手机端文字必须小，不然并排不下 */
+    font-size: 11px;
     color: var(--text-muted);
     font-weight: 800;
-    margin: 0;
-    white-space: nowrap; /* 强制文字也不换行 */
 }
 
-/* 底部链接：强制横向 row */
+/* 底部链接容器：撑开两边空间 */
 .footer-links-container {
     display: flex;
-    flex-direction: row; /* 强制横着 */
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-between; /* 撑满容器两端 */
     align-items: center;
-    gap: 20px; /* 适中的社交距离 */
-    width: 100%;
+    width: 90%; /* 宽度拉开 */
+    max-width: 500px; /* 限制手机端最大宽度，防止贴边太死 */
+    margin: 0 auto;
 }
 
 .clickable-footer-link { 
     cursor: pointer; 
     display: inline-flex; 
     align-items: center; 
-    gap: 4px; 
+    gap: 6px; 
     color: white; 
     font-weight: 900; 
-    font-size: 13px; /* 稍微调小一点，确保并排 */
+    font-size: 17px; /* 放大字号，拒绝小家子气 */
     white-space: nowrap;
-    text-shadow: 0 0 8px rgba(99, 102, 241, 0.5); /* 链接也加上辉光 */
+    /* 链接文字辉光 */
+    text-shadow: 0 0 10px rgba(99, 102, 241, 0.6); 
 }
 
 .clickable-footer-link::after { 
     content: '➔'; 
-    font-size: 10px; 
-    opacity: 0.8; 
+    font-size: 12px; 
+    opacity: 0.9; 
     animation: arrowMove 1.5s infinite ease-in-out; 
 }
 
 @keyframes arrowMove {
     0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(4px); color: var(--primary); }
+    50% { transform: translateX(6px); color: var(--primary); }
 }
 
 .footer-info-block { width: 100%; max-width: 600px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; margin-top: 10px; text-align: center; opacity: 0.7; font-size: 11px; }
@@ -354,8 +348,8 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
 </div>
 
 <footer class="legal-footer">
-    <div>
-        <a href="https://buymeacoffee.com/xiaevan199e" target="_blank" class="coffee-btn">☕ <span id="foot-coffee">Buy me a coffee</span></a>
+    <div style="margin-bottom: 10px;">
+        <a href="https://buymeacoffee.com/xiaevan199e" target="_blank" class="coffee-btn" style="box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);">☕ <span id="foot-coffee">Buy me a coffee</span></a>
     </div>
 
     <div class="trust-signals-grid">
@@ -370,9 +364,9 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
         <h4 class="clickable-footer-link" onclick="window.location.href='about-us.html'">About Us</h4>
     </div>
 
-    <div class="footer-info-block">
-        <p style="margin: 5px 0; font-weight: 800;">© 2025-2026 FlashDrop Pro. All rights reserved.</p>
-        <p style="margin: 2px 0; opacity: 0.8; font-size: 10px;">Privacy-first P2P Workspace.</p>
+    <div class="footer-info-block" style="margin-top: 20px;">
+        <p style="margin: 5px 0; font-weight: 800; font-size: 12px;">© 2025-2026 FlashDrop Pro. All rights reserved.</p>
+        <p style="margin: 2px 0; opacity: 0.8; font-size: 11px;">Privacy-first P2P Workspace.</p>
     </div>
 </footer>
 </div>
