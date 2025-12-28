@@ -123,9 +123,9 @@ summary::after { content: '+'; color: var(--primary); font-size: 18px; transitio
 details[open] summary::after { content: '-'; transform: rotate(90deg); }
 .faq-answer { font-size: 13px; color: var(--text-muted); margin-top: 10px; line-height: 1.6; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.1); }
 
-/* --- 修复版：紫色辉光 + 正常社交距离页脚 --- */
+/* --- 强制横向排布 + 增强紫色辉光 --- */
 .legal-footer { 
-    padding: 25px 10px 35px 10px; 
+    padding: 20px 10px 30px 10px; 
     background: #030712; 
     border-top: 1px solid var(--border);
     display: flex; 
@@ -134,46 +134,62 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
     gap: 25px; 
 }
 
-/* 顶部图标：找回紫色辉光 */
+/* 特性图标：强制横向 row，不换行 */
+.trust-signals-grid {
+    display: flex;
+    flex-direction: row; /* 强制横着 */
+    justify-content: space-around; 
+    align-items: flex-start;
+    width: 100%;
+    max-width: 500px;
+    gap: 5px; /* 间距缩小，防止挤爆 */
+}
+
+.signal-item {
+    flex: 1;
+    text-align: center;
+}
+
 .signal-item div { 
-    font-size: 24px; 
-    margin-bottom: 8px; 
-    /* 核心修复：多重辉光滤镜 */
+    font-size: 20px; /* 稍微缩小一点图标，给文字留空间 */
+    margin-bottom: 5px; 
+    /* 灵魂紫色辉光 */
     filter: drop-shadow(0 0 8px #6366f1) drop-shadow(0 0 12px rgba(99, 102, 241, 0.6));
 }
 
 .signal-item p {
-    font-size: 11px;
+    font-size: 10px; /* 手机端文字必须小，不然并排不下 */
     color: var(--text-muted);
     font-weight: 800;
+    margin: 0;
+    white-space: nowrap; /* 强制文字也不换行 */
 }
 
-/* 底部链接：拒绝三角恋，保持正常间距 */
+/* 底部链接：强制横向 row */
 .footer-links-container {
     display: flex;
-    justify-content: center; /* 居中分布 */
+    flex-direction: row; /* 强制横着 */
+    justify-content: center;
     align-items: center;
-    gap: 30px; /* 拉开距离，给足社交空间 */
+    gap: 20px; /* 适中的社交距离 */
     width: 100%;
-    flex-wrap: nowrap;
 }
 
 .clickable-footer-link { 
     cursor: pointer; 
     display: inline-flex; 
     align-items: center; 
-    gap: 6px; 
+    gap: 4px; 
     color: white; 
     font-weight: 900; 
-    font-size: 15px; /* 稍微大一点点，更有正式感 */
+    font-size: 13px; /* 稍微调小一点，确保并排 */
     white-space: nowrap;
-    text-shadow: 0 0 5px rgba(99, 102, 241, 0.3); /* 文字也带一点点淡淡的辉光 */
+    text-shadow: 0 0 8px rgba(99, 102, 241, 0.5); /* 链接也加上辉光 */
 }
 
-/* 箭头动效保持 */
 .clickable-footer-link::after { 
     content: '➔'; 
-    font-size: 12px; 
+    font-size: 10px; 
     opacity: 0.8; 
     animation: arrowMove 1.5s infinite ease-in-out; 
 }
@@ -343,9 +359,9 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
     </div>
 
     <div class="trust-signals-grid">
-        <div class="signal-item"><div>⚡</div><p>No Upload Limits</p></div>
-        <div class="signal-item"><div>🔐</div><p>Client-Side Only</p></div>
-        <div class="signal-item"><div>📂</div><p>Auto-Destruct</p></div>
+        <div class="signal-item"><div>⚡</div><p>No Limits</p></div>
+        <div class="signal-item"><div>🔐</div><p>P2P Only</p></div>
+        <div class="signal-item"><div>📂</div><p>Auto-Wipe</p></div>
     </div>
 
     <div class="footer-links-container">
@@ -356,7 +372,7 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
 
     <div class="footer-info-block">
         <p style="margin: 5px 0; font-weight: 800;">© 2025-2026 FlashDrop Pro. All rights reserved.</p>
-        <p style="margin: 2px 0; opacity: 0.8; font-size: 11px;">Privacy-first P2P Workspace.</p>
+        <p style="margin: 2px 0; opacity: 0.8; font-size: 10px;">Privacy-first P2P Workspace.</p>
     </div>
 </footer>
 </div>
