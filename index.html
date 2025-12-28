@@ -123,48 +123,52 @@ summary::after { content: '+'; color: var(--primary); font-size: 18px; transitio
 details[open] summary::after { content: '-'; transform: rotate(90deg); }
 .faq-answer { font-size: 13px; color: var(--text-muted); margin-top: 10px; line-height: 1.6; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.1); }
 
-/* --- 最终版横向页脚样式 --- */
+/* --- 最终版：三大链接横向并排样式 --- */
 .legal-footer { 
-    padding: 15px 10px 25px 10px; /* 进一步收窄上下间距 */
+    padding: 20px 10px 30px 10px; 
     background: #030712; 
     border-top: 1px solid var(--border);
     display: flex; 
     flex-direction: column; 
     align-items: center; 
-    gap: 15px; 
+    gap: 20px; 
 }
 
-/* 链接容器：强制横向不换行 */
+/* 链接容器：利用 space-evenly 让它们自动寻找最佳间距 */
 .footer-links-container {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly; /* 在链接之间平分剩余空间 */
     align-items: center;
-    gap: 15px; /* 间距调小一点，防止手机端挤不下 */
     width: 100%;
-    flex-wrap: nowrap; /* 强制不换行 */
+    max-width: 500px; /* 限制最大宽度，防止在大屏散太开 */
+    flex-wrap: nowrap; /* 绝对禁止换行 */
 }
 
 .clickable-footer-link { 
     cursor: pointer; 
     display: inline-flex; 
     align-items: center; 
-    gap: 4px; 
+    gap: 6px; 
     transition: 0.3s; 
     color: white; 
     font-weight: 800; 
-    font-size: 14px; /* 稍微缩小字号，保证横向排布 */
-    white-space: nowrap; /* 文本不换行 */
+    font-size: 14px; /* 保持适中的正式感字号 */
+    white-space: nowrap; /* 确保名字本身不被截断 */
 }
 
-/* 箭头动效微调 */
+/* 箭头微动吸引点击 */
 .clickable-footer-link::after { 
     content: '➔'; 
-    font-size: 11px; 
+    font-size: 12px; 
     opacity: 0.7; 
     animation: arrowMove 1.5s infinite ease-in-out; 
 }
 
-@keyframes arrowMove { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); color: var(--primary); } }
+@keyframes arrowMove {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(4px); color: var(--primary); }
+}
+
 .footer-info-block { width: 100%; max-width: 600px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; margin-top: 10px; text-align: center; opacity: 0.7; font-size: 11px; }
 
         .coffee-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: 1px solid var(--primary); border-radius: 12px; color: var(--primary); text-decoration: none; font-weight: 800; font-size: 12px; transition: 0.3s; margin-bottom: 25px; box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); }
@@ -325,20 +329,20 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
     </div>
 
     <div class="trust-signals-grid">
-        <div class="signal-item"><div>⚡</div><p>No Upload</p></div>
-        <div class="signal-item"><div>🔐</div><p>P2P Only</p></div>
-        <div class="signal-item"><div>📂</div><p>Auto-Wipe</p></div>
+        <div class="signal-item"><div>⚡</div><p>No Upload Limits</p></div>
+        <div class="signal-item"><div>🔐</div><p>Client-Side Only</p></div>
+        <div class="signal-item"><div>📂</div><p>Auto-Destruct</p></div>
     </div>
 
     <div class="footer-links-container">
         <h4 class="clickable-footer-link" onclick="window.location.href='privacy.html'">Privacy</h4>
-        <h4 class="clickable-footer-link" onclick="window.location.href='about-side.html'">Site</h4>
-        <h4 class="clickable-footer-link" onclick="window.location.href='about-us.html'">Us</h4>
+        <h4 class="clickable-footer-link" onclick="window.location.href='about-side.html'">About Site</h4>
+        <h4 class="clickable-footer-link" onclick="window.location.href='about-us.html'">About Us</h4>
     </div>
 
     <div class="footer-info-block">
         <p style="margin: 5px 0; font-weight: 800;">© 2025-2026 FlashDrop Pro. All rights reserved.</p>
-        <p style="margin: 2px 0; opacity: 0.8; font-size: 10px;">Privacy-first P2P Workspace.</p>
+        <p style="margin: 2px 0; opacity: 0.8;">Privacy-first P2P Workspace.</p>
     </div>
 </footer>
 </div>
