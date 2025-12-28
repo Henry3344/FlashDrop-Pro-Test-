@@ -123,25 +123,39 @@ summary::after { content: '+'; color: var(--primary); font-size: 18px; transitio
 details[open] summary::after { content: '-'; transform: rotate(90deg); }
 .faq-answer { font-size: 13px; color: var(--text-muted); margin-top: 10px; line-height: 1.6; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.1); }
 
-/* --- 最终版：三大链接横向并排样式 --- */
+/* --- 修复版：紫色辉光 + 正常社交距离页脚 --- */
 .legal-footer { 
-    padding: 20px 10px 30px 10px; 
+    padding: 25px 10px 35px 10px; 
     background: #030712; 
     border-top: 1px solid var(--border);
     display: flex; 
     flex-direction: column; 
     align-items: center; 
-    gap: 20px; 
+    gap: 25px; 
 }
 
-/* 链接容器：利用 space-evenly 让它们自动寻找最佳间距 */
+/* 顶部图标：找回紫色辉光 */
+.signal-item div { 
+    font-size: 24px; 
+    margin-bottom: 8px; 
+    /* 核心修复：多重辉光滤镜 */
+    filter: drop-shadow(0 0 8px #6366f1) drop-shadow(0 0 12px rgba(99, 102, 241, 0.6));
+}
+
+.signal-item p {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 800;
+}
+
+/* 底部链接：拒绝三角恋，保持正常间距 */
 .footer-links-container {
     display: flex;
-    justify-content: space-evenly; /* 在链接之间平分剩余空间 */
+    justify-content: center; /* 居中分布 */
     align-items: center;
+    gap: 30px; /* 拉开距离，给足社交空间 */
     width: 100%;
-    max-width: 500px; /* 限制最大宽度，防止在大屏散太开 */
-    flex-wrap: nowrap; /* 绝对禁止换行 */
+    flex-wrap: nowrap;
 }
 
 .clickable-footer-link { 
@@ -149,18 +163,18 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
     display: inline-flex; 
     align-items: center; 
     gap: 6px; 
-    transition: 0.3s; 
     color: white; 
-    font-weight: 800; 
-    font-size: 14px; /* 保持适中的正式感字号 */
-    white-space: nowrap; /* 确保名字本身不被截断 */
+    font-weight: 900; 
+    font-size: 15px; /* 稍微大一点点，更有正式感 */
+    white-space: nowrap;
+    text-shadow: 0 0 5px rgba(99, 102, 241, 0.3); /* 文字也带一点点淡淡的辉光 */
 }
 
-/* 箭头微动吸引点击 */
+/* 箭头动效保持 */
 .clickable-footer-link::after { 
     content: '➔'; 
     font-size: 12px; 
-    opacity: 0.7; 
+    opacity: 0.8; 
     animation: arrowMove 1.5s infinite ease-in-out; 
 }
 
@@ -342,7 +356,7 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
 
     <div class="footer-info-block">
         <p style="margin: 5px 0; font-weight: 800;">© 2025-2026 FlashDrop Pro. All rights reserved.</p>
-        <p style="margin: 2px 0; opacity: 0.8;">Privacy-first P2P Workspace.</p>
+        <p style="margin: 2px 0; opacity: 0.8; font-size: 11px;">Privacy-first P2P Workspace.</p>
     </div>
 </footer>
 </div>
