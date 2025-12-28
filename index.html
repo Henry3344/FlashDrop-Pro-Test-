@@ -62,47 +62,38 @@
         .main-wrapper { display: flex; width: 100%; margin: 0 auto; justify-content: center; align-items: flex-start; gap: 20px; padding: 0 15px; }
         .content-area { flex: 1; min-width: 300px; max-width: 600px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
         
-        /* --- 强行占位版：广告不来，框也不许走 --- */
-        .ad-side, .ad-top, .ad-bottom {
-            display: flex !important; /* 强制显示 */
-            visibility: visible !important;
-            background: rgba(255, 255, 255, 0.05) !important; /* 灰紫色背景，一眼就能看到 */
-            border: 1px dashed var(--border) !important; /* 紫色虚线边框 */
-            justify-content: center;
+        /* --- 强制外壳加宽，给侧边留位置 --- */
+        .main-wrapper { 
+            display: flex; 
+            width: 100%; 
+            max-width: 1200px; /* 调大总宽度，确保能放下 160+600+160 */
+            margin: 0 auto; 
+            justify-content: center; 
+            align-items: flex-start; 
+            gap: 20px; 
+            padding: 0 15px; 
+        }
+
+        /* --- 侧边栏：强制物理占位 --- */
+        .ad-side { 
+            width: 160px !important; 
+            min-width: 160px !important; /* 强制最小宽度 */
+            height: 600px !important; 
+            flex-shrink: 0 !important; /* 禁止被中间区域挤压 */
+            position: sticky; 
+            top: 130px; 
+            display: flex !important; 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px dashed #4f46e5; 
+            justify-content: center; 
             align-items: center;
-            position: relative;
+            z-index: 10;
         }
 
-        /* 顶部和底部 */
-        .ad-top, .ad-bottom {
-            width: 728px !important;
-            height: 90px !important;
-            min-height: 90px !important;
-            margin: 15px auto !important;
-        }
-
-        /* 左右两侧 */
-        .ad-side {
-            width: 160px !important;
-            min-width: 160px !important;
-            height: 600px !important;
-            min-height: 600px !important;
-            position: sticky;
-            top: 130px;
-        }
-
-        /* 给空框加个文字提示，方便你调试，正式上线可以删掉 */
-        .ad-side::before, .ad-top::before, .ad-bottom::before {
-            content: "AD SPACE";
-            font-size: 10px;
-            color: var(--text-muted);
-            opacity: 0.5;
-        }
-
-        /* 响应式：屏幕太小时只隐藏侧边 */
-        @media (max-width: 1100px) { 
-            .ad-side { display: none !important; } 
-            .ad-top, .ad-bottom { width: 100% !important; max-width: 728px; }
+        /* --- 重点：检查你的媒体查询 --- */
+        /* 如果你的浏览器窗口小于 1000px，侧边栏会自动隐藏，你可以先把这个关掉测试 */
+        @media (max-width: 1000px) { 
+            /* .ad-side { display: none !important; } */ /* 先注释掉这行测试 */
         }
         
         .card { background: var(--card); padding: 25px; border-radius: 30px; backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.9); }
