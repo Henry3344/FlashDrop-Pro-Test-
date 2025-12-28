@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Privacy & Security | FlashDrop Pro</title>
+  <meta name="description" content="FlashDrop Pro Privacy & Security Policy. Pure P2P file transfer using WebRTC. Zero server storage, zero logs, self-destructing sessions, and privacy-first design." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      background: #0b0f14;
+      color: #e6e6e6;
+      line-height: 1.7;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      background: #0b0f14;
+      border-bottom: 1px solid #1f2937;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+    }
+    header strong {
+      font-size: 16px;
+      letter-spacing: 0.3px;
+    }
+    select {
+      background: #111827;
+      color: #e6e6e6;
+      border: 1px solid #374151;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+    main {
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 0 20px 80px;
+    }
+    h1, h2, h3 {
+      color: #ffffff;
+      margin-top: 1.8em;
+    }
+    h1 {
+      font-size: 34px;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 24px;
+    }
+    h3 {
+      font-size: 18px;
+    }
+    p {
+      margin: 12px 0;
+      color: #d1d5db;
+    }
+    ul {
+      margin-left: 18px;
+    }
+    li {
+      margin: 6px 0;
+    }
+    footer {
+      border-top: 1px solid #1f2937;
+      padding: 24px 20px;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 14px;
+    }
+    .lang {
+      display: none;
+    }
+    .lang.active {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <strong>FlashDrop Pro</strong>
+  <select id="languageSwitcher" onchange="switchLang(this.value)">
+    <option value="en">English</option>
+    <option value="zh">中文</option>
+    <option value="ja">日本語</option>
+    <option value="ko">한국어</option>
+    <option value="es">Español</option>
+    <option value="hi">हिन्दी</option>
+  </select>
+</header>
+
+<main>
+
+<!-- ================= ENGLISH ================= -->
+<section class="lang active" id="en">
+  <h1>Privacy & Security Policy</h1>
+
+  <p>
+    FlashDrop Pro is built with a single principle: <strong>your data never belongs to us</strong>.
+    This document explains exactly how FlashDrop Pro handles privacy, security, and data protection —
+    in plain, verifiable terms.
+  </p>
+
+  <h2>1. Pure Peer-to-Peer Architecture</h2>
+  <p>
+    FlashDrop Pro uses WebRTC-based peer-to-peer (P2P) connections.
+    Files and text are transferred <strong>directly between browsers</strong>.
+  </p>
+  <ul>
+    <li>No file data is uploaded to or stored on our servers</li>
+    <li>No cloud storage, no intermediaries</li>
+    <li>Once the browser tab is closed, all session data is destroyed</li>
+  </ul>
+
+  <h2>2. Zero Server Storage</h2>
+  <p>
+    FlashDrop Pro does not store:
+  </p>
+  <ul>
+    <li>Files or file fragments</li>
+    <li>Text content</li>
+    <li>Download history</li>
+    <li>Transfer metadata</li>
+  </ul>
+  <p>
+    Our servers are used only for minimal connection signaling — never for content delivery.
+  </p>
+
+  <h2>3. Zero Logs Policy</h2>
+  <p>
+    We do not log:
+  </p>
+  <ul>
+    <li>IP addresses</li>
+    <li>User identities</li>
+    <li>File names or sizes</li>
+    <li>Transfer timestamps</li>
+  </ul>
+
+  <h2>4. End-to-End Session Control</h2>
+  <p>
+    Users can define strict access limits:
+  </p>
+  <ul>
+    <li>One-time download</li>
+    <li>Limited number of downloads</li>
+    <li>Unlimited (until sender closes the session)</li>
+  </ul>
+  <p>
+    Once the limit is reached, the session self-destructs automatically.
+  </p>
+
+  <h2>5. Encryption & Transport Security</h2>
+  <p>
+    All transfers occur over encrypted WebRTC channels using modern browser security standards.
+    Data is encrypted in transit and never decrypted by FlashDrop Pro servers.
+  </p>
+
+  <h2>6. What We Can — and Cannot — See</h2>
+  <ul>
+    <li><strong>We can see:</strong> anonymous connection requests</li>
+    <li><strong>We cannot see:</strong> file content, text, names, or user identity</li>
+  </ul>
+
+  <h2>7. Cookies & Tracking</h2>
+  <p>
+    FlashDrop Pro does not use tracking cookies, analytics identifiers, or fingerprinting scripts.
+  </p>
+
+  <h2>8. Legal & Compliance</h2>
+  <p>
+    Because FlashDrop Pro does not process or store user data, most data protection regulations
+    (GDPR, CCPA) do not apply in the traditional sense.
+  </p>
+
+  <h2>9. User Responsibility</h2>
+  <p>
+    Users are responsible for the content they choose to share.
+    FlashDrop Pro cannot access, moderate, or recover transferred data.
+  </p>
+
+  <h2>10. Transparency</h2>
+  <p>
+    FlashDrop Pro is designed to be auditable by behavior:
+    if a server never receives your files, it cannot leak them.
+  </p>
+</section>
+
+<!-- ================= 中文 ================= -->
+<section class="lang" id="zh">
+  <h1>隐私与安全说明</h1>
+  <p>
+    FlashDrop Pro 的核心原则只有一个：<strong>你的数据永远不属于我们</strong>。
+  </p>
+  <p>
+    本页面将以清晰、可验证的方式说明 FlashDrop Pro 如何处理隐私、安全与数据保护。
+  </p>
+
+  <h2>1. 纯 P2P 架构</h2>
+  <p>
+    FlashDrop Pro 基于 WebRTC 实现浏览器之间的点对点（P2P）连接。
+    文件和文本<strong>直接在设备之间传输</strong>。
+  </p>
+
+  <h2>2. 零服务器存储</h2>
+  <ul>
+    <li>不存储文件</li>
+    <li>不存储文本</li>
+    <li>不存储下载记录</li>
+    <li>不存储传输元数据</li>
+  </ul>
+
+  <h2>3. 零日志政策</h2>
+  <ul>
+    <li>不记录 IP</li>
+    <li>不记录用户身份</li>
+    <li>不记录文件名或大小</li>
+  </ul>
+
+  <h2>4. 会话自毁机制</h2>
+  <p>
+    每次传输都是临时会话，达到下载限制或关闭页面后即自动销毁。
+  </p>
+
+  <h2>5. 加密传输</h2>
+  <p>
+    所有数据通过 WebRTC 加密通道传输，服务器无法解密或查看内容。
+  </p>
+
+  <h2>6. 我们能看到什么</h2>
+  <p>
+    我们只能看到匿名连接请求，无法看到任何内容数据。
+  </p>
+</section>
+
+<!-- ================= 日本語 ================= -->
+<section class="lang" id="ja">
+  <h1>プライバシーとセキュリティ</h1>
+  <p>
+    FlashDrop Pro は「データはユーザーのもの」という原則で設計されています。
+  </p>
+  <p>
+    すべての転送はブラウザ間の P2P 接続で行われ、サーバーに保存されることはありません。
+  </p>
+</section>
+
+<!-- ================= 한국어 ================= -->
+<section class="lang" id="ko">
+  <h1>개인정보 및 보안 정책</h1>
+  <p>
+    FlashDrop Pro는 사용자의 데이터를 절대 저장하지 않습니다.
+  </p>
+  <p>
+    모든 파일 전송은 WebRTC 기반 P2P 방식으로 브라우저 간 직접 이루어집니다.
+  </p>
+</section>
+
+<!-- ================= Español ================= -->
+<section class="lang" id="es">
+  <h1>Privacidad y Seguridad</h1>
+  <p>
+    FlashDrop Pro utiliza transferencias P2P directas en el navegador.
+    No almacenamos archivos ni registros.
+  </p>
+</section>
+
+<!-- ================= हिन्दी ================= -->
+<section class="lang" id="hi">
+  <h1>गोपनीयता और सुरक्षा</h1>
+  <p>
+    FlashDrop Pro पूरी तरह से ब्राउज़र आधारित P2P फ़ाइल ट्रांसफ़र का उपयोग करता है।
+  </p>
+  <p>
+    हम किसी भी फ़ाइल या उपयोगकर्ता जानकारी को संग्रहीत नहीं करते।
+  </p>
+</section>
+
+</main>
+
+<footer>
+  © FlashDrop Pro · Privacy-First P2P Workspace
+</footer>
+
+<script>
+  function switchLang(lang) {
+    document.querySelectorAll('.lang').forEach(el => el.classList.remove('active'));
+    document.getElementById(lang).classList.add('active');
+  }
+</script>
+
+</body>
+</html>
