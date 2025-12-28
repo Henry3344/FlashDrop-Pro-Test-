@@ -123,77 +123,96 @@ summary::after { content: '+'; color: var(--primary); font-size: 18px; transitio
 details[open] summary::after { content: '-'; transform: rotate(90deg); }
 .faq-answer { font-size: 13px; color: var(--text-muted); margin-top: 10px; line-height: 1.6; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.1); }
 
-/* --- 撑满空间版：大字号 + 宽间距 + 强效辉光 --- */
+/* --- 深度优化版：解决重叠 + 强制居中 + 气场放大 --- */
 .legal-footer { 
-    padding: 25px 0 40px 0; /* 增加上下留白，更有呼吸感 */
+    padding: 30px 0 50px 0; 
     background: #030712; 
     border-top: 1px solid var(--border);
     display: flex; 
     flex-direction: column; 
     align-items: center; 
-    gap: 30px; 
+    gap: 35px; 
 }
 
-/* 特性图标：稍微放大一点，更显眼 */
+/* 图标区：放大且完美居中 */
 .trust-signals-grid {
     display: flex;
     flex-direction: row;
     justify-content: space-around; 
     align-items: center;
-    width: 95%; /* 占用更多横向空间 */
-    max-width: 650px;
+    width: 95%; 
+    max-width: 700px;
+}
+
+.signal-item {
+    display: flex;
+    flex-direction: column; /* 确保垂直排列 */
+    align-items: center;    /* 强制图标下的字水平居中 */
+    flex: 1;
 }
 
 .signal-item div { 
-    font-size: 26px; /* 稍微放大图标 */
-    margin-bottom: 8px; 
-    /* 强力紫色辉光 */
-    filter: drop-shadow(0 0 10px #6366f1) drop-shadow(0 0 15px rgba(99, 102, 241, 0.7));
+    font-size: 32px; /* 图标放大，更有存在感 */
+    margin-bottom: 10px; 
+    filter: drop-shadow(0 0 12px #6366f1) drop-shadow(0 0 20px rgba(99, 102, 241, 0.7));
 }
 
 .signal-item p {
-    font-size: 11px;
+    font-size: 13px; /* 文字稍微调大，更清晰 */
     color: var(--text-muted);
     font-weight: 800;
+    margin: 0;
+    white-space: nowrap;
 }
 
-/* 底部链接容器：撑开两边空间 */
+/* 链接容器：横向拉开 */
 .footer-links-container {
     display: flex;
     flex-direction: row;
-    justify-content: space-between; /* 撑满容器两端 */
+    justify-content: space-between; 
     align-items: center;
-    width: 90%; /* 宽度拉开 */
-    max-width: 500px; /* 限制手机端最大宽度，防止贴边太死 */
-    margin: 0 auto;
+    width: 92%; 
+    max-width: 550px;
 }
 
 .clickable-footer-link { 
     cursor: pointer; 
     display: inline-flex; 
     align-items: center; 
-    gap: 6px; 
+    position: relative; /* 为箭头定位做准备 */
     color: white; 
     font-weight: 900; 
-    font-size: 17px; /* 放大字号，拒绝小家子气 */
+    font-size: 18px; /* 字体加大，撑起排面 */
     white-space: nowrap;
-    /* 链接文字辉光 */
-    text-shadow: 0 0 10px rgba(99, 102, 241, 0.6); 
+    text-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+    /* 关键：给右边留出足够空间，防止箭头重叠 */
+    padding-right: 25px; 
 }
 
+/* 箭头样式：增加 margin-left 彻底拉开间距 */
 .clickable-footer-link::after { 
     content: '➔'; 
-    font-size: 12px; 
+    position: absolute;
+    right: 0; /* 锁定在最右侧 */
+    margin-left: 12px; 
+    font-size: 14px; 
     opacity: 0.9; 
     animation: arrowMove 1.5s infinite ease-in-out; 
 }
 
 @keyframes arrowMove {
     0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(6px); color: var(--primary); }
+    50% { transform: translateX(8px); color: var(--primary); }
 }
 
-.footer-info-block { width: 100%; max-width: 600px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; margin-top: 10px; text-align: center; opacity: 0.7; font-size: 11px; }
+.footer-info-block {
+    width: 100%; 
+    max-width: 600px; 
+    border-top: 1px dashed rgba(255,255,255,0.1); 
+    padding-top: 20px; 
+    margin-top: 10px; 
+    text-align: center;
+}
 
         .coffee-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: 1px solid var(--primary); border-radius: 12px; color: var(--primary); text-decoration: none; font-weight: 800; font-size: 12px; transition: 0.3s; margin-bottom: 25px; box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); }
         .coffee-btn:hover { background: var(--primary); color: white; transform: translateY(-2px); }
@@ -349,7 +368,7 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
 
 <footer class="legal-footer">
     <div style="margin-bottom: 10px;">
-        <a href="https://buymeacoffee.com/xiaevan199e" target="_blank" class="coffee-btn" style="box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);">☕ <span id="foot-coffee">Buy me a coffee</span></a>
+        <a href="https://buymeacoffee.com/xiaevan199e" target="_blank" class="coffee-btn" style="box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);">☕ <span id="foot-coffee">Buy me a coffee</span></a>
     </div>
 
     <div class="trust-signals-grid">
@@ -364,9 +383,9 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
         <h4 class="clickable-footer-link" onclick="window.location.href='about-us.html'">About Us</h4>
     </div>
 
-    <div class="footer-info-block" style="margin-top: 20px;">
-        <p style="margin: 5px 0; font-weight: 800; font-size: 12px;">© 2025-2026 FlashDrop Pro. All rights reserved.</p>
-        <p style="margin: 2px 0; opacity: 0.8; font-size: 11px;">Privacy-first P2P Workspace.</p>
+    <div class="footer-info-block">
+        <p style="margin: 5px 0; font-weight: 800; font-size: 13px; color:white;">© 2025-2026 FlashDrop Pro. All rights reserved.</p>
+        <p style="margin: 2px 0; opacity: 0.8; font-size: 11px; color:var(--text-muted);">Privacy-first P2P Workspace.</p>
     </div>
 </footer>
 </div>
