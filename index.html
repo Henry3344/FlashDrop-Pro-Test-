@@ -601,6 +601,16 @@ async function initSender() {
         // 显示分享区域和二维码
         document.getElementById('senderCodeArea').style.display = 'block';
         document.getElementById('myCode').innerText = code;
+        area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        document.getElementById('qrcode').innerHTML = ""; 
+        new QRCode(document.getElementById('qrcode'), { 
+            text: window.location.origin + window.location.pathname + "?c=" + code, 
+            width: 140, 
+            height: 140 
+        });
+        startExpiryTimer();
+    });
         document.getElementById('qrcode').innerHTML = ""; 
         new QRCode(document.getElementById('qrcode'), { 
             text: window.location.origin + window.location.pathname + "?c=" + code, 
