@@ -589,28 +589,23 @@ function updateLockUI() {
 
 // 3. 替换后的发送逻辑
 async function initSender() {
-    // 1. 基础重置
     if(peer) peer.destroy(); 
     currentDownloads = 0; 
     const code = Math.floor(100000 + Math.random() * 900000);
     
-    // 2. 初始化 Peer
     peer = new Peer(PREFIX + code);
     
     peer.on('open', () => {
-        // 显示分享区域和二维码
-        document.getElementById('senderCodeArea').style.display = 'block';
+        const area = document.getElementById('senderCodeArea');
+        if (area) {
+            area.style.display = 'block';
+            // 自动平滑滚动
+            setTimeout(() => {
+                area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
+        }
+        
         document.getElementById('myCode').innerText = code;
-        area.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-        document.getElementById('qrcode').innerHTML = ""; 
-        new QRCode(document.getElementById('qrcode'), { 
-            text: window.location.origin + window.location.pathname + "?c=" + code, 
-            width: 140, 
-            height: 140 
-        });
-        startExpiryTimer();
-    });
         document.getElementById('qrcode').innerHTML = ""; 
         new QRCode(document.getElementById('qrcode'), { 
             text: window.location.origin + window.location.pathname + "?c=" + code, 
@@ -621,7 +616,6 @@ async function initSender() {
     });
 
     peer.on('connection', c => {
-        // 监听对方保存成功，用于计算 Limit 限制
         c.on('data', d => { 
             if(d.type === 'confirm_save') { 
                 currentDownloads++; 
@@ -630,25 +624,24 @@ async function initSender() {
         });
 
         c.on('open', async () => {
-            // A. 处理文字加密与发送
-            let text = document.getElementById('quickText').value.trim(); 
-            if(text) {
+            // A. 处理文字
+            let textValue = document.getElementById('quickText').value.trim(); 
+            if(textValue) {
                 if(isEncrypted) {
-                    const encryptedTextBlob = await FlashDropCrypto.encrypt(new Blob([text]), aesKey);
+                    const encryptedTextBlob = await FlashDropCrypto.encrypt(new Blob([textValue]), aesKey);
                     const reader = new FileReader();
                     reader.onload = () => c.send({ type: 'text', data: reader.result, encrypted: true });
                     reader.readAsDataURL(encryptedTextBlob);
                 } else {
-                    c.send({ type: 'text', data: text, encrypted: false });
+                    c.send({ type: 'text', data: textValue, encrypted: false });
                 }
                 addHistory("Sent: Text", "text");
             }
 
-            // B. 处理文件加密与发送 (这里是修复重点)
-            if(stagedFiles.length > 0) {
+            // B. 处理文件
+            if(stagedFiles && stagedFiles.length > 0) {
                 let fb, fn = stagedFiles.length === 1 ? stagedFiles[0].name : "Bundle.zip";
                 
-                // 打包或提取文件
                 if (stagedFiles.length === 1) { 
                     fb = stagedFiles[0]; 
                 } else { 
@@ -657,13 +650,11 @@ async function initSender() {
                     fb = await zip.generateAsync({type: "blob"}); 
                 }
                 
-                // 加密逻辑集成
                 if(isEncrypted) { 
                     fb = await FlashDropCrypto.encrypt(fb, aesKey); 
                     fn += ".enc"; 
                 }
                 
-                // 分块传输
                 c.send({ type: 'meta', name: fn, size: fb.size, encrypted: isEncrypted });
                 for (let i = 0; i < fb.size; i += CHUNK_SIZE) { 
                     c.send({ 
