@@ -674,18 +674,16 @@ function startReceiving() {
     const code = document.getElementById('targetCode').value;
     const rPeer = new Peer();
     const pgBar = document.getElementById('receive-pg-bar');
-    const nerd = document.getElementById('receiveNerdStats');
     
     document.getElementById('receive-pg-container').style.display = 'block';
-    if(nerd) nerd.style.display = 'flex';
     
     rPeer.on('open', () => {
-        const c = rPeer.connect(PREFIX + code, { reliable: true }); 
-        activeConn = c;
-        let meta = null, chunks = [], totalRecv = 0, startTime = Date.now();
+        // 这里的 conn 就是 c，我们用 conn 确保作用域不出错
+        const conn = rPeer.connect(PREFIX + code, { reliable: true }); 
+        activeConn = conn;
+        let meta = null, chunks = [], totalRecv = 0;
         
-        c.on('data', async d => {
-            // 1. 处理文字接收
+        conn.on('data', async d => {
             if(d.type === 'text') {
                 let finalTxt = d.data;
                 if(d.encrypted) {
@@ -701,53 +699,40 @@ function startReceiving() {
                 document.getElementById('receivedText-container').style.display = 'block';
                 pgBar.style.width = '100%';
             }
-            // 2. 处理元数据
             else if(d.type === 'meta') { 
                 meta = d; 
-                document.getElementById('mobileDownloadArea').style.display='block'; 
-                startTime = Date.now(); 
+                document.getElementById('mobileDownloadArea').style.display = 'block'; 
             }
-            // 3. 处理文件块传输
             else if(d.type === 'chunk') { 
                 chunks[d.index] = d.data; totalRecv += d.data.byteLength;
-                if(meta) {
-                    const pct = (totalRecv / meta.size) * 100; pgBar.style.width = pct + '%';
-                    const speed = totalRecv / ((Date.now() - startTime) / 1000);
-                    const speedTxt = (speed / 1024 / 1024).toFixed(1) + " MB/s";
-                    if(document.getElementById('nerd-speed')) document.getElementById('nerd-speed').innerText = speedTxt;
-                }
+                if(meta) pgBar.style.width = (totalRecv / meta.size * 100) + '%';
             }
-            // 4. 传输完成后的动作
             else if(d.type === 'done') {
                 const btn = document.getElementById('btn-save-file');
                 let finalBlob = new Blob(chunks);
 
-                // --- 1. 自动检测加密逻辑 ---
+                // --- 自动检测加密并弹出 ---
                 if (meta && meta.encrypted) {
-                    // 如果加密，自动弹出密码框
                     const pass = prompt("🔐 This file is encrypted. Enter password to decrypt:");
                     if (!pass) {
-                        btn.innerText = "❌ DECRYPTION CANCELED";
-                        btn.onclick = () => location.reload(); // 取消则刷新重来
+                        btn.innerText = "❌ CANCELED";
                         return;
                     }
                     try {
                         finalBlob = await FlashDropCrypto.decrypt(finalBlob, pass);
-                        btn.innerText = "✅ DECRYPTED! CLICK TO SAVE";
-                        btn.style.background = "#10b981"; // 变成绿色表示安全
+                        btn.innerText = "✅ DECRYPTED! SAVE NOW";
+                        btn.style.background = "#10b981";
                     } catch (e) {
-                        alert("❌ Wrong password! Decryption failed.");
-                        btn.innerText = "❌ ERROR: WRONG PASSWORD";
-                        btn.onclick = () => location.reload();
+                        alert("❌ Wrong password!");
+                        btn.innerText = "❌ WRONG PASSWORD";
                         return;
                     }
                 } else {
-                    // 如果没加密，直接提示保存
                     btn.innerText = "📥 SAVE FILE";
                     btn.style.background = "#10b981";
                 }
 
-                // --- 2. 最终的保存动作 ---
+                // --- 修复后的保存动作 ---
                 btn.onclick = () => {
                     const u = window.URL.createObjectURL(finalBlob);
                     const a = document.createElement('a');
@@ -755,17 +740,23 @@ function startReceiving() {
                     a.download = meta.name.replace('.enc', '');
                     a.click();
 
-                    // 发送确认并记录历史
-                    if (c.open) c.send({ type: 'confirm_save' });
+                    // 使用 conn 而不是 c，确保连接还在
+                    if (conn && conn.open) {
+                        conn.send({ type: 'confirm_save' });
+                    }
+                    
                     addHistory("Received: " + meta.name.replace('.enc', ''), "file");
 
-                    // 延迟重置，确保下载已启动
+                    // 延迟重置
                     setTimeout(() => { 
                         resetReceiver(); 
                         rPeer.destroy(); 
                     }, 1000); 
                 };
             }
+        });
+    });
+}
 
     function addHistory(name, type) {
         let h = JSON.parse(localStorage.getItem('fd_history') || "[]");
