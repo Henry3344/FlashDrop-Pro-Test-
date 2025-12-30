@@ -10,23 +10,6 @@
 <meta property="og:title" content="FlashDrop Pro — Secure P2P Workspace">
 <meta property="og:description" content="Browser-based P2P file sharing. Files never touch our servers.">
     
-    <script>(function(s){s.dataset.zone='10380251',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-    <script src="https://pl28342028.effectivegatecpm.com/a2/19/f7/a219f7c4a8d2e3bbeea9d014e51bb043.js"></script>
-    <script>(function(s){s.dataset.zone='10380245',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-    <script>  
-        (function(ctxj){  
-        var d = document,  
-            s = d.createElement('script'),  
-            l = d.scripts[d.scripts.length - 1];  
-        s.settings = ctxj || {};  
-        s.src = "\/\/big-brief.com\/bCXiVts.dFG-l\/0pYpWucG\/me_mb9BucZCUfl\/kTP-T\/Ya3PMhzuQB5XNnTGARtBNfjycvzdNND\/ki1NM\/Qe";  
-        s.async = true;  
-        s.referrerPolicy = 'no-referrer-when-downgrade';  
-        l.parentNode.insertBefore(s, l);  
-        })({})  
-    </script>
-
-    <script src="https://quge5.com/88/tag.min.js" data-zone="194952" async data-cfasync="false"></script>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -237,11 +220,64 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
         .step-item { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); font-weight: 800; }
         .step-dot { width: 8px; height: 8px; background: var(--border); border-radius: 50%; margin-bottom: 5px; }
 /* 加密锁头与弹窗样式 */
-#crypto-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(99, 102, 241, 0.1); border: 1.5px solid rgba(99, 102, 241, 0.3); border-radius: 10px; cursor: pointer; transition: 0.3s; margin-right: 10px; }
-#crypto-toggle.enabled { border-color: #6366f1; background: rgba(99, 102, 241, 0.25); box-shadow: 0 0 10px rgba(99, 102, 241, 0.3); }
-.crypto-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 10001; display: none; justify-content: center; align-items: center; }
-.crypto-modal-card { background: #111827; border: 1px solid #6366f1; padding: 30px; border-radius: 24px; width: 320px; text-align: center; }
-.crypto-modal input { width: 100%; padding: 12px; background: #030712; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; margin: 15px 0; text-align: center; }
+/* --- 加密切换按钮 & 紫色发光效果 --- */
+#crypto-toggle { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 8px; 
+    padding: 8px 16px; 
+    background: rgba(15, 23, 42, 0.6); 
+    border: 1.5px solid var(--border); 
+    border-radius: 12px; 
+    cursor: pointer; 
+    transition: 0.4s; 
+    user-select: none;
+}
+
+/* 自定义模式下的紫色闪烁发光 */
+#crypto-toggle.custom-mode { 
+    border-color: #a855f7; 
+    background: rgba(168, 85, 247, 0.15); 
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+    animation: purple-pulse 2s infinite;
+}
+
+@keyframes purple-pulse {
+    0% { box-shadow: 0 0 5px rgba(168, 85, 247, 0.4); }
+    50% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.7); }
+    100% { box-shadow: 0 0 5px rgba(168, 85, 247, 0.4); }
+}
+
+/* 验证码显示区域调整：为了兼容长密码 */
+.code-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.code-display { 
+    font-size: 48px; /* 稍微缩小一点防止长密码溢出 */
+    letter-spacing: 4px; 
+    font-weight: 900; 
+    color: #a5b4fc; 
+    text-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+    word-break: break-all;
+    padding: 0 40px;
+}
+
+/* 眼睛按钮样式 */
+#eye-btn {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 24px;
+    display: none; /* 默认隐藏 */
+}
     </style>
 </head>
 <body>
@@ -342,28 +378,31 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
                             <button class="action-btn" id="btn-share-text" onclick="triggerAd('send-text')">SHARE TEXT</button>
                         </div>
                     </div>
-                    <div style="margin: 12px 0; font-size:12px; color:var(--text-muted); text-align:center;"><div id="crypto-toggle" onclick="showCryptoModal()">
-    <span id="lock-icon">🔓</span>
-    <span id="lock-text" style="font-size: 11px; font-weight: 900; color: var(--text-muted);">PROTECTION OFF</span>
-</div>
-
-<div id="crypto-modal" class="crypto-modal">
-    <div class="crypto-modal-card">
-        <h3 style="color: #6366f1; margin: 0;">Set Password</h3>
-        <input type="password" id="crypto-password" placeholder="Min 6 characters">
-        <div style="display: flex; gap: 10px;">
-            <button class="action-btn" style="flex: 1; padding: 10px;" onclick="confirmEncryption()">ENABLE</button>
-            <button class="action-btn" style="flex: 1; padding: 10px; background: #374151;" onclick="closeCryptoModal()">CANCEL</button>
-        </div>
+                    <div style="margin: 15px 0; display: flex; justify-content: center; align-items: center; gap: 10px;">
+    <div id="crypto-toggle" onclick="toggleCryptoMode()">
+        <span id="lock-icon">🤖</span>
+        <span id="lock-text" style="font-size: 11px; font-weight: 900; color: var(--text-muted);">自动算法加密</span>
+    </div>
+    
+    <div style="font-size: 12px; color: var(--text-muted);">
+        Limit: 
+        <select id="downloadLimit" style="background:#0f172a; color:#fff; border:1.5px solid var(--border); padding:6px 12px; border-radius:8px;">
+            <option value="1">1 Time</option>
+            <option value="3">3 Times</option>
+            <option value="5">5 Times</option>
+            <option value="999">Unlimited</option>
+        </select>
     </div>
 </div>
-Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:1.5px solid var(--border); padding:6px 12px; border-radius:8px;"><option value="1">1 Time</option><option value="3">3 Times</option><option value="5">5 Times</option><option value="999">Unlimited</option></select></div>
                     <input type="file" id="fileInput" multiple style="display:none;" onchange="handleFiles(this.files)">
                     <div id="senderCodeArea">
                         <div style="font-size:12px; color:var(--success); font-weight:900; margin-bottom:15px;">🛡️ P2P ENCRYPTED</div>
                         <p id="guideText" style="font-size:13px; color:var(--primary); font-weight:800; margin-bottom:18px; line-height:1.5;"></p>
                         <div id="qrcode"></div>
-                        <div class="code-display" id="myCode">000000</div>
+                        <div class="code-wrapper">
+    <div class="code-display" id="myCode">000000</div>
+    <button id="eye-btn" onmousedown="showPass()" onmouseup="hidePass()" ontouchstart="showPass()" ontouchend="hidePass()">👁️‍🗨️</button>
+</div>
                         <div id="expiryTimer" style="font-size:13px; color:var(--danger); font-weight:900; margin-top:10px;">Expires: 10:00</div>
                         <button class="action-btn" id="btn-copy-link" style="background:#4f46e5; margin-top:15px;">📋 COPY LINK</button>
                         <button class="action-btn" onclick="resetSender()" style="background:var(--danger); margin-top:15px;">STOP</button>
@@ -373,7 +412,7 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
                 <div id="panel-receive" class="panel">
                     <div style="display:flex; flex-direction:column; align-items:center;">
                         <div class="receive-input-container">
-                            <input type="number" id="targetCode" placeholder="000000" oninput="if(this.value.length>6) this.value=this.value.slice(0,6)" onkeydown="if(event.key==='Enter') triggerAd('receive')">
+                            <input type="text" id="targetCode" placeholder="Enter Key / Code" onkeydown="if(event.key==='Enter') triggerAd('receive')">
                             <button id="btn-scan" onclick="openScanner()">or scan 📷</button>
                         </div>
                         <button class="action-btn" id="btn-connect" onclick="triggerAd('receive')" style="margin-top: 25px;">DOWNLOAD</button>
@@ -532,10 +571,15 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
         }, 100);
     }
 
-    /* --- [ 4. 核心加解密逻辑与函数集成 ] --- */
+/* --- [ 4. 核心加解密逻辑与函数集成 ] --- */
 
-// 1. 加密核心工具
-let isEncrypted = false, aesKey = "";
+// --- 全局变量与加密工具 ---
+let isCustomMode = false; 
+let customKey = "";
+let realCodeValue = ""; 
+let isEncrypted = true; // 强制开启，确保 AES-256 逻辑运行
+let aesKey = "";
+
 const FlashDropCrypto = {
     async deriveKey(pass, salt) {
         const encoder = new TextEncoder();
@@ -566,55 +610,89 @@ const FlashDropCrypto = {
     }
 };
 
-// 2. UI 控制函数
-function showCryptoModal() { 
-    if(isEncrypted) { isEncrypted = false; aesKey = ""; updateLockUI(); return; }
-    document.getElementById('crypto-modal').style.display = 'flex'; 
-}
-function closeCryptoModal() { document.getElementById('crypto-modal').style.display = 'none'; }
-function confirmEncryption() {
-    const p = document.getElementById('crypto-password').value;
-    if(p.length < 6) return alert("Min 6 chars!");
-    aesKey = p; isEncrypted = true; updateLockUI(); closeCryptoModal();
-}
-function updateLockUI() {
-    const toggle = document.getElementById('crypto-toggle');
-    const icon = document.getElementById('lock-icon');
-    const text = document.getElementById('lock-text');
-    if(isEncrypted) {
-        toggle.classList.add('enabled'); icon.innerText = "🔐";
-        text.innerText = "PROTECTION ON"; text.style.color = "#6366f1";
+// --- UI 控制：切换自动/自定义模式 ---
+function toggleCryptoMode() {
+    if (!isCustomMode) {
+        const p = prompt(currLang === 'zh' ? "请输入自定义密钥 (最少4位):" : "Enter Custom Key (Min 4 chars):");
+        if (p && p.length >= 4) {
+            customKey = p;
+            isCustomMode = true;
+            updateModeUI();
+        }
     } else {
-        toggle.classList.remove('enabled'); icon.innerText = "🔓";
-        text.innerText = "PROTECTION OFF"; text.style.color = "var(--text-muted)";
+        isCustomMode = false;
+        customKey = "";
+        updateModeUI();
     }
 }
 
-// 3. 替换后的发送逻辑
+function updateModeUI() {
+    const btn = document.getElementById('crypto-toggle');
+    const icon = document.getElementById('lock-icon');
+    const text = document.getElementById('lock-text');
+    if (isCustomMode) {
+        btn.classList.add('custom-mode');
+        icon.innerText = "🔮";
+        text.innerText = currLang === 'zh' ? "自定义密钥加密" : "CUSTOM KEY MODE";
+        text.style.color = "#a855f7";
+    } else {
+        btn.classList.remove('custom-mode');
+        icon.innerText = "🤖";
+        text.innerText = currLang === 'zh' ? "自动算法加密" : "AUTO ALGO MODE";
+        text.style.color = "var(--text-muted)";
+    }
+}
+
+// 密码显示/隐藏（眼睛按钮）
+function showPass() { document.getElementById('myCode').innerText = realCodeValue; }
+function hidePass() { 
+    if(isCustomMode) {
+        document.getElementById('myCode').innerText = "*".repeat(realCodeValue.length > 8 ? 8 : realCodeValue.length); 
+    }
+}
+
+// --- 发送端核心逻辑 ---
 async function initSender() {
     if(peer) peer.destroy(); 
     currentDownloads = 0; 
-    const code = Math.floor(100000 + Math.random() * 900000);
     
-    peer = new Peer(PREFIX + code);
+    // 确定密钥：自动生成6位或使用自定义
+    const code = isCustomMode ? customKey : Math.floor(100000 + Math.random() * 900000).toString();
+    realCodeValue = code;
+    aesKey = code; 
+
+    // 使用 Base64 处理 ID 避免特殊字符导致 PeerJS 报错
+    const safePeerId = PREFIX + btoa(code).replace(/=/g, '');
+    peer = new Peer(safePeerId);
     
     peer.on('open', () => {
         const area = document.getElementById('senderCodeArea');
-        if (area) {
-            area.style.display = 'block';
-            // 自动平滑滚动
-            setTimeout(() => {
-                area.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 200);
+        area.style.display = 'block';
+        setTimeout(() => area.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
+
+        const displayElem = document.getElementById('myCode');
+        const eyeBtn = document.getElementById('eye-btn');
+
+        if (isCustomMode) {
+            displayElem.innerText = "*".repeat(code.length > 8 ? 8 : code.length);
+            eyeBtn.style.display = 'block';
+        } else {
+            displayElem.innerText = code;
+            eyeBtn.style.display = 'none';
         }
-        
-        document.getElementById('myCode').innerText = code;
+
+        // 二维码：只含链接，不含密钥，强制对方手动输入
         document.getElementById('qrcode').innerHTML = ""; 
         new QRCode(document.getElementById('qrcode'), { 
-            text: window.location.origin + window.location.pathname + "?c=" + code, 
-            width: 140, 
-            height: 140 
+            text: window.location.origin + window.location.pathname, 
+            width: 140, height: 140 
         });
+        
+        document.getElementById('btn-copy-link').onclick = () => {
+            navigator.clipboard.writeText(window.location.origin + window.location.pathname);
+            alert(currLang === 'zh' ? "链接已复制！请手动告知对方密钥。" : "Link copied! Share key manually.");
+        };
+
         startExpiryTimer();
     });
 
@@ -627,44 +705,32 @@ async function initSender() {
         });
 
         c.on('open', async () => {
-            // A. 处理文字
+            // A. 处理文字加密发送
             let textValue = document.getElementById('quickText').value.trim(); 
             if(textValue) {
-                if(isEncrypted) {
-                    const encryptedTextBlob = await FlashDropCrypto.encrypt(new Blob([textValue]), aesKey);
-                    const reader = new FileReader();
-                    reader.onload = () => c.send({ type: 'text', data: reader.result, encrypted: true });
-                    reader.readAsDataURL(encryptedTextBlob);
-                } else {
-                    c.send({ type: 'text', data: textValue, encrypted: false });
-                }
+                const encryptedTextBlob = await FlashDropCrypto.encrypt(new Blob([textValue]), aesKey);
+                const reader = new FileReader();
+                reader.onload = () => c.send({ type: 'text', data: reader.result, encrypted: true });
+                reader.readAsDataURL(encryptedTextBlob);
                 addHistory("Sent: Text", "text");
             }
 
-            // B. 处理文件
+            // B. 处理文件加密发送
             if(stagedFiles && stagedFiles.length > 0) {
                 let fb, fn = stagedFiles.length === 1 ? stagedFiles[0].name : "Bundle.zip";
-                
-                if (stagedFiles.length === 1) { 
-                    fb = stagedFiles[0]; 
-                } else { 
+                if (stagedFiles.length === 1) { fb = stagedFiles[0]; } 
+                else { 
                     const zip = new JSZip(); 
                     stagedFiles.forEach(f => zip.file(f.name, f)); 
                     fb = await zip.generateAsync({type: "blob"}); 
                 }
                 
-                if(isEncrypted) { 
-                    fb = await FlashDropCrypto.encrypt(fb, aesKey); 
-                    fn += ".enc"; 
-                }
+                fb = await FlashDropCrypto.encrypt(fb, aesKey); 
+                fn += ".enc";
                 
-                c.send({ type: 'meta', name: fn, size: fb.size, encrypted: isEncrypted });
+                c.send({ type: 'meta', name: fn, size: fb.size, encrypted: true });
                 for (let i = 0; i < fb.size; i += CHUNK_SIZE) { 
-                    c.send({ 
-                        type: 'chunk', 
-                        index: i/CHUNK_SIZE, 
-                        data: await fb.slice(i, i + CHUNK_SIZE).arrayBuffer() 
-                    }); 
+                    c.send({ type: 'chunk', index: i/CHUNK_SIZE, data: await fb.slice(i, i + CHUNK_SIZE).arrayBuffer() }); 
                 }
                 c.send({ type: 'done' }); 
                 addHistory("Sent: " + fn, "file");
@@ -673,35 +739,30 @@ async function initSender() {
     });
 }
 
-// --- [ 优化版：全英文 + 加密自动识别逻辑 ] ---
+// --- 接收端核心逻辑 ---
 function startReceiving() {
     const code = document.getElementById('targetCode').value;
+    if(!code) return alert(I18N[currLang].inputErr);
+
     const rPeer = new Peer();
     const pgBar = document.getElementById('receive-pg-bar');
-    
     document.getElementById('receive-pg-container').style.display = 'block';
     
     rPeer.on('open', () => {
-        // 这里的 conn 就是 c，我们用 conn 确保作用域不出错
-        const conn = rPeer.connect(PREFIX + code, { reliable: true }); 
+        const safePeerId = PREFIX + btoa(code).replace(/=/g, '');
+        const conn = rPeer.connect(safePeerId, { reliable: true }); 
         activeConn = conn;
         let meta = null, chunks = [], totalRecv = 0;
         
         conn.on('data', async d => {
             if(d.type === 'text') {
-                let finalTxt = d.data;
-                if(d.encrypted) {
-                    const pass = prompt("🔐 Encrypted Message! Enter Password:");
-                    if(!pass) return;
-                    try {
-                        const res = await fetch(d.data); const blob = await res.blob();
-                        const ptBlob = await FlashDropCrypto.decrypt(blob, pass);
-                        finalTxt = await ptBlob.text();
-                    } catch(e) { return alert("❌ Wrong Password!"); }
-                }
-                document.getElementById('receivedText').innerText = finalTxt;
-                document.getElementById('receivedText-container').style.display = 'block';
-                pgBar.style.width = '100%';
+                try {
+                    const res = await fetch(d.data); const blob = await res.blob();
+                    const ptBlob = await FlashDropCrypto.decrypt(blob, code);
+                    document.getElementById('receivedText').innerText = await ptBlob.text();
+                    document.getElementById('receivedText-container').style.display = 'block';
+                    pgBar.style.width = '100%';
+                } catch(e) { alert("❌ Decryption Failed. Wrong Key?"); resetReceiver(); }
             }
             else if(d.type === 'meta') { 
                 meta = d; 
@@ -714,76 +775,46 @@ function startReceiving() {
             else if(d.type === 'done') {
                 const btn = document.getElementById('btn-save-file');
                 let finalBlob = new Blob(chunks);
-
-                // --- 自动检测加密并弹出 ---
-                if (meta && meta.encrypted) {
-                    const pass = prompt("🔐 This file is encrypted. Enter password to decrypt:");
-                    if (!pass) {
-                        btn.innerText = "❌ CANCELED";
-                        return;
-                    }
-                    try {
-                        finalBlob = await FlashDropCrypto.decrypt(finalBlob, pass);
-                        btn.innerText = "✅ DECRYPTED! SAVE NOW";
-                        btn.style.background = "#10b981";
-                    } catch (e) {
-                        alert("❌ Wrong password!");
-                        btn.innerText = "❌ WRONG PASSWORD";
-                        return;
-                    }
-                } else {
-                    btn.innerText = "📥 SAVE FILE";
+                try {
+                    finalBlob = await FlashDropCrypto.decrypt(finalBlob, code);
+                    btn.innerText = "✅ DECRYPTED! SAVE NOW";
                     btn.style.background = "#10b981";
-                }
-
-                // --- 修复后的保存动作 ---
-                btn.onclick = () => {
-                    const u = window.URL.createObjectURL(finalBlob);
-                    const a = document.createElement('a');
-                    a.href = u;
-                    a.download = meta.name.replace('.enc', '');
-                    a.click();
-
-                    // 使用 conn 而不是 c，确保连接还在
-                    if (conn && conn.open) {
-                        conn.send({ type: 'confirm_save' });
-                    }
                     
-                    addHistory("Received: " + meta.name.replace('.enc', ''), "file");
-
-                    // 延迟重置
-                    setTimeout(() => { 
-                        resetReceiver(); 
-                        rPeer.destroy(); 
-                    }, 1000); 
-                };
+                    btn.onclick = () => {
+                        const u = window.URL.createObjectURL(finalBlob);
+                        const a = document.createElement('a');
+                        a.href = u; a.download = meta.name.replace('.enc', ''); a.click();
+                        if (conn && conn.open) conn.send({ type: 'confirm_save' });
+                        addHistory("Received: " + meta.name.replace('.enc', ''), "file");
+                        setTimeout(() => { resetReceiver(); rPeer.destroy(); }, 1000); 
+                    };
+                } catch (e) {
+                    btn.innerText = "❌ WRONG KEY / FAILED";
+                    btn.style.background = "var(--danger)";
+                }
             }
         });
     });
+
+    rPeer.on('error', () => { alert("Connection Failed. Check Code."); resetReceiver(); });
 }
 
-    function addHistory(name, type) {
-        let h = JSON.parse(localStorage.getItem('fd_history') || "[]");
-        h.unshift({ name: name.substring(0,25), time: new Date().toLocaleTimeString(), type: type });
-        h = h.slice(0, 5); localStorage.setItem('fd_history', JSON.stringify(h)); renderHistory();
-    }
-    function renderHistory() {
-        const list = document.getElementById('history-list');
-        const h = JSON.parse(localStorage.getItem('fd_history') || "[]");
-        list.innerHTML = h.map(i => `<div class="history-item"><span>${i.type==='file'?'📄':'🔤'} ${i.name}</span><span style="opacity:0.5">${i.time}</span></div>`).join('');
-    }
-
-    function copyReceivedText() { 
-        navigator.clipboard.writeText(document.getElementById('receivedText').innerText); 
-        alert("Copied!"); 
-        
-        // 【这是新加的】复制完立刻给发送方发信号，触发阅后即毁
-        if(activeConn && activeConn.open) {
-            activeConn.send({ type: 'confirm_save' }); 
-        }
-        
-        resetReceiver(); 
-    }
+function addHistory(name, type) {
+    let h = JSON.parse(localStorage.getItem('fd_history') || "[]");
+    h.unshift({ name: name.substring(0,25), time: new Date().toLocaleTimeString(), type: type });
+    h = h.slice(0, 5); localStorage.setItem('fd_history', JSON.stringify(h)); renderHistory();
+}
+function renderHistory() {
+    const list = document.getElementById('history-list');
+    const h = JSON.parse(localStorage.getItem('fd_history') || "[]");
+    list.innerHTML = h.map(i => `<div class="history-item"><span>${i.type==='file'?'📄':'🔤'} ${i.name}</span><span style="opacity:0.5">${i.time}</span></div>`).join('');
+}
+function copyReceivedText() { 
+    navigator.clipboard.writeText(document.getElementById('receivedText').innerText); 
+    alert("Copied!"); 
+    if(activeConn && activeConn.open) activeConn.send({ type: 'confirm_save' }); 
+    resetReceiver(); 
+}
     // --- 覆盖到这里结束，下面紧跟着是 detectAdBlock 函数 ---
 
     function detectAdBlock() {
