@@ -438,18 +438,20 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
             <div class="card">
                 <div class="tab-group"><div id="tab-send" class="tab active" onclick="switchTab('send', event)">Send</div><div id="tab-receive" class="tab" onclick="switchTab('receive', event)">Receive</div></div>
                 <div id="panel-send" class="panel active">
-    <div class="crypto-selector">
-        <div id="opt-auto" class="crypto-opt active" onclick="setCryptoMode('auto')">🤖 自动生成</div>
-        <div id="opt-custom" class="crypto-opt" onclick="setCryptoMode('custom')">🔮 自定义密码</div>
+    <div class="crypto-selector" style="display: flex; background: rgba(15, 23, 42, 0.6); padding: 4px; border-radius: 12px; border: 1.5px solid var(--border); margin-bottom: 15px; width: 100%;">
+        <div id="opt-auto" class="crypto-opt active" onclick="setCryptoMode('auto')" style="flex: 1; padding: 10px; font-size: 12px; font-weight: 900; text-align: center; cursor: pointer; border-radius: 8px; transition: 0.3s;">🤖 自动算法加密</div>
+        <div id="opt-custom" class="crypto-opt" onclick="setCryptoMode('custom')" style="flex: 1; padding: 10px; font-size: 12px; font-weight: 900; text-align: center; cursor: pointer; border-radius: 8px; transition: 0.3s;">🔮 自定义加密算法</div>
     </div>
 
-    <div id="custom-pass-area" class="custom-pass-area">
-        <input type="text" id="customPassword" placeholder="输入密码 (至少4位)" oninput="checkStrength(this.value)">
-        <div class="strength-meter"><div id="strength-bar"></div></div>
-        <div id="strength-text" style="color: var(--danger)">密码太短</div>
+    <div id="custom-pass-area" style="display: none; margin-bottom: 15px;">
+        <input type="text" id="customPassword" placeholder="输入自定义提取码 (至少4位)" oninput="checkStrength(this.value)" style="width: 100%; background: rgba(15, 23, 42, 0.8); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px; color: white; font-weight: 800; font-size: 14px;">
+        <div class="strength-meter" style="height: 4px; width: 100%; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; overflow: hidden;">
+            <div id="strength-bar" style="height: 100%; width: 0%; transition: 0.3s;"></div>
+        </div>
+        <div id="strength-text" style="font-size: 10px; margin-top: 4px; font-weight: 800;"></div>
     </div>
 
-    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px; text-align: center;">
+    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px; text-align: center;">
         下载次数限制: 
         <select id="downloadLimit" style="background:#0f172a; color:#fff; border:1.5px solid var(--border); padding:6px 12px; border-radius:8px;">
             <option value="1">1 Time</option>
@@ -462,6 +464,7 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
     <div class="share-grid">
         <div class="column-box">
             <label class="file-zone" for="fileInput"><div style="font-size: 42px;">📂</div><div id="label-files" style="font-size:13px; margin-top:10px; font-weight:900;">Drop / Click</div></label>
+            <input type="file" id="fileInput" multiple style="display:none" onchange="handleFiles(this.files)">
             <div id="stagedList"></div>
             <button class="action-btn" id="btn-share-files" onclick="triggerAd('send-file')">SHARE FILES</button>
         </div>
@@ -475,7 +478,7 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
         <div style="font-size:12px; color:var(--success); font-weight:900; margin-bottom:15px;">🛡️ P2P ENCRYPTED</div>
         <div class="code-wrapper">
             <div class="code-display" id="myCode">000000</div>
-            <button id="eye-btn" onmousedown="showPass()" onmouseup="hidePass()" ontouchstart="showPass()" ontouchend="hidePass()" style="display:none;">👁️</button>
+            <button id="eye-btn" onmousedown="showPass()" onmouseup="hidePass()" ontouchstart="showPass()" ontouchend="hidePass()" style="position: absolute; right: 10px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 24px;">👁️</button>
         </div>
         <div id="qrcode"></div>
         <div id="expiryTimer" style="font-size:13px; color:var(--danger); font-weight:900; margin-top:10px;">Expires: 10:00</div>
@@ -579,48 +582,33 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
 </div>
 
 <script>
-    const I18N = {
-        en: { tabSend: "Send", tabReceive: "Receive", badges: ["🔒 P2P", "🕵️ No Logs", "☁️ CF Secured", "🛠️ GitHub Sync"], drop: "DROP HERE", fileLab: "Drop / Click", shareF: "SHARE FILES", shareT: "SHARE TEXT", connect: "DOWNLOAD", save: "📥 SAVE", exp: "Expires: ", copyLink: "📋 COPY LINK", orScan: "or scan 📷", histTitle: "Recent History", fileErr: "Please select files first.", textErr: "Please enter text first.", inputErr: "Please enter code." },
-        zh: { tabSend: "发送", tabReceive: "接收", badges: ["🔒 P2P 加密", "🕵️ 零日志", "☁️ CF 加速", "🛠️ GitHub 部署"], drop: "松手上传", fileLab: "拖拽 / 点击", shareF: "分享文件", shareT: "分享文字", connect: "立即下载", save: "📥 保存文件", exp: "有效期: ", copyLink: "📋 复制链接", orScan: "或者扫码 📷", histTitle: "最近记录", fileErr: "请先选择文件。", textErr: "请先输入文字。", inputErr: "请输入提取码。" }
-    };
-
     let currLang = "en", peer = null, stagedFiles = [], currentDownloads = 0, videoTrack = null, torchOn = false, activeConn = null, expiryTimerIdx = null;
     let isCustomMode = false, realCodeValue = "", aesKey = ""; 
     const PREFIX = "fd-pro-", CHUNK_SIZE = 262144;
 
-    // --- 1. 你最想要的：加密交互逻辑 ---
+    // --- 加密 UI 控制 ---
     function setCryptoMode(mode) {
         isCustomMode = (mode === 'custom');
-        // 切换高亮
         document.getElementById('opt-auto').classList.toggle('active', !isCustomMode);
         document.getElementById('opt-custom').classList.toggle('active', isCustomMode);
-        // 显示或隐藏输入框
+        document.getElementById('opt-auto').style.background = isCustomMode ? 'transparent' : 'var(--primary)';
+        document.getElementById('opt-custom').style.background = isCustomMode ? 'var(--primary)' : 'transparent';
         document.getElementById('custom-pass-area').style.display = isCustomMode ? 'block' : 'none';
     }
 
-    // 实时检测密码强度
     function checkStrength(val) {
         const bar = document.getElementById('strength-bar');
         const text = document.getElementById('strength-text');
         if (!val) { bar.style.width = '0%'; text.innerText = ""; return; }
-        
-        if (val.length < 4) {
-            bar.style.width = '25%'; bar.style.background = '#ef4444';
-            text.innerText = "太弱了 (Min 4)"; text.style.color = '#ef4444';
-        } else if (val.length < 8) {
-            bar.style.width = '60%'; bar.style.background = '#f59e0b';
-            text.innerText = "强度中等"; text.style.color = '#f59e0b';
-        } else {
-            bar.style.width = '100%'; bar.style.background = '#10b981';
-            text.innerText = "非常安全"; text.style.color = '#10b981';
-        }
+        if (val.length < 4) { bar.style.width = '25%'; bar.style.background = '#ef4444'; text.innerText = "太简单啦 (至少4位)"; text.style.color = '#ef4444'; }
+        else if (val.length < 8) { bar.style.width = '60%'; bar.style.background = '#f59e0b'; text.innerText = "强度还可以"; text.style.color = '#f59e0b'; }
+        else { bar.style.width = '100%'; bar.style.background = '#10b981'; text.innerText = "非常安全"; text.style.color = '#10b981'; }
     }
 
-    // 眼睛按钮：按住看密码，松手变星号
     function showPass() { document.getElementById('myCode').innerText = realCodeValue; }
     function hidePass() { if(isCustomMode) document.getElementById('myCode').innerText = "*".repeat(Math.min(realCodeValue.length, 10)); }
 
-    // --- 2. 核心加解密工具 (AES-256) ---
+    // --- 核心加解密库 ---
     const FlashDropCrypto = {
         async deriveKey(pass, salt) {
             const encoder = new TextEncoder();
@@ -642,28 +630,23 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
         }
     };
 
-    // --- 3. 发送逻辑 ---
+    // --- 发送端 ---
     async function initSender() {
         if(peer) peer.destroy();
-        
         let code = isCustomMode ? document.getElementById('customPassword').value.trim() : Math.floor(100000 + Math.random() * 900000).toString();
-        if (isCustomMode && code.length < 4) return alert("密码至少4位！");
-
+        if (isCustomMode && code.length < 4) return alert("为了安全，自定义提取码至少需要4位哦！");
         realCodeValue = code; aesKey = code;
         const safeId = PREFIX + btoa(code).replace(/=/g, '');
         peer = new Peer(safeId);
-
         peer.on('open', () => {
             document.getElementById('senderCodeArea').style.display = 'block';
             const display = document.getElementById('myCode'), eye = document.getElementById('eye-btn');
             if(isCustomMode) { display.innerText = "*".repeat(Math.min(code.length, 10)); eye.style.display = 'block'; }
             else { display.innerText = code; eye.style.display = 'none'; }
-            
             document.getElementById('qrcode').innerHTML = "";
             new QRCode(document.getElementById('qrcode'), { text: window.location.origin + window.location.pathname + "?c=" + code, width: 140, height: 140 });
             startExpiryTimer();
         });
-
         peer.on('connection', c => {
             c.on('data', d => { if(d.type === 'confirm_save') { currentDownloads++; if(currentDownloads >= parseInt(document.getElementById('downloadLimit').value)) resetSender(); } });
             c.on('open', async () => {
@@ -671,7 +654,6 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
                 if(textVal) {
                     const enc = await FlashDropCrypto.encrypt(new Blob([textVal]), aesKey);
                     const reader = new FileReader(); reader.onload = () => c.send({ type: 'text', data: reader.result }); reader.readAsDataURL(enc);
-                    addHistory("Sent: Text", "text");
                 }
                 if(stagedFiles.length > 0) {
                     let fb, fn = stagedFiles.length === 1 ? stagedFiles[0].name : "Bundle.zip";
@@ -680,16 +662,16 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
                     fb = await FlashDropCrypto.encrypt(fb, aesKey); fn += ".enc";
                     c.send({ type: 'meta', name: fn, size: fb.size });
                     for (let i = 0; i < fb.size; i += CHUNK_SIZE) { c.send({ type: 'chunk', index: i/CHUNK_SIZE, data: await fb.slice(i, i + CHUNK_SIZE).arrayBuffer() }); }
-                    c.send({ type: 'done' }); addHistory("Sent: " + fn, "file");
+                    c.send({ type: 'done' });
                 }
             });
         });
     }
 
-    // --- 4. 接收逻辑 ---
+    // --- 接收端 ---
     function startReceiving() {
         const code = document.getElementById('targetCode').value;
-        if(!code) return alert("请输入码");
+        if(!code) return alert("请输入提取码");
         const rPeer = new Peer();
         document.getElementById('receive-pg-container').style.display = 'block';
         rPeer.on('open', () => {
@@ -701,52 +683,38 @@ details[open] summary::after { content: '-'; transform: rotate(90deg); }
                         const res = await fetch(d.data); const pt = await FlashDropCrypto.decrypt(await res.blob(), code);
                         document.getElementById('receivedText').innerText = await pt.text();
                         document.getElementById('receivedText-container').style.display = 'block';
-                    } catch(e) { alert("解密失败！"); resetReceiver(); }
+                    } catch(e) { alert("解密失败！提取码对吗？"); resetReceiver(); }
                 } else if(d.type === 'meta') { meta = d; document.getElementById('mobileDownloadArea').style.display = 'block'; }
                 else if(d.type === 'chunk') { chunks[d.index] = d.data; document.getElementById('receive-pg-bar').style.width = (chunks.length * CHUNK_SIZE / meta.size * 100) + '%'; }
                 else if(d.type === 'done') {
                     const btn = document.getElementById('btn-save-file');
                     try {
                         const final = await FlashDropCrypto.decrypt(new Blob(chunks), code);
-                        btn.innerText = "✅ DECRYPTED! SAVE"; btn.style.background = "#10b981";
+                        btn.innerText = "✅ 解密成功！保存文件"; btn.style.background = "#10b981";
                         btn.onclick = () => {
                             const a = document.createElement('a'); a.href = URL.createObjectURL(final); a.download = meta.name.replace('.enc',''); a.click();
                             conn.send({type:'confirm_save'}); resetReceiver();
                         };
-                    } catch(e) { btn.innerText = "❌ WRONG KEY"; }
+                    } catch(e) { btn.innerText = "❌ 提取码错误"; }
                 }
             });
         });
     }
 
-    // --- 5. 补完功能：扫码、广告检测、通用工具 ---
-    async function openScanner() { document.getElementById('scanner-modal').style.display='flex'; try { const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }); const video = document.getElementById('video-preview'); video.srcObject = stream; videoTrack = stream.getVideoTracks()[0]; video.play(); requestAnimationFrame(tickScanner); } catch (e) { alert("Camera failed"); closeScanner(); } }
-    function closeScanner() { document.getElementById('scanner-modal').style.display='none'; if(videoTrack) videoTrack.stop(); torchOn = false; }
-    async function toggleTorch() { if (!videoTrack) return; torchOn = !torchOn; try { await videoTrack.applyConstraints({ advanced: [{ torch: torchOn }] }); } catch (e) {} }
-    function tickScanner() {
-        const v = document.getElementById('video-preview');
-        if(v.readyState === v.HAVE_ENOUGH_DATA) {
-            const cvs = document.createElement("canvas"); cvs.width = v.videoWidth; cvs.height = v.videoHeight;
-            const ctx = cvs.getContext("2d"); ctx.drawImage(v, 0, 0);
-            const data = jsQR(ctx.getImageData(0,0,cvs.width,cvs.height).data, cvs.width, cvs.height);
-            if(data) { try { const url = new URL(data.data); const c = url.searchParams.get("c"); if(c) { document.getElementById('targetCode').value = c; closeScanner(); triggerAd('receive'); return; } } catch(e) { document.getElementById('targetCode').value = data.data; closeScanner(); triggerAd('receive'); return; } }
-        }
-        if(document.getElementById('scanner-modal').style.display === 'flex') requestAnimationFrame(tickScanner);
-    }
-    function detectAdBlock() { const topAd = document.getElementById('top-ad-zone'); if (topAd && (topAd.offsetHeight < 10 || topAd.innerHTML.length < 50)) { document.getElementById('safety-notice-view').style.display = 'flex'; return true; } return false; }
-    function triggerAd(mode) { if(detectAdBlock()) return; const modal = document.getElementById('adModal'); modal.style.display = 'flex'; let elapsed = 0; const itv = setInterval(() => { elapsed += 100; document.getElementById('ad-pg-bar').style.width = (elapsed / 5000 * 100) + '%'; if(elapsed >= 5000) { clearInterval(itv); modal.style.display = 'none'; mode.startsWith('send') ? initSender() : startReceiving(); } }, 100); }
-    function applyI18N() { const userLang = navigator.language.split('-')[0]; currLang = I18N[userLang] ? userLang : "en"; const d = I18N[currLang]; document.getElementById('currentLangTag').innerText = currLang.toUpperCase(); document.getElementById('tab-send').innerText = d.tabSend; document.getElementById('tab-receive').innerText = d.tabReceive; document.getElementById('label-files').innerText = d.fileLab; document.getElementById('btn-share-files').innerText = d.shareF; document.getElementById('btn-share-text').innerText = d.shareT; document.getElementById('btn-connect').innerText = d.connect; document.getElementById('btn-scan').innerText = d.orScan; document.getElementById('history-title-text').innerText = d.histTitle; }
-    function addHistory(n, t) { let h = JSON.parse(localStorage.getItem('fd_history') || "[]"); h.unshift({ n, t, time: new Date().toLocaleTimeString() }); h = h.slice(0, 5); localStorage.setItem('fd_history', JSON.stringify(h)); renderHistory(); }
-    function renderHistory() { const list = document.getElementById('history-list'); const h = JSON.parse(localStorage.getItem('fd_history') || "[]"); list.innerHTML = h.map(i => `<div class="history-item"><span>${i.t==='file'?'📄':'🔤'} ${i.n}</span><span style="opacity:0.5">${i.time}</span></div>`).join(''); }
-    function resetSender() { if(peer) peer.destroy(); document.getElementById('senderCodeArea').style.display = 'none'; if(expiryTimerIdx) clearInterval(expiryTimerIdx); }
-    function resetReceiver() { document.getElementById('targetCode').value = ""; document.getElementById('mobileDownloadArea').style.display = 'none'; document.getElementById('receive-pg-container').style.display = 'none'; document.getElementById('receivedText-container').style.display = 'none'; }
-    function switchTab(m, e) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); e.target.classList.add('active'); document.getElementById(`panel-${m}`).classList.add('active'); }
+    // --- 通用工具 (扫码、倒计时、广告检测) ---
+    async function openScanner() { document.getElementById('scanner-modal').style.display='flex'; try { const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }); const v = document.getElementById('video-preview'); v.srcObject = stream; videoTrack = stream.getVideoTracks()[0]; v.play(); requestAnimationFrame(tickScanner); } catch (e) { alert("相机启动失败"); closeScanner(); } }
+    function closeScanner() { document.getElementById('scanner-modal').style.display='none'; if(videoTrack) videoTrack.stop(); }
+    function tickScanner() { const v = document.getElementById('video-preview'); if(v.readyState === v.HAVE_ENOUGH_DATA) { const cvs = document.createElement("canvas"); cvs.width = v.videoWidth; cvs.height = v.videoHeight; const ctx = cvs.getContext("2d"); ctx.drawImage(v, 0, 0); const data = jsQR(ctx.getImageData(0,0,cvs.width,cvs.height).data, cvs.width, cvs.height); if(data) { try { const url = new URL(data.data); const c = url.searchParams.get("c"); if(c) { document.getElementById('targetCode').value = c; closeScanner(); triggerAd('receive'); return; } } catch(e) { document.getElementById('targetCode').value = data.data; closeScanner(); triggerAd('receive'); return; } } } if(document.getElementById('scanner-modal').style.display === 'flex') requestAnimationFrame(tickScanner); }
+    function detectAdBlock() { const ad = document.getElementById('top-ad-zone'); if (ad && (ad.offsetHeight < 10)) { document.getElementById('safety-notice-view').style.display = 'flex'; return true; } return false; }
+    function triggerAd(mode) { if(detectAdBlock()) return; const m = document.getElementById('adModal'); m.style.display = 'flex'; let e = 0; const i = setInterval(() => { e += 100; document.getElementById('ad-pg-bar').style.width = (e / 5000 * 100) + '%'; if(e >= 5000) { clearInterval(i); m.style.display = 'none'; mode.startsWith('send') ? initSender() : startReceiving(); } }, 100); }
+    function startExpiryTimer() { let sec = 600; if(expiryTimerIdx) clearInterval(expiryTimerIdx); expiryTimerIdx = setInterval(() => { sec--; document.getElementById('expiryTimer').innerText = `Expires: ${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; if(sec <= 0) resetSender(); }, 1000); }
+    function resetSender() { if(peer) peer.destroy(); document.getElementById('senderCodeArea').style.display = 'none'; stagedFiles = []; renderStagedList(); }
+    function resetReceiver() { document.getElementById('receive-pg-container').style.display = 'none'; document.getElementById('mobileDownloadArea').style.display = 'none'; document.getElementById('receivedText-container').style.display = 'none'; }
     function handleFiles(files) { stagedFiles = stagedFiles.concat(Array.from(files)); renderStagedList(); }
     function renderStagedList() { const list = document.getElementById('stagedList'); list.style.display = stagedFiles.length ? 'block' : 'none'; list.innerHTML = stagedFiles.map((f, i) => `<div class="staged-item"><span>📄 ${f.name}</span><span style="color:var(--danger); cursor:pointer;" onclick="stagedFiles.splice(${i},1);renderStagedList()">✕</span></div>`).join(''); }
-    function startExpiryTimer() { let sec = 600; if(expiryTimerIdx) clearInterval(expiryTimerIdx); expiryTimerIdx = setInterval(() => { sec--; document.getElementById('expiryTimer').innerText = `Expires: ${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; if(sec <= 0) resetSender(); }, 1000); }
+    function switchTab(m, e) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); e.target.classList.add('active'); document.getElementById(`panel-${m}`).classList.add('active'); }
     function initStars() { const c = document.getElementById('stars'); for(let i=0; i<80; i++) { const s = document.createElement('div'); s.className = 'star'; s.style.width = s.style.height = Math.random()*2+'px'; s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%'; s.style.animationDuration = Math.random()*20+20+'s'; c.appendChild(s); } }
-    function copyReceivedText() { navigator.clipboard.writeText(document.getElementById('receivedText').innerText); alert("Copied!"); }
-    window.onload = () => { initStars(); applyI18N(); renderHistory(); };
+    window.onload = () => { initStars(); };
 </script>
 </body>
 </html>
