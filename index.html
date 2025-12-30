@@ -357,10 +357,15 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
 <footer class="legal-footer">
 <div class="faq-container">
     <h3 id="faq-title">Common Questions</h3>
-    <details><summary>Do my files ever touch your servers?</summary><div class="faq-answer">No. FlashDrop Pro uses peer-to-peer (P2P) connections powered by WebRTC. Files and text are sent directly between browsers and are never uploaded to or stored on our servers.</div></details>
-    <details><summary>Do you store logs or track users?</summary><div class="faq-answer">No. FlashDrop Pro does not store IP addresses, transfer logs, file names, or user identities. We do not use tracking cookies or build user profiles.</div></details>
-    <details><summary>How is the data secured during transfer?</summary><div class="faq-answer">Transfers are encrypted using standard WebRTC security mechanisms. Data is encrypted in transit and is never decrypted by FlashDrop Pro servers.</div></details>
-    <details><summary>Can the recipient see my IP address?</summary><div class="faq-answer">Because FlashDrop Pro uses direct peer-to-peer connections, your IP address may be visible to the receiving peer. We recommend using a VPN if this is a concern.</div></details>
+    <details><summary id="faq-q1">Do my files ever touch your servers?</summary><div class="faq-answer" id="faq-a1">No. FlashDrop Pro uses peer-to-peer (P2P) connections powered by WebRTC. Files and text are sent directly between browsers and are never uploaded to or stored on our servers.</div></details>
+    <details><summary id="faq-q2">Do you store logs or track users?</summary><div class="faq-answer" id="faq-a2">No. FlashDrop Pro does not store IP addresses, transfer logs, file names, or user identities. We do not use tracking cookies or build user profiles.</div></details>
+    <details><summary id="faq-q3">How is the data secured during transfer?</summary><div class="faq-answer" id="faq-a3">Transfers are encrypted using standard WebRTC security mechanisms. Data is encrypted in transit and is never decrypted by FlashDrop Pro servers.</div></details>
+    <details><summary id="faq-q4">Can the recipient see my IP address?</summary><div class="faq-answer" id="faq-a4">Because FlashDrop Pro uses direct peer-to-peer connections, your IP address may be visible to the receiving peer. We recommend using a VPN if this is a concern.</div></details>
+    <details><summary id="faq-q5">Is FlashDrop Pro suitable for sensitive files?</summary><div class="faq-answer" id="faq-a5">FlashDrop Pro is designed for privacy. Since files are not stored on servers, exposure risk is minimal. However, you are responsible for what you share.</div></details>
+    <details><summary id="faq-q6">Can I recover a file after the session?</summary><div class="faq-answer" id="faq-a6">No. Once a session ends or the browser tab is closed, the data is destroyed and cannot be recovered by anyone.</div></details>
+    <details><summary id="faq-q7">Can FlashDrop Pro see my files?</summary><div class="faq-answer" id="faq-a7">No. Files are transferred directly between devices. If encrypted, we absolutely cannot access them.</div></details>
+    <details><summary id="faq-q8">Is the password required?</summary><div class="faq-answer" id="faq-a8">No. Password protection is optional for extra security.</div></details>
+    <details><summary id="faq-q9">What if I forget the password?</summary><div class="faq-answer" id="faq-a9">Encrypted files cannot be recovered without the correct password. There is no "forgot password" feature.</div></details>
 </div>
 
 <footer class="legal-footer">
@@ -414,8 +419,9 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
     </div>
     <button class="action-btn" style="width:180px; background:#334155;" onclick="closeScanner()">CLOSE</button>
 </div>
+
 <script>
-    /* --- [多语言配置中心] --- */
+    /* --- [多语言配置中心 - 完整 FAQ 版] --- */
     const I18N = {
         en: { 
             tabSend: "Send", tabReceive: "Receive", 
@@ -435,6 +441,16 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
             heroSub: "Direct P2P transfer. Optional AES-256 encryption. No servers.",
             sig1: "No Limits", sig2: "P2P Only", sig3: "Auto-Wipe",
             modalTitle: "Set Password", btnEnable: "ENABLE", btnCancel: "CANCEL",
+            faqTitle: "Common Questions",
+            faqQ1: "Do my files ever touch your servers?", faqA1: "No. Files are sent directly between browsers via P2P. Never stored on our servers.",
+            faqQ2: "Do you store logs or track users?", faqA2: "No. We don't store IPs, logs, or track user identities.",
+            faqQ3: "How is data secured?", faqA3: "End-to-end encryption via WebRTC. We cannot see your data.",
+            faqQ4: "Can recipient see my IP?", faqA4: "Yes, P2P requires direct connection. Use VPN if concerned.",
+            faqQ5: "Suitable for sensitive files?", faqA5: "Yes. Zero-knowledge architecture makes it very safe.",
+            faqQ6: "Can I recover files later?", faqA6: "No. Once closed, data is gone forever.",
+            faqQ7: "Can FlashDrop see my files?", faqA7: "No. Impossible by design.",
+            faqQ8: "Is password required?", faqA8: "No. It's optional.",
+            faqQ9: "Forgot password?", faqA9: "Files cannot be recovered without it.",
             techPhrases: ["Generating RSA-4096 Key...", "Initializing WebRTC Handshake...", "Establishing P2P Tunnel...", "Synchronizing Peer Signals...", "Channel Secured!"]
         },
         zh: { 
@@ -455,6 +471,16 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
             heroSub: "点对点直连。可选 AES-256 加密。不经服务器。",
             sig1: "无限制", sig2: "仅P2P", sig3: "自动销毁",
             modalTitle: "设置密码", btnEnable: "启用保护", btnCancel: "取消",
+            faqTitle: "常见问题",
+            faqQ1: "文件会经过服务器吗？", faqA1: "不会。文件通过 P2P 直接在浏览器间传输，绝不存储在服务器上。",
+            faqQ2: "会记录日志吗？", faqA2: "不会。我们不记录 IP、日志或用户身份。",
+            faqQ3: "传输安全吗？", faqA3: "全程 WebRTC 加密传输，我们无法查看您的数据。",
+            faqQ4: "对方能看到我IP吗？", faqA4: "可能。P2P 直连需要 IP，介意请使用 VPN。",
+            faqQ5: "适合传机密文件吗？", faqA5: "适合。零知识架构非常安全。",
+            faqQ6: "关掉后能恢复吗？", faqA6: "不能。页面关闭即刻销毁。",
+            faqQ7: "你们能看到文件吗？", faqA7: "不能。技术上无法实现。",
+            faqQ8: "必须设密码吗？", faqA8: "不用。这是可选功能。",
+            faqQ9: "忘了密码咋办？", faqA9: "那文件就找不回来了，无法破解。",
             techPhrases: ["正在生成密钥对...", "初始化 WebRTC 握手...", "建立加密隧道...", "同步点对点信号...", "通道已安全!"]
         },
         ja: { 
@@ -475,6 +501,16 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
             heroSub: "P2P直接転送。AES-256暗号化オプション。サーバーなし。",
             sig1: "無制限", sig2: "P2Pのみ", sig3: "自動消去",
             modalTitle: "パスワード設定", btnEnable: "有効にする", btnCancel: "キャンセル",
+            faqTitle: "よくある質問",
+            faqQ1: "サーバーに保存されますか？", faqA1: "いいえ。P2Pで直接転送され、サーバーには保存されません。",
+            faqQ2: "ログは保存されますか？", faqA2: "いいえ。IPやログは一切保存しません。",
+            faqQ3: "安全ですか？", faqA3: "WebRTCで暗号化されています。",
+            faqQ4: "IPは見えますか？", faqA4: "はい、P2P接続のため必要です。VPNを推奨します。",
+            faqQ5: "機密ファイルに適していますか？", faqA5: "はい、ゼロ知識設計で安全です。",
+            faqQ6: "復元できますか？", faqA6: "いいえ。閉じると完全に消去されます。",
+            faqQ7: "運営はファイルを見れますか？", faqA7: "いいえ。技術的に不可能です。",
+            faqQ8: "パスワードは必須？", faqA8: "いいえ、オプションです。",
+            faqQ9: "パスワードを忘れたら？", faqA9: "復元不可能です。",
             techPhrases: ["RSA鍵を生成中...", "WebRTCハンドシェイク...", "P2Pトンネル確立中...", "信号を同期中...", "安全な接続完了!"]
         },
         ko: { 
@@ -495,6 +531,16 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
             heroSub: "직접 P2P 전송. 선택적 AES-256 암호화.",
             sig1: "무제한", sig2: "P2P 전용", sig3: "자동 삭제",
             modalTitle: "비밀번호 설정", btnEnable: "활성화", btnCancel: "취소",
+            faqTitle: "자주 묻는 질문",
+            faqQ1: "서버에 저장되나요?", faqA1: "아니요. P2P로 직접 전송됩니다.",
+            faqQ2: "로그가 남나요?", faqA2: "아니요. IP나 기록을 저장하지 않습니다.",
+            faqQ3: "보안은 어떤가요?", faqA3: "WebRTC로 암호화되어 전송됩니다.",
+            faqQ4: "IP가 노출되나요?", faqA4: "P2P 특성상 노출될 수 있습니다. VPN을 권장합니다.",
+            faqQ5: "민감한 파일도 괜찮나요?", faqA5: "네, 매우 안전합니다.",
+            faqQ6: "복구 가능한가요?", faqA6: "아니요. 닫으면 영구 삭제됩니다.",
+            faqQ7: "운영자가 볼 수 있나요?", faqA7: "아니요. 기술적으로 불가능합니다.",
+            faqQ8: "비밀번호 필수인가요?", faqA8: "아니요, 선택 사항입니다.",
+            faqQ9: "비번을 잊으면요?", faqA9: "복구할 수 없습니다.",
             techPhrases: ["RSA 키 생성 중...", "WebRTC 연결 중...", "P2P 터널 수립 중...", "동기화 중...", "보안 연결 완료!"]
         },
         es: { 
@@ -515,6 +561,16 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
             heroSub: "Transferencia P2P directa. Cifrado AES-256 opcional.",
             sig1: "Sin Límites", sig2: "Solo P2P", sig3: "Auto-Borrado",
             modalTitle: "Contraseña", btnEnable: "ACTIVAR", btnCancel: "CANCELAR",
+            faqTitle: "Preguntas Frecuentes",
+            faqQ1: "¿Se guardan en servidores?", faqA1: "No. Se envían directamente entre navegadores (P2P).",
+            faqQ2: "¿Guardáis registros?", faqA2: "No. No guardamos IPs ni metadatos.",
+            faqQ3: "¿Es seguro?", faqA3: "Sí, todo está cifrado vía WebRTC.",
+            faqQ4: "¿Se ve mi IP?", faqA4: "Sí, es necesario para P2P. Usa VPN si prefieres.",
+            faqQ5: "¿Archivos sensibles?", faqA5: "Sí. Diseño de conocimiento cero.",
+            faqQ6: "¿Se puede recuperar?", faqA6: "No. Al cerrar se borra todo.",
+            faqQ7: "¿Podéis ver mis archivos?", faqA7: "No. Es imposible.",
+            faqQ8: "¿Contraseña obligatoria?", faqA8: "No, es opcional.",
+            faqQ9: "¿Olvidé la contraseña?", faqA9: "No se puede recuperar.",
             techPhrases: ["Generando Clave RSA...", "Iniciando WebRTC...", "Túnel P2P...", "Sincronizando...", "¡Canal Seguro!"]
         },
         hi: { 
@@ -535,6 +591,16 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
             heroSub: "सीधा P2P स्थानांतरण। वैकल्पिक AES-256 एन्क्रिप्शन।",
             sig1: "कोई सीमा नहीं", sig2: "केवल P2P", sig3: "ऑटो-वाइप",
             modalTitle: "पासवर्ड सेट करें", btnEnable: "सक्षम करें", btnCancel: "रद्द करें",
+            faqTitle: "सामान्य प्रश्न",
+            faqQ1: "क्या फ़ाइलें सर्वर पर जाती हैं?", faqA1: "नहीं। फ़ाइलें सीधे P2P के माध्यम से भेजी जाती हैं।",
+            faqQ2: "क्या आप लॉग रखते हैं?", faqA2: "नहीं। हम IP या डेटा स्टोर नहीं करते।",
+            faqQ3: "क्या यह सुरक्षित है?", faqA3: "हाँ, WebRTC एन्क्रिप्शन का उपयोग होता है।",
+            faqQ4: "क्या IP दिखता है?", faqA4: "हाँ, P2P के लिए आवश्यक है। VPN का उपयोग करें।",
+            faqQ5: "क्या यह गोपनीय है?", faqA5: "हाँ, यह बहुत सुरक्षित है।",
+            faqQ6: "क्या डेटा रिकवर हो सकता है?", faqA6: "नहीं। बंद करने पर सब मिट जाता है।",
+            faqQ7: "क्या आप फ़ाइलें देख सकते हैं?", faqA7: "नहीं। यह असंभव है।",
+            faqQ8: "क्या पासवर्ड जरूरी है?", faqA8: "नहीं, यह वैकल्पिक है।",
+            faqQ9: "पासवर्ड भूल गए?", faqA9: "डेटा वापस नहीं मिल सकता।",
             techPhrases: ["RSA कुंजी बना रहा है...", "WebRTC शुरू हो रहा है...", "P2P टनल...", "सिंक्रनाइज़ हो रहा है...", "चैनल सुरक्षित!"]
         }
     };
@@ -566,12 +632,22 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
             'step-1': d.step1, 'step-2': d.step2, 'step-3': d.step3,
             'hero-title': d.heroTitle, 'hero-subtitle': d.heroSub,
             'signal-1': d.sig1, 'signal-2': d.sig2, 'signal-3': d.sig3,
-            'modal-pass-title': d.modalTitle, 'btn-enable-pass': d.btnEnable, 'btn-cancel-pass': d.btnCancel
+            'modal-pass-title': d.modalTitle, 'btn-enable-pass': d.btnEnable, 'btn-cancel-pass': d.btnCancel,
+            'faq-title': d.faqTitle,
+            'faq-q1': d.faqQ1, 'faq-a1': d.faqA1,
+            'faq-q2': d.faqQ2, 'faq-a2': d.faqA2,
+            'faq-q3': d.faqQ3, 'faq-a3': d.faqA3,
+            'faq-q4': d.faqQ4, 'faq-a4': d.faqA4,
+            'faq-q5': d.faqQ5, 'faq-a5': d.faqA5,
+            'faq-q6': d.faqQ6, 'faq-a6': d.faqA6,
+            'faq-q7': d.faqQ7, 'faq-a7': d.faqA7,
+            'faq-q8': d.faqQ8, 'faq-a8': d.faqA8,
+            'faq-q9': d.faqQ9, 'faq-a9': d.faqA9
         };
 
         for (const [id, text] of Object.entries(map)) {
             const el = document.getElementById(id);
-            if(el) el.innerHTML = text; // 使用 innerHTML 允许简单的换行标签
+            if(el) el.innerHTML = text; 
         }
 
         // 动态生成徽章 (Badges)
@@ -867,7 +943,6 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
 
     /* --- [界面交互逻辑] --- */
     function showPolicy(type) {
-        // 由于篇幅限制，隐私政策弹窗依然只保留中英，其他语言默认显示英文
         const modal = document.getElementById('policyModal');
         const body = document.getElementById('policyBody');
         const langKey = currLang === 'zh' ? 'zh' : 'en';
