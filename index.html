@@ -832,7 +832,7 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
         });
     }
 
-    /* --- [接收端逻辑] --- */
+    /* --- [接收端逻辑 - 已修复速度与ETA显示] --- */
     function startReceiving() {
         const code = document.getElementById('targetCode').value;
         const rPeer = new Peer();
@@ -844,6 +844,8 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
             const conn = rPeer.connect(PREFIX + code, { reliable: true }); 
             activeConn = conn;
             let meta = null, chunks = [], totalRecv = 0;
+            // 新增：计时变量
+            let startTime = 0, lastUpdate = 0;
             
             conn.on('data', async d => {
                 if(d.type === 'text') {
@@ -863,15 +865,40 @@ Limit: <select id="downloadLimit" style="background:#0f172a; color:#fff; border:
                 }
                 else if(d.type === 'meta') { 
                     meta = d; 
+                    startTime = Date.now(); // 开始计时
                     document.getElementById('mobileDownloadArea').style.display = 'block'; 
+                    document.getElementById('receiveNerdStats').style.display = 'flex'; // 显示速度栏
                 }
                 else if(d.type === 'chunk') { 
-                    chunks[d.index] = d.data; totalRecv += d.data.byteLength;
-                    if(meta) pgBar.style.width = (totalRecv / meta.size * 100) + '%';
+                    chunks[d.index] = d.data; 
+                    totalRecv += d.data.byteLength;
+                    
+                    if(meta) {
+                        // 更新进度条
+                        pgBar.style.width = (totalRecv / meta.size * 100) + '%';
+                        
+                        // --- 新增：计算速度与 ETA ---
+                        const now = Date.now();
+                        // 每 500ms 更新一次 UI，避免频繁重绘
+                        if (now - lastUpdate > 500 || totalRecv === meta.size) {
+                            const duration = (now - startTime) / 1000; // 已耗时(秒)
+                            const speed = duration > 0 ? (totalRecv / 1024 / 1024 / duration) : 0; // MB/s
+                            const remainingBytes = meta.size - totalRecv;
+                            const eta = speed > 0 ? (remainingBytes / 1024 / 1024 / speed) : 0; // 剩余秒数
+                            
+                            document.getElementById('nerd-speed').innerText = speed.toFixed(1) + ' MB/s';
+                            document.getElementById('nerd-eta').innerText = 'ETA: ' + Math.ceil(eta) + 's';
+                            lastUpdate = now;
+                        }
+                    }
                 }
                 else if(d.type === 'done') {
                     const btn = document.getElementById('btn-save-file');
                     let finalBlob = new Blob(chunks);
+                    
+                    // 传输完成，进度条和数据拉满
+                    pgBar.style.width = '100%';
+                    document.getElementById('nerd-eta').innerText = 'ETA: 0s';
 
                     if (meta && meta.encrypted) {
                         const pass = prompt("🔐 This file is encrypted. Enter password to decrypt:");
