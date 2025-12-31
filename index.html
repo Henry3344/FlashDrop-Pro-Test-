@@ -33,7 +33,8 @@
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: moveStars linear infinite; }
         @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-1000px); } }
         
-        .navbar { position: fixed; top: 0; left: 0; right: 0; height: 110px; background: var(--nav-bg); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(25px); padding: 10px; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+        /* [核心] 提高导航栏层级，确保不被内容遮挡 */
+        .navbar { position: fixed; top: 0; left: 0; right: 0; height: 110px; background: var(--nav-bg); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(25px); padding: 10px; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
         .logo-wrap { display: flex; align-items: center; gap: 12px; }
         .logo { font-size: 30px; font-weight: 900; color: white; letter-spacing: 2px; }
         .logo span { color: var(--primary); }
@@ -66,7 +67,7 @@
         .column-box { display: flex; flex-direction: column; gap: 10px; min-height: 220px; }
         .file-zone { border: 2.5px dashed var(--border); border-radius: 20px; padding: 25px; background: rgba(15, 23, 42, 0.5); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 150px; text-align: center; transition: 0.3s; backdrop-filter: blur(15px); }
         
-        /* [新增] 拖拽激活时的样式 */
+        /* [新增] 拖拽激活样式：文件拖进来时变色 */
         .file-zone.drag-active, #drop-zone.drag-active { background: rgba(99, 102, 241, 0.3); border-color: #fff; transform: scale(1.02); }
         
         .text-zone { border: 1.5px solid var(--border); border-radius: 20px; padding: 20px; background: rgba(15, 23, 42, 0.5); display: flex; flex-direction: column; flex: 1; min-height: 150px; backdrop-filter: blur(15px); }
@@ -159,10 +160,9 @@
         .protection-btn:has(input:checked) .state.off { display: none !important; }
         .protection-btn:has(input:checked) .state.on { display: flex !important; }
 
-        /* --- [新增] 密码强度条高级样式 (HSL平滑变色) --- */
+        /* 密码强度条高级样式 */
         .strength-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; width: 100%; }
         .strength-track { flex: 1; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; }
-        /* 丝滑过渡动画 cubic-bezier */
         #strength-bar-fill { height: 100%; width: 0%; background-color: #ef4444; border-radius: 3px; transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.3s ease; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
         #strength-text { font-size: 11px; font-weight: 800; color: #64748b; min-width: 60px; text-align: right; transition: color 0.3s ease; }
     </style>
@@ -610,8 +610,9 @@
         currLang = I18N[userLang] ? userLang : "en";
         const d = I18N[currLang];
 
-        // 动态更新语言标签 (EN -> CN / ES ...)
-        document.getElementById('currentLangTag').innerText = d.tag;
+        // 动态更新语言标签
+        const tagEl = document.getElementById('currentLangTag');
+        if(tagEl) tagEl.innerText = d.tag;
 
         const map = {
             'tab-send': d.tabSend, 'tab-receive': d.tabReceive,
@@ -653,18 +654,19 @@
         }
 
         const badgeContainer = document.getElementById('trust-badges');
-        badgeContainer.innerHTML = d.badges.map(b => 
-            `<span class="status-tag" style="font-size: 9px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); white-space: nowrap; letter-spacing: 0.5px;">${b}</span>`
-        ).join('');
+        if(badgeContainer) {
+            badgeContainer.innerHTML = d.badges.map(b => 
+                `<span class="status-tag" style="font-size: 9px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); white-space: nowrap; letter-spacing: 0.5px;">${b}</span>`
+            ).join('');
+        }
     }
 
-    /* --- [2. 拖拽功能修复] --- */
+    /* --- [2. 拖拽功能修复 & UI逻辑] --- */
     function initDragAndDrop() {
         const dz = document.getElementById('drop-zone');
-        // 同时给 全局 和 文件区域 都加监听
-        const handlers = ['dragenter', 'dragover', 'dragleave', 'drop'];
-        handlers.forEach(name => {
-            document.body.addEventListener(name, preventDefaults, false);
+        // 全局拖拽事件
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            document.body.addEventListener(eventName, preventDefaults, false);
         });
 
         function preventDefaults(e) {
@@ -673,7 +675,12 @@
         }
 
         // 拖入显示全屏覆盖层
-        document.body.addEventListener('dragenter', () => { dz.style.display = 'flex'; });
+        document.body.addEventListener('dragenter', (e) => { 
+            // 只有拖入文件时才显示
+            if (e.dataTransfer.types && e.dataTransfer.types.includes('Files')) {
+                dz.style.display = 'flex'; 
+            }
+        });
         
         // 覆盖层上的拖拽事件
         dz.addEventListener('dragleave', (e) => { 
@@ -685,12 +692,11 @@
             const dt = e.dataTransfer;
             const files = dt.files;
             handleFiles(files);
-            // 自动切换到发送Tab
             document.getElementById('tab-send').click();
         });
     }
 
-    /* --- [3. 广告检测] --- */
+    /* --- [3. 广告检测 & 狠心拒绝] --- */
     function dismissAdBlock() {
         isAdBlockIgnored = true; 
         document.getElementById('safety-notice-view').style.display = 'none';
@@ -835,7 +841,7 @@
         if(checkbox) checkbox.checked = isEncrypted;
     }
 
-    /* --- [PeerJS 传输核心] --- */
+    /* --- [P2P 通信核心] --- */
     async function initSender() {
         if(peer) peer.destroy(); 
         currentDownloads = 0; 
@@ -1050,17 +1056,30 @@
     function closePolicy() { document.getElementById('policyModal').style.display = 'none'; }
     function startExpiryTimer() { let sec = 600; if(expiryTimerIdx) clearInterval(expiryTimerIdx); expiryTimerIdx = setInterval(() => { sec--; document.getElementById('expiryTimer').innerText = `${I18N[currLang].exp}${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; if(sec <= 0) resetSender(); }, 1000); }
     
-    // [核心修复] 重置发送界面时，自动滚回顶部，防止界面“消失”
+    // [核心修复] 强制滚回顶部 + 隐藏键盘
     function resetSender() { 
         if(peer) peer.destroy(); 
+        
+        // 隐藏二维码区域
         document.getElementById('senderCodeArea').style.display = 'none'; 
+        
         stagedFiles = []; 
         renderStagedList(); 
-        document.getElementById('quickText').value = ""; 
+        
+        // 1. 清空输入框并让其失去焦点（这会强制手机键盘收起）
+        const quickText = document.getElementById('quickText');
+        quickText.value = ""; 
+        quickText.blur(); 
+        
         if(expiryTimerIdx) clearInterval(expiryTimerIdx); 
         
-        // 关键行：滚回顶部
-        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+        // 2. 强制滚回顶部，解决界面“消失”问题
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // 3. 双重保险：稍微延时后再滚一次，防止键盘收起动画干扰
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+        }, 300);
     }
     
     function resetReceiver() { document.getElementById('targetCode').value = ""; document.getElementById('mobileDownloadArea').style.display = 'none'; document.getElementById('receive-pg-container').style.display = 'none'; document.getElementById('receiveNerdStats').style.display = 'none'; document.getElementById('receivedText-container').style.display = 'none'; activeConn = null; }
