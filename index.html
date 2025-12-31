@@ -65,6 +65,9 @@
         @media (max-width: 550px) { .share-grid { grid-template-columns: 1fr; } }
         .column-box { display: flex; flex-direction: column; gap: 10px; min-height: 220px; }
         .file-zone { border: 2.5px dashed var(--border); border-radius: 20px; padding: 25px; background: rgba(15, 23, 42, 0.5); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 150px; text-align: center; transition: 0.3s; backdrop-filter: blur(15px); }
+        /* 拖拽激活样式 */
+        .file-zone.drag-active, #drop-zone.drag-active { background: rgba(99, 102, 241, 0.3); border-color: #fff; transform: scale(1.02); }
+        
         .text-zone { border: 1.5px solid var(--border); border-radius: 20px; padding: 20px; background: rgba(15, 23, 42, 0.5); display: flex; flex-direction: column; flex: 1; min-height: 150px; backdrop-filter: blur(15px); }
         textarea { background: transparent; border: none; color: white; resize: none; width: 100%; flex: 1; font-size: 14px; margin-top: 8px; }
 
@@ -228,7 +231,7 @@
                 <div id="panel-send" class="panel active">
                     <div class="share-grid">
                         <div class="column-box">
-                            <label class="file-zone" for="fileInput"><div style="font-size: 42px;">📂</div><div id="label-files" style="font-size:13px; margin-top:10px; font-weight:900;">Drop / Click</div></label>
+                            <label class="file-zone" id="file-drop-area" for="fileInput"><div style="font-size: 42px;">📂</div><div id="label-files" style="font-size:13px; margin-top:10px; font-weight:900;">Drop / Click</div></label>
                             <div id="stagedList"></div>
                             <button class="action-btn" id="btn-share-files" onclick="triggerAd('send-file')">SHARE FILES</button>
                         </div>
@@ -388,9 +391,10 @@
     <button class="action-btn" style="width:180px; background:#334155;" onclick="closeScanner()">CLOSE</button>
 </div>
 <script>
-    /* --- [多语言配置中心 - 已添加 7级强度提示 & 狠心拒绝] --- */
+    /* --- [多语言配置中心] --- */
     const I18N = {
         en: { 
+            tag: "EN", // 语言标签显示
             tabSend: "Send", tabReceive: "Receive", 
             badges: ["🔒 P2P Encrypted", "🕵️ No Logs", "⚡ High Speed", "📂 Auto-Wipe"], 
             drop: "DROP TO STAGE", fileLab: "Drop / Click", 
@@ -410,7 +414,6 @@
             modalTitle: "Set Password", btnEnable: "ENABLE", btnCancel: "CANCEL",
             aesOff: "AES-256 OFF", aesOn: "AES-256 ON",
             btnRuthless: "Ruthless Refusal (Session only)",
-            // [新增] 7级强度提示
             strengthLevels: ["Very Weak", "Weak", "Medium", "Moderate", "Strong", "Very Strong", "Unbreakable"],
             faqTitle: "Common Questions",
             faqQ1: "Do my files ever touch your servers?", faqA1: "No. Files are sent directly between browsers via P2P. Never stored on our servers.",
@@ -425,6 +428,7 @@
             techPhrases: ["Generating RSA-4096 Key...", "Initializing WebRTC Handshake...", "Establishing P2P Tunnel...", "Synchronizing Peer Signals...", "Channel Secured!"]
         },
         zh: { 
+            tag: "CN",
             tabSend: "发送", tabReceive: "接收", 
             badges: ["🔒 P2P 加密", "🕵️ 零日志", "⚡ 极速传输", "📂 阅后即焚"], 
             drop: "松手上传", fileLab: "拖拽 / 点击", 
@@ -444,7 +448,6 @@
             modalTitle: "设置密码", btnEnable: "启用保护", btnCancel: "取消",
             aesOff: "AES-256 关闭", aesOn: "AES-256 开启",
             btnRuthless: "狠心拒绝（仅这次）",
-            // [新增] 7级强度提示
             strengthLevels: ["极弱", "弱", "中等", "稍强", "强", "极强", "特别强"],
             faqTitle: "常见问题",
             faqQ1: "文件会经过服务器吗？", faqA1: "不会。文件通过 P2P 直接在浏览器间传输，绝不存储在服务器上。",
@@ -459,6 +462,7 @@
             techPhrases: ["正在生成密钥对...", "初始化 WebRTC 握手...", "建立加密隧道...", "同步点对点信号...", "通道已安全!"]
         },
         ja: { 
+            tag: "JP",
             tabSend: "送信", tabReceive: "受信", 
             badges: ["🔒 P2P暗号化", "🕵️ ログなし", "⚡ 高速転送", "📂 自動消去"], 
             drop: "ここにドロップ", fileLab: "クリックして選択", 
@@ -492,6 +496,7 @@
             techPhrases: ["RSA鍵を生成中...", "WebRTCハンドシェイク...", "P2Pトンネル確立中...", "信号を同期中...", "安全な接続完了!"]
         },
         ko: { 
+            tag: "KR",
             tabSend: "보내기", tabReceive: "받기", 
             badges: ["🔒 P2P 암호화", "🕵️ 로그 없음", "⚡ 고속 전송", "📂 자동 삭제"], 
             drop: "여기에 드롭", fileLab: "파일 선택 / 클릭", 
@@ -525,6 +530,7 @@
             techPhrases: ["RSA 키 생성 중...", "WebRTC 연결 중...", "P2P 터널 수립 중...", "동기화 중...", "보안 연결 완료!"]
         },
         es: { 
+            tag: "ES",
             tabSend: "Enviar", tabReceive: "Recibir", 
             badges: ["🔒 Cifrado P2P", "🕵️ Sin Registros", "⚡ Alta Velocidad", "📂 Auto-Borrado"], 
             drop: "SOLTAR AQUÍ", fileLab: "Soltar / Clic", 
@@ -558,6 +564,7 @@
             techPhrases: ["Generando Clave RSA...", "Iniciando WebRTC...", "Túnel P2P...", "Sincronizando...", "¡Canal Seguro!"]
         },
         hi: { 
+            tag: "HI",
             tabSend: "भेजें", tabReceive: "प्राप्त करें", 
             badges: ["🔒 P2P एन्क्रिप्शन", "🕵️ कोई लॉग नहीं", "⚡ तीव्र गति", "📂 ऑटो-वाइप"], 
             drop: "यहाँ छोड़ें", fileLab: "चुनें / क्लिक करें", 
@@ -593,16 +600,17 @@
     };
 
     let currLang = "en", peer = null, stagedFiles = [], currentDownloads = 0, videoTrack = null, torchOn = false, activeConn = null, expiryTimerIdx = null;
-    let isAdBlockIgnored = false; // [狠心拒绝] 状态位
+    let isAdBlockIgnored = false; 
     const PREFIX = "fd-pro-", CHUNK_SIZE = 262144;
 
-    /* --- [语言自动检测与应用 - 适配新加的按钮和强度等级] --- */
+    /* --- [1. 语言自动检测与应用 - 动态更新右上角标签] --- */
     function applyI18N() {
         const userLang = navigator.language.split('-')[0];
         currLang = I18N[userLang] ? userLang : "en";
         const d = I18N[currLang];
 
-        document.getElementById('currentLangTag').innerText = currLang.toUpperCase();
+        // 核心修改：动态更新语言标签 (EN -> CN / ES / JP ...)
+        document.getElementById('currentLangTag').innerText = d.tag;
 
         const map = {
             'tab-send': d.tabSend, 'tab-receive': d.tabReceive,
@@ -618,7 +626,7 @@
             'signal-1': d.sig1, 'signal-2': d.sig2, 'signal-3': d.sig3,
             'modal-pass-title': d.modalTitle, 'btn-enable-pass': d.btnEnable, 'btn-cancel-pass': d.btnCancel,
             'aes-off-txt': d.aesOff, 'aes-on-txt': d.aesOn, 
-            'btn-ruthless': d.btnRuthless, // [适配] 狠心拒绝按钮
+            'btn-ruthless-text': d.btnRuthless, 
             'faq-title': d.faqTitle,
             'faq-q1': d.faqQ1, 'faq-a1': d.faqA1,
             'faq-q2': d.faqQ2, 'faq-a2': d.faqA2,
@@ -633,16 +641,7 @@
 
         for (const [id, text] of Object.entries(map)) {
             const el = document.getElementById(id);
-            if(el) { 
-                // 针对按钮内的 span 单独处理，或者直接替换按钮内容
-                if(id === 'btn-ruthless') {
-                    // 按钮里可能包了span，直接找span改或者整个改
-                    const span = document.getElementById('btn-ruthless-text');
-                    if(span) span.innerText = text; else el.innerText = text;
-                } else {
-                    el.innerHTML = text;
-                }
-            }
+            if(el) el.innerHTML = text; 
         }
 
         const badgeContainer = document.getElementById('trust-badges');
@@ -651,15 +650,47 @@
         ).join('');
     }
 
-    /* --- [广告与等待机制 - 4秒延时 + 狠心拒绝跳过] --- */
+    /* --- [2. 拖拽功能修复：添加完整事件监听] --- */
+    function initDragAndDrop() {
+        const dz = document.getElementById('drop-zone');
+        const fz = document.getElementById('file-drop-area'); // 对应 panel 里的区域
+        
+        // 阻止默认行为
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // 拖入显示全屏覆盖层
+        document.body.addEventListener('dragenter', () => { dz.style.display = 'flex'; });
+        
+        // 覆盖层上的拖拽事件
+        dz.addEventListener('dragleave', (e) => { 
+            if(e.target === dz) dz.style.display = 'none'; 
+        });
+        
+        dz.addEventListener('drop', (e) => {
+            dz.style.display = 'none';
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+            // 如果不在发送面板，自动切换过去
+            document.getElementById('tab-send').click();
+        });
+    }
+
+    /* --- [3. 广告检测：4秒延时 + 狠心拒绝] --- */
     function dismissAdBlock() {
-        isAdBlockIgnored = true; // 设为 true，本次会话不再弹
+        isAdBlockIgnored = true; 
         document.getElementById('safety-notice-view').style.display = 'none';
         document.querySelectorAll('.ad-space, .ad-side').forEach(el => el.style.display = 'none');
     }
 
     function triggerAd(mode) {
-        // [检测开关] 如果用户点了狠心拒绝，直接通过
         if(isAdBlockIgnored) {
             mode.startsWith('send') ? initSender() : startReceiving();
             return;
@@ -707,7 +738,7 @@
         }, 100);
     }
 
-    /* --- [加密核心模块] --- */
+    /* --- [加密模块] --- */
     let isEncrypted = false, aesKey = "";
     const FlashDropCrypto = {
         async deriveKey(pass, salt) {
@@ -745,7 +776,7 @@
     }
     function closeCryptoModal() { document.getElementById('crypto-modal').style.display = 'none'; }
     
-    /* --- [核心算法：积分制密码强度检测 (0-100分 + HSL变色 + 7级提示)] --- */
+    /* --- [密码强度检测：积分制+HSL变色] --- */
     function checkStrength(p) {
         const bar = document.getElementById('strength-bar-fill');
         const txt = document.getElementById('strength-text');
@@ -756,36 +787,26 @@
             txt.innerText = 'Empty'; return;
         }
 
-        // 1. 长度分：每位 3 分 (长度即正义)
         score += p.length * 3;
-        
-        // 2. 种类分：每种 10 分 (鼓励混合)
         if (/[A-Z]/.test(p)) score += 10;
         if (/[a-z]/.test(p)) score += 10;
         if (/[0-9]/.test(p)) score += 10;
         if (/[^A-Za-z0-9]/.test(p)) score += 10;
 
-        // 封顶 100 分 (40位纯字母就已经 120分了，肯定满分)
         if (score > 100) score = 100;
 
-        // 计算颜色 HSL: 0(红) -> 120(绿) 丝滑过渡
         const hue = Math.floor((score / 100) * 120);
-        
         bar.style.width = `${score}%`;
-        bar.style.backgroundColor = `hsl(${hue}, 90%, 45%)`; // 亮度45%比较醒目
+        bar.style.backgroundColor = `hsl(${hue}, 90%, 45%)`;
 
-        // 计算文字等级 (0-6)
-        // 0-14分:极弱, 15-29分:弱 ... 90-100分:特别强
         const levels = I18N[currLang].strengthLevels;
         let idx = Math.floor(score / 14.5); 
         if(idx >= levels.length) idx = levels.length - 1;
         
         txt.innerText = levels[idx];
-        // 文字颜色也跟着变色，更加直观
         txt.style.color = `hsl(${hue}, 80%, 40%)`;
     }
 
-    /* --- [确认加密：只要分数够高或者符合基本要求即可] --- */
     function confirmEncryption() {
         const p = document.getElementById('crypto-password').value;
         const hasUpper = /[A-Z]/.test(p);
@@ -794,8 +815,6 @@
         const hasSym = /[^A-Za-z0-9]/.test(p);
         const isLongEnough = p.length >= 8;
 
-        // 规则：要么满足严格的复杂度校验，要么长度超级长(>20位)也可以放行
-        // 这里还是保留你的“严格要求”逻辑，保证安全性
         if (!isLongEnough || !hasUpper || !hasLower || !hasNum || !hasSym) {
             alert("Password too weak!\nMust be at least 8 characters and include:\n- Uppercase (A-Z)\n- Lowercase (a-z)\n- Number (0-9)\n- Special Character (!@#$)");
             return;
@@ -809,7 +828,7 @@
         if(checkbox) checkbox.checked = isEncrypted;
     }
 
-    /* --- [发送端逻辑] --- */
+    /* --- [PeerJS 传输逻辑] --- */
     async function initSender() {
         if(peer) peer.destroy(); 
         currentDownloads = 0; 
@@ -1006,11 +1025,10 @@
         resetReceiver(); 
     }
     function detectAdBlock() {
-        // [修改] 如果标记了狠心拒绝，则跳过
         if(isAdBlockIgnored) return false;
 
         setTimeout(() => {
-            if(isAdBlockIgnored) return; // 二次检查
+            if(isAdBlockIgnored) return;
 
             const topAd = document.getElementById('top-ad-zone');
             const hasContent = topAd.getElementsByTagName('iframe').length > 0 || topAd.getElementsByTagName('ins').length > 0;
@@ -1018,11 +1036,11 @@
                 document.getElementById('safety-notice-view').style.display = 'flex';
                 document.querySelectorAll('.ad-space, .ad-side').forEach(el => el.style.display = 'none');
             }
-        }, 4000); // 延时改为 4000
+        }, 4000); // 4秒延时
         return false;
     }
 
-    /* --- [界面交互逻辑] --- */
+    /* --- [辅助逻辑] --- */
     function closePolicy() { document.getElementById('policyModal').style.display = 'none'; }
     function startExpiryTimer() { let sec = 600; if(expiryTimerIdx) clearInterval(expiryTimerIdx); expiryTimerIdx = setInterval(() => { sec--; document.getElementById('expiryTimer').innerText = `${I18N[currLang].exp}${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; if(sec <= 0) resetSender(); }, 1000); }
     function resetSender() { if(peer) peer.destroy(); document.getElementById('senderCodeArea').style.display = 'none'; stagedFiles = []; renderStagedList(); document.getElementById('quickText').value = ""; if(expiryTimerIdx) clearInterval(expiryTimerIdx); }
@@ -1031,14 +1049,14 @@
     function handleFiles(files) { stagedFiles = stagedFiles.concat(Array.from(files)); renderStagedList(); }
     function renderStagedList() { const list = document.getElementById('stagedList'); list.style.display = stagedFiles.length ? 'block' : 'none'; list.innerHTML = stagedFiles.map((f, i) => `<div class="staged-item"><span>📄 ${f.name.length > 15 ? f.name.substring(0,12)+'...' : f.name}</span><span style="color:var(--danger); cursor:pointer; font-weight:bold; padding:0 5px;" onclick="stagedFiles.splice(${i},1);renderStagedList()">✕</span></div>`).join(''); }
     
-    /* --- [QR 扫描器逻辑] --- */
     async function toggleTorch() { if (!videoTrack) return; torchOn = !torchOn; try { await videoTrack.applyConstraints({ advanced: [{ torch: torchOn }] }); } catch (e) {} }
     async function openScanner() { document.getElementById('scanner-modal').style.display='flex'; try { const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }); const video = document.getElementById('video-preview'); video.srcObject = stream; videoTrack = stream.getVideoTracks()[0]; video.play(); requestAnimationFrame(tickScanner); } catch (e) { alert("Camera failed"); closeScanner(); } }
     function closeScanner() { document.getElementById('scanner-modal').style.display='none'; if(videoTrack) videoTrack.stop(); torchOn = false; }
     function tickScanner() { const v = document.getElementById('video-preview'); if(v.readyState === v.HAVE_ENOUGH_DATA) { const cvs = document.createElement("canvas"); cvs.width = v.videoWidth; cvs.height = v.videoHeight; const ctx = cvs.getContext("2d"); ctx.drawImage(v, 0, 0); const data = jsQR(ctx.getImageData(0,0,cvs.width,cvs.height).data, cvs.width, cvs.height); if(data) { const c = new URL(data.data).searchParams.get("c"); if(c) { document.getElementById('targetCode').value = c; closeScanner(); triggerAd('receive'); return; } } } if(document.getElementById('scanner-modal').style.display === 'flex') requestAnimationFrame(tickScanner); }
     function initStars() { const c = document.getElementById('stars'); for(let i=0; i<80; i++) { const s = document.createElement('div'); s.className = 'star'; s.style.width = s.style.height = Math.random()*2+'px'; s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%'; s.style.animationDuration = Math.random()*20+20+'s'; c.appendChild(s); } }
     
-    window.onload = () => { initStars(); applyI18N(); renderHistory(); detectAdBlock(); };
+    // 初始化所有功能：星星背景、多语言、拖拽监听、历史记录、广告检测
+    window.onload = () => { initStars(); applyI18N(); initDragAndDrop(); renderHistory(); detectAdBlock(); };
 </script>
 </body>
 </html>
