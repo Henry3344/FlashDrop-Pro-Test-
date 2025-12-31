@@ -419,7 +419,8 @@
             drop: "DROP TO STAGE", fileLab: "Drop / Click", 
             shareF: "SHARE FILES", shareT: "SHARE TEXT", 
             connect: "DOWNLOAD", save: "📥 SAVE", 
-            recv: "RECEIVE", decryptRecv: "🔓 DECRYPT & VIEW", decryptSave: "🔓 DECRYPT & SAVE",
+            // 单按钮状态
+            recv: "RECEIVE", decryptRecv: "🔓 DECRYPT & VIEW", decryptSave: "🔓 DECRYPT & SAVE", saveNow: "💾 SAVE NOW",
             
             exp: "Expires: ", copyLink: "📋 COPY LINK", stop: "STOP",
             guide: "Scan QR or enter code on receiver device.", 
@@ -664,15 +665,12 @@
     let downloadDotsIdx = null; 
     const PREFIX = "fd-pro-", CHUNK_SIZE = 262144;
 
-    /* --- [1. 语言自动检测与应用] --- */
     function applyI18N() {
         const userLang = navigator.language.split('-')[0];
         currLang = I18N[userLang] ? userLang : "en";
         const d = I18N[currLang];
-
         const tagEl = document.getElementById('currentLangTag');
         if(tagEl) tagEl.innerText = d.tag;
-
         const map = {
             'tab-send': d.tabSend, 'tab-receive': d.tabReceive,
             'drop-text': d.drop, 'label-files': d.fileLab,
@@ -682,10 +680,7 @@
             'guideText': d.guide, 'foot-coffee': d.coffee,
             'link-priv': d.hPriv, 'link-site': d.hSite, 'link-us': d.hUs,
             'btn-scan': d.orScan, 'history-title-text': d.histTitle,
-            
-            // 4步骤
             'step-1': d.step1, 'step-2': d.step2, 'step-3': d.step3, 'step-4': d.step4,
-
             'hero-title': d.heroTitle, 'signal-1': d.sig1, 'signal-2': d.sig2, 'signal-3': d.sig3,
             'modal-pass-title': d.modalTitle, 'btn-enable-pass': d.btnEnable, 'btn-cancel-pass': d.btnCancel,
             'aes-off-txt': d.aesOff, 'aes-on-txt': d.aesOn, 
@@ -696,7 +691,6 @@
             'faq-q7': d.faqQ7, 'faq-a7': d.faqA7, 'faq-q8': d.faqQ8, 'faq-a8': d.faqA8,
             'faq-q9': d.faqQ9, 'faq-a9': d.faqA9
         };
-
         for (const [id, text] of Object.entries(map)) {
             const el = document.getElementById(id);
             if(el) { 
@@ -704,45 +698,40 @@
                 else { el.innerHTML = text; }
             }
         }
-
         const badgeContainer = document.getElementById('trust-badges');
         if(badgeContainer) {
             badgeContainer.innerHTML = d.badges.map(b => `<span class="status-tag" style="font-size: 9px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); white-space: nowrap; letter-spacing: 0.5px;">${b}</span>`).join('');
         }
     }
 
-    /* --- [2. 拖拽功能] --- */
     function initDragAndDrop() {
         const dz = document.getElementById('drop-zone');
-        document.body.addEventListener('dragenter', (e) => { 
-            if (e.dataTransfer.types && e.dataTransfer.types.includes('Files')) { e.preventDefault(); dz.style.display = 'flex'; } 
-        });
+        document.body.addEventListener('dragenter', (e) => { if (e.dataTransfer.types && e.dataTransfer.types.includes('Files')) { e.preventDefault(); dz.style.display = 'flex'; } });
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(name => { document.body.addEventListener(name, (e) => { e.preventDefault(); e.stopPropagation(); }, false); });
         dz.addEventListener('dragleave', (e) => { if(e.target === dz) dz.style.display = 'none'; });
         dz.addEventListener('drop', (e) => { dz.style.display = 'none'; handleFiles(e.dataTransfer.files); document.getElementById('tab-send').click(); });
     }
 
-    /* --- [3. 广告与验证] --- */
     function dismissAdBlock() { isAdBlockIgnored = true; document.getElementById('safety-notice-view').style.display = 'none'; document.querySelectorAll('.ad-space, .ad-side').forEach(el => el.style.display = 'none'); }
 
+    // [修复] 调整检测顺序：先检查内容，再检查广告
     function triggerAd(mode) {
-        if(isAdBlockIgnored) { mode.startsWith('send') ? initSender() : startReceiving(); return; }
-        if(detectAdBlock()) return;
-        
-        // [修复] 接收模式下，先检查验证码，为空则不显示 Loading
+        // 1. 内容/输入校验 (Priority High)
         if(mode === 'receive') {
             document.getElementById('targetCode').blur(); 
             const codeVal = document.getElementById('targetCode').value;
             if(!codeVal || codeVal.length < 6) { alert(I18N[currLang].inputErr); return; }
         }
-        
         if(mode === 'send-file' && stagedFiles.length === 0) { alert(I18N[currLang].fileErr); return; }
         if(mode === 'send-text' && !document.getElementById('quickText').value.trim()) { alert(I18N[currLang].textErr); return; }
+
+        // 2. 广告逻辑 (Priority Low)
+        if(isAdBlockIgnored) { mode.startsWith('send') ? initSender() : startReceiving(); return; }
+        if(detectAdBlock()) return;
 
         const modal = document.getElementById('adModal'); const adPg = document.getElementById('ad-pg-bar'); const timerText = document.getElementById('ad-timer-text'); const title = document.getElementById('ad-wait-title'); const techPhrases = I18N[currLang].techPhrases;
         modal.style.display = 'flex'; adPg.style.width = '0%'; 
         let elapsed = 0; const totalMs = 5000;
-
         const itv = setInterval(() => { 
             elapsed += 100; const pct = (elapsed / totalMs) * 100; const rem = Math.ceil((totalMs - elapsed) / 1000);
             adPg.style.width = pct + '%'; timerText.innerText = `Remaining: ${rem > 0 ? rem : 0}s`;
@@ -751,7 +740,6 @@
         }, 100);
     }
 
-    /* --- [加密模块] --- */
     let isEncrypted = false, aesKey = "";
     const FlashDropCrypto = {
         async deriveKey(pass, salt) {
@@ -773,7 +761,18 @@
         }
     };
 
-    function showCryptoModal() { if(isEncrypted) { isEncrypted = false; aesKey = ""; updateLockUI(); return; } document.getElementById('crypto-modal').style.display = 'flex'; }
+    function showCryptoModal() { 
+        // [修复] 关闭时清空所有密码数据
+        if(isEncrypted) { 
+            isEncrypted = false; 
+            aesKey = ""; 
+            document.getElementById('crypto-password').value = ""; // 清空输入框
+            checkStrength(""); // 重置强度条
+            updateLockUI(); 
+            return; 
+        } 
+        document.getElementById('crypto-modal').style.display = 'flex'; 
+    }
     function closeCryptoModal() { document.getElementById('crypto-modal').style.display = 'none'; }
     function checkStrength(p) {
         const bar = document.getElementById('strength-bar-fill'); const txt = document.getElementById('strength-text');
@@ -792,7 +791,6 @@
     }
     function updateLockUI() { document.getElementById('protection-toggle-input').checked = isEncrypted; }
 
-    /* --- [Sender Logic] --- */
     async function initSender() {
         if(peer) peer.destroy(); currentDownloads = 0; const code = Math.floor(100000 + Math.random() * 900000);
         peer = new Peer(PREFIX + code);
@@ -826,7 +824,6 @@
         });
     }
 
-    /* --- [Receiver Logic - Single Button Dynamic] --- */
     function startReceiving() {
         const code = document.getElementById('targetCode').value;
         const rPeer = new Peer();
@@ -843,7 +840,6 @@
             let meta = null, chunks = [], totalRecv = 0, startTime = Date.now(), lastUpdate = 0;
             
             conn.on('data', async d => {
-                // --- TEXT ---
                 if(d.type === 'text') {
                     if(downloadDotsIdx) clearInterval(downloadDotsIdx);
                     const label = d.encrypted ? I18N[currLang].decryptRecv : I18N[currLang].recv;
@@ -872,13 +868,11 @@
                         document.getElementById('receivedText').innerText = finalTxt;
                         document.getElementById('receivedText-container').style.display = 'block';
                         pgBar.style.width = '100%';
-                        // 复原
                         btn.onclick = () => triggerAd('receive');
                         btn.innerText = I18N[currLang].connect; btn.style.background = "var(--primary)";
                         if (conn && conn.open) { conn.send({ type: 'confirm_save' }); }
                     };
                 }
-                // --- FILE META ---
                 else if(d.type === 'meta') { 
                     meta = d; startTime = Date.now(); 
                     const stats = document.getElementById('receiveNerdStats'); stats.style.display = 'flex';
@@ -886,7 +880,6 @@
                     const warnText = warnTextMap[currLang] || warnTextMap.en;
                     stats.innerHTML = `<span id="nerd-speed">0.0 MB/s</span><span class="blink-warn">${warnText}</span><span id="nerd-eta" style="color:var(--primary)">ETA: --s</span>`;
                 }
-                // --- FILE CHUNK ---
                 else if(d.type === 'chunk') { 
                     chunks[d.index] = d.data; totalRecv += d.data.byteLength;
                     if(meta) {
@@ -904,37 +897,29 @@
                         }
                     }
                 }
-                // --- FILE DONE ---
                 else if(d.type === 'done') {
                     if(downloadDotsIdx) clearInterval(downloadDotsIdx);
-                    
                     const label = (meta && meta.encrypted) ? I18N[currLang].decryptSave : I18N[currLang].save;
                     const bg = (meta && meta.encrypted) ? "#f59e0b" : "#10b981";
-                    
-                    btn.innerText = label; 
-                    btn.style.background = bg; 
-                    btn.disabled = false; btn.style.opacity = "1";
+                    btn.innerText = label; btn.style.background = bg; btn.disabled = false; btn.style.opacity = "1";
                     
                     const stats = document.getElementById('receiveNerdStats');
                     if(stats) stats.innerHTML = `<span style="color:var(--success); width:100%; text-align:center;">✅ TRANSFER COMPLETE</span>`;
                     pgBar.style.width = '100%';
                     let finalBlob = new Blob(chunks);
 
-                    // [修复] 重写点击逻辑：解密 -> 变绿 -> 保存
                     btn.onclick = async () => {
                         if (meta && meta.encrypted) {
                             let attempts = 0;
                             while(true) {
                                 const pass = prompt(`🔐 Encrypted File! Attempt ${attempts+1}/3. Enter Password:`);
-                                if (!pass) return; // 取消不下载
+                                if (!pass) return; 
                                 try {
                                     finalBlob = await FlashDropCrypto.decrypt(finalBlob, pass);
                                     
-                                    // 重点：解密成功后，按钮变绿提示用户点击下载
+                                    // [修复] 解密成功后，按钮变绿提示手动点击
                                     btn.innerText = I18N[currLang].saveNow || "💾 SAVE NOW";
                                     btn.style.background = "#10b981";
-                                    
-                                    // 再次绑定点击事件执行下载
                                     btn.onclick = () => {
                                         const u = window.URL.createObjectURL(finalBlob);
                                         const a = document.createElement('a'); a.href = u;
@@ -943,7 +928,7 @@
                                         addHistory("Received: " + meta.name.replace('.enc', ''), "file");
                                         setTimeout(() => { resetReceiver(); rPeer.destroy(); }, 1000);
                                     };
-                                    return; // 退出解密循环，等待用户点击Save Now
+                                    return;
 
                                 } catch (e) {
                                     attempts++;
@@ -952,7 +937,6 @@
                                 }
                             }
                         } else {
-                            // 非加密，直接下载
                             const u = window.URL.createObjectURL(finalBlob);
                             const a = document.createElement('a'); a.href = u;
                             a.download = meta.name.replace('.enc', ''); a.click();
@@ -978,8 +962,8 @@
     }
     function copyReceivedText() { 
         navigator.clipboard.writeText(document.getElementById('receivedText').innerText); 
-        // [修复] 复制后完全重置
         alert("Copied!"); 
+        // [修复] 复制后重置
         document.getElementById('receivedText').innerText = "";
         document.getElementById('receivedText-container').style.display = 'none';
         
