@@ -161,7 +161,7 @@
 
         #btn-torch { position: absolute; top: 30px; right: 30px; width: 45px; height: 45px; border-radius: 50%; background: rgba(0,0,0,0.4); border: 1.5px solid white; color: white; font-size: 20px; cursor: pointer; backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 10001; }
 
-        /* [特效] 步骤条流光特效 */
+        /* 步骤条流光特效 */
         .steps-bar { 
             position: relative; display: flex; justify-content: space-between; align-items: center; 
             margin-bottom: 25px; width: 100%; overflow: hidden; padding: 10px 0;
@@ -314,7 +314,6 @@
                         <button class="action-btn" id="btn-stop" onclick="resetSender()" style="background:var(--danger); margin-top:15px;">STOP</button>
                     </div>
                 </div>
-
                 <div id="panel-receive" class="panel">
                     <div style="display:flex; flex-direction:column; align-items:center;">
                         <div class="receive-input-container">
@@ -420,7 +419,6 @@
             drop: "DROP TO STAGE", fileLab: "Drop / Click", 
             shareF: "SHARE FILES", shareT: "SHARE TEXT", 
             connect: "DOWNLOAD", save: "📥 SAVE", 
-            // [新增] 状态文本
             recv: "RECEIVE", decryptRecv: "🔓 DECRYPT & VIEW", decryptSave: "🔓 DECRYPT & SAVE",
             
             exp: "Expires: ", copyLink: "📋 COPY LINK", stop: "STOP",
@@ -428,7 +426,7 @@
             coffee: "Buy me a coffee", 
             hPriv: "Privacy", hSite: "About Site", hUs: "About Us",
             inputErr: "Enter 6-digit code.", orScan: "or scan 📷", 
-            doneRemind: "DONE! Click SAVE below.", 
+            doneRemind: "DONE! Click SAVE above.", 
             histTitle: "Recent History", fileErr: "Please select files first.", textErr: "Please enter text first.",
             
             step1: "Select Files<br><span style='font-size:9px; opacity:0.7'>(Type Text)</span>", 
@@ -462,7 +460,6 @@
             drop: "松手上传", fileLab: "拖拽 / 点击", 
             shareF: "分享文件", shareT: "分享文字", 
             connect: "立即下载", save: "📥 保存文件", 
-            // [更新] 单按钮状态文案
             recv: "👀 查看文字", decryptRecv: "🔓 解密并查看", decryptSave: "🔓 解密并保存",
 
             exp: "有效期: ", copyLink: "📋 复制链接", stop: "停止分享",
@@ -664,18 +661,15 @@
     };
     let currLang = "en", peer = null, stagedFiles = [], currentDownloads = 0, videoTrack = null, torchOn = false, activeConn = null, expiryTimerIdx = null;
     let isAdBlockIgnored = false; 
-    let downloadDotsIdx = null; // 控制按钮动画
+    let downloadDotsIdx = null; 
     const PREFIX = "fd-pro-", CHUNK_SIZE = 262144;
 
-    /* --- [1. 语言自动检测与应用] --- */
     function applyI18N() {
         const userLang = navigator.language.split('-')[0];
         currLang = I18N[userLang] ? userLang : "en";
         const d = I18N[currLang];
-
         const tagEl = document.getElementById('currentLangTag');
         if(tagEl) tagEl.innerText = d.tag;
-
         const map = {
             'tab-send': d.tabSend, 'tab-receive': d.tabReceive,
             'drop-text': d.drop, 'label-files': d.fileLab,
@@ -686,74 +680,41 @@
             'link-priv': d.hPriv, 'link-site': d.hSite, 'link-us': d.hUs,
             'btn-scan': d.orScan, 'history-title-text': d.histTitle,
             'step-1': d.step1, 'step-2': d.step2, 'step-3': d.step3, 'step-4': d.step4,
-            'hero-title': d.heroTitle, 
-            'signal-1': d.sig1, 'signal-2': d.sig2, 'signal-3': d.sig3,
+            'hero-title': d.heroTitle, 'signal-1': d.sig1, 'signal-2': d.sig2, 'signal-3': d.sig3,
             'modal-pass-title': d.modalTitle, 'btn-enable-pass': d.btnEnable, 'btn-cancel-pass': d.btnCancel,
             'aes-off-txt': d.aesOff, 'aes-on-txt': d.aesOn, 
-            'btn-ruthless-text': d.btnRuthless, 
-            'faq-title': d.faqTitle,
-            'faq-q1': d.faqQ1, 'faq-a1': d.faqA1,
-            'faq-q2': d.faqQ2, 'faq-a2': d.faqA2,
-            'faq-q3': d.faqQ3, 'faq-a3': d.faqA3,
-            'faq-q4': d.faqQ4, 'faq-a4': d.faqA4,
-            'faq-q5': d.faqQ5, 'faq-a5': d.faqA5,
-            'faq-q6': d.faqQ6, 'faq-a6': d.faqA6,
-            'faq-q7': d.faqQ7, 'faq-a7': d.faqA7,
-            'faq-q8': d.faqQ8, 'faq-a8': d.faqA8,
+            'btn-ruthless-text': d.btnRuthless, 'faq-title': d.faqTitle,
+            'faq-q1': d.faqQ1, 'faq-a1': d.faqA1, 'faq-q2': d.faqQ2, 'faq-a2': d.faqA2,
+            'faq-q3': d.faqQ3, 'faq-a3': d.faqA3, 'faq-q4': d.faqQ4, 'faq-a4': d.faqA4,
+            'faq-q5': d.faqQ5, 'faq-a5': d.faqA5, 'faq-q6': d.faqQ6, 'faq-a6': d.faqA6,
+            'faq-q7': d.faqQ7, 'faq-a7': d.faqA7, 'faq-q8': d.faqQ8, 'faq-a8': d.faqA8,
             'faq-q9': d.faqQ9, 'faq-a9': d.faqA9
         };
-
         for (const [id, text] of Object.entries(map)) {
             const el = document.getElementById(id);
             if(el) { 
-                if(id === 'btn-ruthless') {
-                    const span = document.getElementById('btn-ruthless-text');
-                    if(span) span.innerText = text; else el.innerText = text;
-                } else {
-                    el.innerHTML = text;
-                }
+                if(id === 'btn-ruthless') { const span = document.getElementById('btn-ruthless-text'); if(span) span.innerText = text; else el.innerText = text; } 
+                else { el.innerHTML = text; }
             }
         }
-
         const badgeContainer = document.getElementById('trust-badges');
         if(badgeContainer) {
-            badgeContainer.innerHTML = d.badges.map(b => 
-                `<span class="status-tag" style="font-size: 9px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); white-space: nowrap; letter-spacing: 0.5px;">${b}</span>`
-            ).join('');
+            badgeContainer.innerHTML = d.badges.map(b => `<span class="status-tag" style="font-size: 9px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); white-space: nowrap; letter-spacing: 0.5px;">${b}</span>`).join('');
         }
     }
 
-    /* --- [2. 拖拽功能] --- */
     function initDragAndDrop() {
         const dz = document.getElementById('drop-zone');
-        document.body.addEventListener('dragenter', (e) => { 
-            if (e.dataTransfer.types && e.dataTransfer.types.includes('Files')) {
-                e.preventDefault(); dz.style.display = 'flex'; 
-            }
-        });
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(name => {
-            document.body.addEventListener(name, (e) => { e.preventDefault(); e.stopPropagation(); }, false);
-        });
+        document.body.addEventListener('dragenter', (e) => { if (e.dataTransfer.types && e.dataTransfer.types.includes('Files')) { e.preventDefault(); dz.style.display = 'flex'; } });
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(name => { document.body.addEventListener(name, (e) => { e.preventDefault(); e.stopPropagation(); }, false); });
         dz.addEventListener('dragleave', (e) => { if(e.target === dz) dz.style.display = 'none'; });
-        dz.addEventListener('drop', (e) => {
-            dz.style.display = 'none'; 
-            handleFiles(e.dataTransfer.files);
-            document.getElementById('tab-send').click(); 
-        });
+        dz.addEventListener('drop', (e) => { dz.style.display = 'none'; handleFiles(e.dataTransfer.files); document.getElementById('tab-send').click(); });
     }
 
-    /* --- [3. 广告检测] --- */
-    function dismissAdBlock() {
-        isAdBlockIgnored = true; 
-        document.getElementById('safety-notice-view').style.display = 'none';
-        document.querySelectorAll('.ad-space, .ad-side').forEach(el => el.style.display = 'none');
-    }
+    function dismissAdBlock() { isAdBlockIgnored = true; document.getElementById('safety-notice-view').style.display = 'none'; document.querySelectorAll('.ad-space, .ad-side').forEach(el => el.style.display = 'none'); }
 
     function triggerAd(mode) {
-        if(isAdBlockIgnored) {
-            mode.startsWith('send') ? initSender() : startReceiving();
-            return;
-        }
+        if(isAdBlockIgnored) { mode.startsWith('send') ? initSender() : startReceiving(); return; }
         if(detectAdBlock()) return;
         if(mode === 'receive') {
             document.getElementById('targetCode').blur(); 
@@ -762,128 +723,76 @@
         if(mode === 'send-file' && stagedFiles.length === 0) { alert(I18N[currLang].fileErr); return; }
         if(mode === 'send-text' && !document.getElementById('quickText').value.trim()) { alert(I18N[currLang].textErr); return; }
 
-        const modal = document.getElementById('adModal');
-        const adPg = document.getElementById('ad-pg-bar');
-        const timerText = document.getElementById('ad-timer-text');
-        const title = document.getElementById('ad-wait-title');
-        const techPhrases = I18N[currLang].techPhrases;
-
+        const modal = document.getElementById('adModal'); const adPg = document.getElementById('ad-pg-bar'); const timerText = document.getElementById('ad-timer-text'); const title = document.getElementById('ad-wait-title'); const techPhrases = I18N[currLang].techPhrases;
         modal.style.display = 'flex'; adPg.style.width = '0%'; 
         let elapsed = 0; const totalMs = 5000;
-
         const itv = setInterval(() => { 
-            elapsed += 100; 
-            const pct = (elapsed / totalMs) * 100;
-            const rem = Math.ceil((totalMs - elapsed) / 1000);
-            adPg.style.width = pct + '%'; 
-            timerText.innerText = `Remaining: ${rem > 0 ? rem : 0}s`;
-            if (elapsed % 1200 === 0 || elapsed === 100) {
-                const phraseIdx = Math.floor(elapsed / 1200);
-                title.innerText = techPhrases[Math.min(phraseIdx, techPhrases.length - 1)];
-            }
-            if(elapsed >= totalMs) { 
-                clearInterval(itv); 
-                modal.style.display = 'none'; 
-                mode.startsWith('send') ? initSender() : startReceiving(); 
-            } 
+            elapsed += 100; const pct = (elapsed / totalMs) * 100; const rem = Math.ceil((totalMs - elapsed) / 1000);
+            adPg.style.width = pct + '%'; timerText.innerText = `Remaining: ${rem > 0 ? rem : 0}s`;
+            if (elapsed % 1200 === 0 || elapsed === 100) { const phraseIdx = Math.floor(elapsed / 1200); title.innerText = techPhrases[Math.min(phraseIdx, techPhrases.length - 1)]; }
+            if(elapsed >= totalMs) { clearInterval(itv); modal.style.display = 'none'; mode.startsWith('send') ? initSender() : startReceiving(); } 
         }, 100);
     }
 
-    /* --- [加密模块] --- */
     let isEncrypted = false, aesKey = "";
     const FlashDropCrypto = {
         async deriveKey(pass, salt) {
-            const encoder = new TextEncoder();
-            const baseKey = await crypto.subtle.importKey("raw", encoder.encode(pass), "PBKDF2", false, ["deriveKey"]);
+            const encoder = new TextEncoder(); const baseKey = await crypto.subtle.importKey("raw", encoder.encode(pass), "PBKDF2", false, ["deriveKey"]);
             return crypto.subtle.deriveKey({ name: "PBKDF2", salt: salt, iterations: 600000, hash: "SHA-256" }, baseKey, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
         },
         async encrypt(blob, pass) {
-            const salt = crypto.getRandomValues(new Uint8Array(16));
-            const iv = crypto.getRandomValues(new Uint8Array(12));
-            const key = await this.deriveKey(pass, salt);
-            const data = await blob.arrayBuffer();
+            const salt = crypto.getRandomValues(new Uint8Array(16)); const iv = crypto.getRandomValues(new Uint8Array(12));
+            const key = await this.deriveKey(pass, salt); const data = await blob.arrayBuffer();
             const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, data);
             return new Blob([salt, iv, new Uint8Array(ct)]);
         },
         async decrypt(blob, pass) {
             try {
-                const buf = await blob.arrayBuffer();
-                const salt = new Uint8Array(buf.slice(0, 16));
-                const iv = new Uint8Array(buf.slice(16, 28));
-                const ct = buf.slice(28);
-                const key = await this.deriveKey(pass, salt);
-                const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, ct);
+                const buf = await blob.arrayBuffer(); const salt = new Uint8Array(buf.slice(0, 16)); const iv = new Uint8Array(buf.slice(16, 28)); const ct = buf.slice(28);
+                const key = await this.deriveKey(pass, salt); const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, ct);
                 return new Blob([pt]);
             } catch (e) { throw new Error("ENC_FAILED"); }
         }
     };
 
-    function showCryptoModal() { 
-        if(isEncrypted) { isEncrypted = false; aesKey = ""; updateLockUI(); return; }
-        document.getElementById('crypto-modal').style.display = 'flex'; 
-    }
+    function showCryptoModal() { if(isEncrypted) { isEncrypted = false; aesKey = ""; updateLockUI(); return; } document.getElementById('crypto-modal').style.display = 'flex'; }
     function closeCryptoModal() { document.getElementById('crypto-modal').style.display = 'none'; }
     function checkStrength(p) {
-        const bar = document.getElementById('strength-bar-fill');
-        const txt = document.getElementById('strength-text');
-        let score = 0;
-        if(!p) { bar.style.width = '0%'; bar.style.backgroundColor = '#ef4444'; txt.innerText = 'Empty'; return; }
-        score += p.length * 3;
-        if (/[A-Z]/.test(p)) score += 10;
-        if (/[a-z]/.test(p)) score += 10;
-        if (/[0-9]/.test(p)) score += 10;
-        if (/[^A-Za-z0-9]/.test(p)) score += 10;
+        const bar = document.getElementById('strength-bar-fill'); const txt = document.getElementById('strength-text');
+        let score = 0; if(!p) { bar.style.width = '0%'; bar.style.backgroundColor = '#ef4444'; txt.innerText = 'Empty'; return; }
+        score += p.length * 3; if (/[A-Z]/.test(p)) score += 10; if (/[a-z]/.test(p)) score += 10; if (/[0-9]/.test(p)) score += 10; if (/[^A-Za-z0-9]/.test(p)) score += 10;
         if (score > 100) score = 100;
-        const hue = Math.floor((score / 100) * 120);
-        bar.style.width = `${score}%`; bar.style.backgroundColor = `hsl(${hue}, 90%, 45%)`;
-        const levels = I18N[currLang].strengthLevels;
-        let idx = Math.floor(score / 14.5); if(idx >= levels.length) idx = levels.length - 1;
+        const hue = Math.floor((score / 100) * 120); bar.style.width = `${score}%`; bar.style.backgroundColor = `hsl(${hue}, 90%, 45%)`;
+        const levels = I18N[currLang].strengthLevels; let idx = Math.floor(score / 14.5); if(idx >= levels.length) idx = levels.length - 1;
         txt.innerText = levels[idx]; txt.style.color = `hsl(${hue}, 80%, 40%)`;
     }
     function confirmEncryption() {
         const p = document.getElementById('crypto-password').value;
         const hasUpper = /[A-Z]/.test(p); const hasLower = /[a-z]/.test(p); const hasNum = /[0-9]/.test(p); const hasSym = /[^A-Za-z0-9]/.test(p); const isLongEnough = p.length >= 8;
-        if (!isLongEnough || !hasUpper || !hasLower || !hasNum || !hasSym) {
-            alert("Password too weak!\nMust be at least 8 characters and include:\n- Uppercase (A-Z)\n- Lowercase (a-z)\n- Number (0-9)\n- Special Character (!@#$)");
-            return;
-        }
+        if (!isLongEnough || !hasUpper || !hasLower || !hasNum || !hasSym) { alert("Password too weak!\nMust be at least 8 characters."); return; }
         aesKey = p; isEncrypted = true; updateLockUI(); closeCryptoModal();
     }
     function updateLockUI() { document.getElementById('protection-toggle-input').checked = isEncrypted; }
 
-    /* --- [Sender Logic] --- */
     async function initSender() {
-        if(peer) peer.destroy(); 
-        currentDownloads = 0; 
-        const code = Math.floor(100000 + Math.random() * 900000);
+        if(peer) peer.destroy(); currentDownloads = 0; const code = Math.floor(100000 + Math.random() * 900000);
         peer = new Peer(PREFIX + code);
-        
         peer.on('open', () => {
-            const area = document.getElementById('senderCodeArea');
-            if (area) { area.style.display = 'block'; setTimeout(() => { area.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200); }
-            document.getElementById('myCode').innerText = code;
-            document.getElementById('qrcode').innerHTML = ""; 
+            const area = document.getElementById('senderCodeArea'); if (area) { area.style.display = 'block'; setTimeout(() => { area.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200); }
+            document.getElementById('myCode').innerText = code; document.getElementById('qrcode').innerHTML = ""; 
             new QRCode(document.getElementById('qrcode'), { text: window.location.origin + window.location.pathname + "?c=" + code, width: 140, height: 140 });
             startExpiryTimer();
         });
-
         peer.on('connection', c => {
             c.on('data', d => { 
-                if (d.type === 'security_burn') { alert("⚠️ SECURITY ALERT: Recipient failed authentication 3 times. Session destroyed."); resetSender(); return; }
-                if(d.type === 'confirm_save') { 
-                    currentDownloads++; 
-                    if(currentDownloads >= parseInt(document.getElementById('downloadLimit').value)) resetSender(); 
-                } 
+                if (d.type === 'security_burn') { alert("⚠️ SECURITY ALERT: Recipient failed authentication 3 times."); resetSender(); return; }
+                if(d.type === 'confirm_save') { currentDownloads++; if(currentDownloads >= parseInt(document.getElementById('downloadLimit').value)) resetSender(); } 
             });
             c.on('open', async () => {
                 let textValue = document.getElementById('quickText').value.trim(); 
                 if(textValue) {
-                    if(isEncrypted) {
-                        const encryptedTextBlob = await FlashDropCrypto.encrypt(new Blob([textValue]), aesKey);
-                        const reader = new FileReader();
-                        reader.onload = () => c.send({ type: 'text', data: reader.result, encrypted: true });
-                        reader.readAsDataURL(encryptedTextBlob);
-                    } else { c.send({ type: 'text', data: textValue, encrypted: false }); }
+                    if(isEncrypted) { const encryptedTextBlob = await FlashDropCrypto.encrypt(new Blob([textValue]), aesKey); const reader = new FileReader(); reader.onload = () => c.send({ type: 'text', data: reader.result, encrypted: true }); reader.readAsDataURL(encryptedTextBlob); } 
+                    else { c.send({ type: 'text', data: textValue, encrypted: false }); }
                     addHistory("Sent: Text", "text");
                 }
                 if(stagedFiles && stagedFiles.length > 0) {
@@ -898,50 +807,35 @@
         });
     }
 
-    /* --- [Receiver Logic - Single Button Dynamic] --- */
     function startReceiving() {
         const code = document.getElementById('targetCode').value;
         const rPeer = new Peer();
         const pgBar = document.getElementById('receive-pg-bar');
         document.getElementById('receive-pg-container').style.display = 'block';
         
-        const warnTextMap = { en: "Downloading... Keep Open!", zh: "正在下载... 请勿关闭页面！" };
-        const warnText = warnTextMap[currLang] || warnTextMap.en;
-        
-        // 1. 立即启动动态下载按钮
         const btn = document.getElementById('btn-connect');
         btn.disabled = true; btn.style.opacity = "0.7";
-        let dots = 0;
-        if(downloadDotsIdx) clearInterval(downloadDotsIdx);
+        let dots = 0; if(downloadDotsIdx) clearInterval(downloadDotsIdx);
         downloadDotsIdx = setInterval(() => { dots = (dots + 1) % 4; btn.innerText = "Downloading" + ".".repeat(dots); }, 400);
 
         rPeer.on('open', () => {
-            const conn = rPeer.connect(PREFIX + code, { reliable: true }); 
-            activeConn = conn;
+            const conn = rPeer.connect(PREFIX + code, { reliable: true }); activeConn = conn;
             let meta = null, chunks = [], totalRecv = 0, startTime = Date.now(), lastUpdate = 0;
             
             conn.on('data', async d => {
-                // --- 接收文本 ---
                 if(d.type === 'text') {
-                    // 停止下载动画
                     if(downloadDotsIdx) clearInterval(downloadDotsIdx);
-                    
-                    // 设置按钮为“查看”模式
                     const label = d.encrypted ? I18N[currLang].decryptRecv : I18N[currLang].recv;
                     const bg = d.encrypted ? "#f59e0b" : "#10b981";
+                    btn.innerText = label; btn.style.background = bg; btn.disabled = false; btn.style.opacity = "1";
                     
-                    btn.innerText = label;
-                    btn.style.background = bg;
-                    btn.disabled = false; btn.style.opacity = "1";
-                    
-                    // 重写点击事件：处理解密与查看
                     btn.onclick = async () => {
                         let finalTxt = d.data;
                         if(d.encrypted) {
                             let attempts = 0;
                             while(true) {
                                 const pass = prompt(`🔐 Encrypted! Attempt ${attempts+1}/3. Enter Password:`);
-                                if(!pass) return; // 取消不复原，等待再次点击
+                                if(!pass) return; 
                                 try {
                                     const res = await fetch(d.data); const blob = await res.blob();
                                     const ptBlob = await FlashDropCrypto.decrypt(blob, pass);
@@ -954,27 +848,19 @@
                                 }
                             }
                         }
-                        // 显示文本并复原按钮
                         document.getElementById('receivedText').innerText = finalTxt;
                         document.getElementById('receivedText-container').style.display = 'block';
                         pgBar.style.width = '100%';
-                        
-                        // 复原按钮
                         btn.onclick = () => triggerAd('receive');
-                        btn.innerText = I18N[currLang].connect;
-                        btn.style.background = "var(--primary)";
-                        
+                        btn.innerText = I18N[currLang].connect; btn.style.background = "var(--primary)";
                         if (conn && conn.open) { conn.send({ type: 'confirm_save' }); }
                     };
                 }
-                // --- 接收文件元数据 ---
                 else if(d.type === 'meta') { 
                     meta = d; startTime = Date.now(); 
-                    const stats = document.getElementById('receiveNerdStats');
-                    stats.style.display = 'flex';
-                    stats.innerHTML = `<span id="nerd-speed">0.0 MB/s</span><span class="blink-warn">${warnText}</span><span id="nerd-eta" style="color:var(--primary)">ETA: --s</span>`;
+                    const stats = document.getElementById('receiveNerdStats'); stats.style.display = 'flex';
+                    stats.innerHTML = `<span id="nerd-speed">0.0 MB/s</span><span class="blink-warn">Downloading...</span><span id="nerd-eta" style="color:var(--primary)">ETA: --s</span>`;
                 }
-                // --- 接收文件块 ---
                 else if(d.type === 'chunk') { 
                     chunks[d.index] = d.data; totalRecv += d.data.byteLength;
                     if(meta) {
@@ -992,21 +878,15 @@
                         }
                     }
                 }
-                // --- 文件接收完成 ---
                 else if(d.type === 'done') {
                     if(downloadDotsIdx) clearInterval(downloadDotsIdx);
-                    
                     const label = (meta && meta.encrypted) ? I18N[currLang].decryptSave : I18N[currLang].save;
                     const bg = (meta && meta.encrypted) ? "#f59e0b" : "#10b981";
-                    
-                    btn.innerText = label;
-                    btn.style.background = bg;
-                    btn.disabled = false; btn.style.opacity = "1";
+                    btn.innerText = label; btn.style.background = bg; btn.disabled = false; btn.style.opacity = "1";
                     
                     const stats = document.getElementById('receiveNerdStats');
                     if(stats) stats.innerHTML = `<span style="color:var(--success); width:100%; text-align:center;">✅ TRANSFER COMPLETE</span>`;
                     pgBar.style.width = '100%';
-
                     let finalBlob = new Blob(chunks);
 
                     btn.onclick = async () => {
@@ -1025,19 +905,12 @@
                                 }
                             }
                         }
-                        // 下载文件
                         const u = window.URL.createObjectURL(finalBlob);
                         const a = document.createElement('a'); a.href = u;
                         a.download = meta.name.replace('.enc', ''); a.click();
-                        
                         if (conn && conn.open) { conn.send({ type: 'confirm_save' }); }
                         addHistory("Received: " + meta.name.replace('.enc', ''), "file");
-                        
-                        // 复原界面
-                        setTimeout(() => { 
-                            resetReceiver(); 
-                            rPeer.destroy(); 
-                        }, 1000);
+                        setTimeout(() => { resetReceiver(); rPeer.destroy(); }, 1000);
                     };
                 }
             });
@@ -1057,6 +930,10 @@
     function copyReceivedText() { 
         navigator.clipboard.writeText(document.getElementById('receivedText').innerText); 
         alert("Copied!"); 
+        // [修复] 复制后重置接收区域
+        document.getElementById('receivedText').innerText = "";
+        document.getElementById('receivedText-container').style.display = 'none';
+        
         if(activeConn && activeConn.open) { activeConn.send({ type: 'confirm_save' }); }
         resetReceiver(); 
     }
@@ -1092,14 +969,12 @@
     function resetReceiver() { 
         if(downloadDotsIdx) clearInterval(downloadDotsIdx);
         const btn = document.getElementById('btn-connect');
-        // 复原按钮状态
         btn.innerText = I18N[currLang].connect;
         btn.style.background = "var(--primary)";
         btn.disabled = false; btn.style.opacity = "1";
-        btn.onclick = () => triggerAd('receive'); // 重新绑定回触发广告逻辑
+        btn.onclick = () => triggerAd('receive'); 
 
         document.getElementById('targetCode').value = ""; 
-        document.getElementById('mobileDownloadArea').style.display = 'none'; // 其实已经删了这个DOM，但留着不报错
         document.getElementById('receive-pg-container').style.display = 'none'; 
         document.getElementById('receiveNerdStats').style.display = 'none'; 
         document.getElementById('receivedText-container').style.display = 'none'; 
