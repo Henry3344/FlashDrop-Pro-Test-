@@ -596,13 +596,11 @@
     let isAdBlockIgnored = false; 
     const PREFIX = "fd-pro-", CHUNK_SIZE = 262144;
 
-    /* --- [1. 语言自动检测与应用] --- */
     function applyI18N() {
         const userLang = navigator.language.split('-')[0];
         currLang = I18N[userLang] ? userLang : "en";
         const d = I18N[currLang];
 
-        // 动态更新语言标签
         const tagEl = document.getElementById('currentLangTag');
         if(tagEl) tagEl.innerText = d.tag;
 
@@ -654,7 +652,6 @@
         }
     }
 
-    /* --- [2. 拖拽功能修复] --- */
     function initDragAndDrop() {
         const dz = document.getElementById('drop-zone');
         // 全局拖拽事件
@@ -667,15 +664,12 @@
             e.stopPropagation();
         }
 
-        // 拖入显示全屏覆盖层
         document.body.addEventListener('dragenter', (e) => { 
-            // 只有拖入文件时才显示
             if (e.dataTransfer.types && e.dataTransfer.types.includes('Files')) {
                 dz.style.display = 'flex'; 
             }
         });
         
-        // 覆盖层上的拖拽事件
         dz.addEventListener('dragleave', (e) => { 
             if(e.target === dz) dz.style.display = 'none'; 
         });
@@ -689,7 +683,6 @@
         });
     }
 
-    /* --- [3. 广告检测 & 狠心拒绝] --- */
     function dismissAdBlock() {
         isAdBlockIgnored = true; 
         document.getElementById('safety-notice-view').style.display = 'none';
@@ -744,14 +737,13 @@
         }, 100);
     }
 
-    /* --- [加密模块] --- */
     let isEncrypted = false, aesKey = "";
     const FlashDropCrypto = {
         async deriveKey(pass, salt) {
             const encoder = new TextEncoder();
             const baseKey = await crypto.subtle.importKey("raw", encoder.encode(pass), "PBKDF2", false, ["deriveKey"]);
             return crypto.subtle.deriveKey(
-                { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+                { name: "PBKDF2", salt: salt, iterations: 600000, hash: "SHA-256" }, // [已修改] 强度提升至 600,000 次
                 baseKey, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
             );
         },
@@ -782,7 +774,6 @@
     }
     function closeCryptoModal() { document.getElementById('crypto-modal').style.display = 'none'; }
     
-    /* --- [密码强度检测] --- */
     function checkStrength(p) {
         const bar = document.getElementById('strength-bar-fill');
         const txt = document.getElementById('strength-text');
@@ -834,7 +825,6 @@
         if(checkbox) checkbox.checked = isEncrypted;
     }
 
-    /* --- [P2P 通信核心] --- */
     async function initSender() {
         if(peer) peer.destroy(); 
         currentDownloads = 0; 
@@ -912,7 +902,6 @@
         });
     }
 
-    /* --- [接收端逻辑] --- */
     function startReceiving() {
         const code = document.getElementById('targetCode').value;
         const rPeer = new Peer();
@@ -1013,7 +1002,6 @@
         });
     }
 
-    /* --- [通用工具] --- */
     function addHistory(name, type) {
         let h = JSON.parse(localStorage.getItem('fd_history') || "[]");
         h.unshift({ name: name.substring(0,25), time: new Date().toLocaleTimeString(), type: type });
@@ -1049,7 +1037,7 @@
     function closePolicy() { document.getElementById('policyModal').style.display = 'none'; }
     function startExpiryTimer() { let sec = 600; if(expiryTimerIdx) clearInterval(expiryTimerIdx); expiryTimerIdx = setInterval(() => { sec--; document.getElementById('expiryTimer').innerText = `${I18N[currLang].exp}${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; if(sec <= 0) resetSender(); }, 1000); }
     
-    // [核心修复]：强制回顶 + 失焦 (解决手机键盘收起后的页面错位)
+    // [核心修复] 强制回顶 + 失焦 (解决手机键盘收起后的页面错位)
     function resetSender() { 
         if(peer) peer.destroy(); 
         document.getElementById('senderCodeArea').style.display = 'none'; 
