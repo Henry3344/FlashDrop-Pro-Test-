@@ -161,7 +161,7 @@
 
         #btn-torch { position: absolute; top: 30px; right: 30px; width: 45px; height: 45px; border-radius: 50%; background: rgba(0,0,0,0.4); border: 1.5px solid white; color: white; font-size: 20px; cursor: pointer; backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 10001; }
 
-        /* [新增] 步骤条流光特效 */
+        /* [特效] 步骤条流光特效 */
         .steps-bar { 
             position: relative; display: flex; justify-content: space-between; align-items: center; 
             margin-bottom: 25px; width: 100%; overflow: hidden; padding: 10px 0;
@@ -320,7 +320,9 @@
                             <input type="number" id="targetCode" placeholder="000000" oninput="if(this.value.length>6) this.value=this.value.slice(0,6)" onkeydown="if(event.key==='Enter') triggerAd('receive')">
                             <button id="btn-scan" onclick="openScanner()">or scan 📷</button>
                         </div>
+                        
                         <button class="action-btn" id="btn-connect" onclick="triggerAd('receive')" style="margin-top: 25px;">DOWNLOAD</button>
+                        
                         <div id="receive-pg-container" class="pg-container"><div id="receive-pg-bar" class="pg-bar"></div></div>
                         <div id="receiveNerdStats" class="nerd-stats" style="display:none; width:100%; margin-top:5px;"><span id="nerd-speed">0.0 MB/s</span><span class="blink-warn">Downloading... Keep Open!</span><span id="nerd-eta" style="color:var(--primary)">ETA: --s</span></div>
                         <div id="mobileDownloadArea" style="display:none; width:100%; margin-top:15px; text-align:center;"><button class="action-btn" id="btn-save-file" style="background:var(--success); padding:22px;">📥 SAVE</button></div>
@@ -648,6 +650,7 @@
     };
     let currLang = "en", peer = null, stagedFiles = [], currentDownloads = 0, videoTrack = null, torchOn = false, activeConn = null, expiryTimerIdx = null;
     let isAdBlockIgnored = false; 
+    let downloadDotsIdx = null; // [新增] 控制下载按钮动画
     const PREFIX = "fd-pro-", CHUNK_SIZE = 262144;
 
     /* --- [1. 语言自动检测与应用] --- */
@@ -979,6 +982,17 @@
         const warnTextMap = { en: "Downloading... Keep Open!", zh: "正在下载... 请勿关闭页面！" };
         const warnText = warnTextMap[currLang] || warnTextMap.en;
         
+        // [新增] 广告结束后，立即触发按钮动态效果
+        const btn = document.getElementById('btn-connect');
+        btn.disabled = true; // 防止重复点击
+        btn.style.opacity = "0.7";
+        let dots = 0;
+        if(downloadDotsIdx) clearInterval(downloadDotsIdx);
+        downloadDotsIdx = setInterval(() => {
+            dots = (dots + 1) % 4;
+            btn.innerText = "Downloading" + ".".repeat(dots);
+        }, 400);
+
         rPeer.on('open', () => {
             const conn = rPeer.connect(PREFIX + code, { reliable: true }); 
             activeConn = conn;
@@ -987,6 +1001,11 @@
             
             conn.on('data', async d => {
                 if(d.type === 'text') {
+                    // 收到文本，停止动画，按钮复原
+                    if(downloadDotsIdx) clearInterval(downloadDotsIdx);
+                    btn.innerText = I18N[currLang].connect;
+                    btn.disabled = false; btn.style.opacity = "1";
+
                     let finalTxt = d.data;
                     if(d.encrypted) {
                         let attempts = 0;
@@ -1042,15 +1061,22 @@
                     }
                 }
                 else if(d.type === 'done') {
-                    const btn = document.getElementById('btn-save-file');
+                    // 收到文件，停止动画，按钮变 SAVE
+                    if(downloadDotsIdx) clearInterval(downloadDotsIdx);
+                    btn.disabled = false; btn.style.opacity = "1";
+                    
+                    const saveBtn = document.getElementById('btn-save-file');
                     let finalBlob = new Blob(chunks);
                     pgBar.style.width = '100%';
                     const stats = document.getElementById('receiveNerdStats');
                     if(stats) stats.innerHTML = `<span style="color:var(--success); width:100%; text-align:center;">✅ TRANSFER COMPLETE</span>`;
 
+                    // 这里要把 Download 按钮文字还原，或者隐藏它，因为下方有 save 按钮了
+                    btn.innerText = I18N[currLang].connect; 
+
                     if (meta && meta.encrypted) {
                         let attempts = 0;
-                        btn.onclick = async () => {
+                        saveBtn.onclick = async () => {
                             while(true) {
                                 const pass = prompt(`🔐 Encrypted File! Attempt ${attempts+1}/3. Enter Password:`);
                                 if (!pass) return;
@@ -1077,11 +1103,11 @@
                                 }
                             }
                         };
-                        btn.innerText = "🔐 DECRYPT & SAVE";
-                        btn.style.background = "#f59e0b"; 
+                        saveBtn.innerText = "🔐 DECRYPT & SAVE";
+                        saveBtn.style.background = "#f59e0b"; 
                     } else {
-                        btn.innerText = I18N[currLang].save; btn.style.background = "#10b981";
-                        btn.onclick = () => {
+                        saveBtn.innerText = I18N[currLang].save; saveBtn.style.background = "#10b981";
+                        saveBtn.onclick = () => {
                             const u = window.URL.createObjectURL(finalBlob);
                             const a = document.createElement('a'); a.href = u;
                             a.download = meta.name.replace('.enc', ''); a.click();
@@ -1146,7 +1172,15 @@
         setTimeout(() => window.scrollTo(0,0), 300);
     }
     
-    function resetReceiver() { document.getElementById('targetCode').value = ""; document.getElementById('mobileDownloadArea').style.display = 'none'; document.getElementById('receive-pg-container').style.display = 'none'; document.getElementById('receiveNerdStats').style.display = 'none'; document.getElementById('receivedText-container').style.display = 'none'; activeConn = null; }
+    function resetReceiver() { 
+        // [修复] 重置时也要清理动画
+        if(downloadDotsIdx) clearInterval(downloadDotsIdx);
+        const btn = document.getElementById('btn-connect');
+        btn.innerText = I18N[currLang].connect;
+        btn.disabled = false; btn.style.opacity = "1";
+
+        document.getElementById('targetCode').value = ""; document.getElementById('mobileDownloadArea').style.display = 'none'; document.getElementById('receive-pg-container').style.display = 'none'; document.getElementById('receiveNerdStats').style.display = 'none'; document.getElementById('receivedText-container').style.display = 'none'; activeConn = null; 
+    }
     function switchTab(m, e) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); e.target.classList.add('active'); document.getElementById(`panel-${m}`).classList.add('active'); }
     function handleFiles(files) { stagedFiles = stagedFiles.concat(Array.from(files)); renderStagedList(); }
     function renderStagedList() { const list = document.getElementById('stagedList'); list.style.display = stagedFiles.length ? 'block' : 'none'; list.innerHTML = stagedFiles.map((f, i) => `<div class="staged-item"><span>📄 ${f.name.length > 15 ? f.name.substring(0,12)+'...' : f.name}</span><span style="color:var(--danger); cursor:pointer; font-weight:bold; padding:0 5px;" onclick="stagedFiles.splice(${i},1);renderStagedList()">✕</span></div>`).join(''); }
