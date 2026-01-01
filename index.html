@@ -137,7 +137,7 @@
         .protection-btn:has(input:checked) .state.off { display: none !important; }
         .protection-btn:has(input:checked) .state.on { display: flex !important; }
 
-        /* [新增] 通用弹窗样式，复用 .crypto-modal 的结构 */
+        /* 通用弹窗样式 */
         .crypto-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 6000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .crypto-modal-card { background: #0f172a; padding: 30px; border-radius: 24px; border: 1px solid var(--border); width: 90%; max-width: 380px; box-shadow: 0 20px 60px rgba(99, 102, 241, 0.15); display: flex; flex-direction: column; gap: 15px; }
         
@@ -161,6 +161,11 @@
         @keyframes scanMove { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
 
         #btn-torch { position: absolute; top: 30px; right: 30px; width: 45px; height: 45px; border-radius: 50%; background: rgba(0,0,0,0.4); border: 1.5px solid white; color: white; font-size: 20px; cursor: pointer; backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 10001; }
+
+        /* [新增] 震动特效 & 错误样式 */
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        .input-error { border-color: #ef4444 !important; animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; color: #ef4444 !important; }
+        #pass-error-msg { min-height: 20px; font-size: 12px; color: #ef4444; text-align: center; font-weight: 800; margin-bottom: 5px; }
 
         /* [特效] 步骤条流光特效 */
         .steps-bar { 
@@ -411,7 +416,9 @@
 
 <div id="pass-input-modal" class="crypto-modal" style="z-index: 99999;">
     <div class="crypto-modal-card">
-        <h3 id="pass-input-title" style="color: #f59e0b; margin: 0 0 10px 0; font-size: 18px; text-align: center;">🔐 Enter Password</h3>
+        <h3 id="pass-input-title" style="color: #f59e0b; margin: 0 0 5px 0; font-size: 18px; text-align: center;">🔐 Enter Password</h3>
+        <div id="pass-error-msg"></div>
+        
         <input type="password" id="alert-password-input" placeholder="Type password..." style="text-align: center;">
         <div style="display: flex; gap: 10px; margin-top: 10px;">
             <button class="action-btn" id="btn-pass-confirm" style="flex: 1; padding: 12px; margin:0; background: #f59e0b;">UNLOCK</button>
@@ -448,8 +455,10 @@
             inputErr: "Enter 6-digit code.", orScan: "or scan 📷", 
             doneRemind: "DONE! Click SAVE above.", 
             histTitle: "Recent History", fileErr: "Please select files first.", textErr: "Please enter text first.",
+            
+            // [新增] 弹窗文案
             passTitle: "🔐 Enter Password", passPlaceholder: "Type password...", passUnlock: "UNLOCK", passCancel: "CANCEL",
-            passWrong: "❌ Wrong Password!", passRemaining: "attempts remaining.",
+            passWrong: "Wrong Password!", passRemaining: "attempts left",
             
             step1: "Select Files<br><span style='font-size:9px; opacity:0.7'>(Type Text)</span>", 
             step2: "Set AES-256<br><span style='font-size:9px; opacity:0.7'>(Option)</span>", 
@@ -492,6 +501,8 @@
             inputErr: "请输入6位验证码。", orScan: "扫码接收 📷", 
             doneRemind: "传输完成！点击上方按钮保存。", 
             histTitle: "最近记录", fileErr: "请先选择文件。", textErr: "请先输入文字。",
+            
+            // 弹窗相关
             passTitle: "🔐 输入密码", passPlaceholder: "在此输入...", passUnlock: "解锁", passCancel: "取消",
             passWrong: "❌ 密码错误！", passRemaining: "次尝试机会。",
             passWeak: "密码太弱！\n必须包含8位以上，且含有：\n- 大写字母\n- 小写字母\n- 数字\n- 特殊符号",
@@ -745,43 +756,57 @@
         }
     }
 
-    /* [新增] 通用警告弹窗函数 */
     function showCustomAlert(msg) {
         document.getElementById('alert-msg').innerText = msg;
         document.getElementById('alert-modal').style.display = 'flex';
     }
 
-    /* [新增] 密码请求弹窗 Promise */
-    function requestPassword() {
+    /* [核心] 密码输入弹窗：支持震动反馈，不关闭 */
+    function requestPassword(attemptsLeft) {
         return new Promise((resolve) => {
             const modal = document.getElementById('pass-input-modal');
             const inp = document.getElementById('alert-password-input');
+            const errDiv = document.getElementById('pass-error-msg');
             const btnOk = document.getElementById('btn-pass-confirm');
             const btnCancel = document.getElementById('btn-pass-cancel');
             
-            inp.value = ""; 
+            // 如果是重试，显示错误信息并震动
+            if (attemptsLeft !== undefined) {
+                errDiv.innerText = `${I18N[currLang].passWrong} ${attemptsLeft} ${I18N[currLang].passRemaining}`;
+                inp.classList.add('input-error');
+                setTimeout(() => inp.classList.remove('input-error'), 500);
+            } else {
+                // 首次打开清空
+                errDiv.innerText = "";
+                inp.value = ""; 
+            }
+            
             modal.style.display = 'flex';
             inp.focus();
 
-            // 绑定一次性事件
+            // 解绑旧事件，防止重复触发
             const cleanup = () => {
                 btnOk.onclick = null;
                 btnCancel.onclick = null;
-                modal.style.display = 'none';
+                inp.onkeydown = null;
             };
 
-            btnOk.onclick = () => {
+            const confirm = () => {
                 const val = inp.value;
-                if(val) { cleanup(); resolve(val); }
+                if(val) { 
+                    cleanup(); 
+                    // 注意：这里不关闭modal，等待解密结果决定是关闭还是报错
+                    resolve(val); 
+                }
             };
-            
+
+            btnOk.onclick = confirm;
             btnCancel.onclick = () => {
-                cleanup(); resolve(null); // 用户取消
+                cleanup(); 
+                modal.style.display = 'none'; // 取消则关闭
+                resolve(null); 
             };
-            
-            inp.onkeydown = (e) => {
-                if(e.key === 'Enter') btnOk.click();
-            };
+            inp.onkeydown = (e) => { if(e.key === 'Enter') confirm(); };
         });
     }
 
@@ -796,7 +821,6 @@
     function dismissAdBlock() { isAdBlockIgnored = true; document.getElementById('safety-notice-view').style.display = 'none'; document.querySelectorAll('.ad-space, .ad-side').forEach(el => el.style.display = 'none'); }
 
     function triggerAd(mode) {
-        // 1. 内容校验 (Priority High) -> 使用自定义弹窗
         if(mode === 'receive') {
             document.getElementById('targetCode').blur(); 
             const codeVal = document.getElementById('targetCode').value;
@@ -805,7 +829,6 @@
         if(mode === 'send-file' && stagedFiles.length === 0) { showCustomAlert(I18N[currLang].fileErr); return; }
         if(mode === 'send-text' && !document.getElementById('quickText').value.trim()) { showCustomAlert(I18N[currLang].textErr); return; }
 
-        // 2. 广告逻辑
         if(isAdBlockIgnored) { mode.startsWith('send') ? initSender() : startReceiving(); return; }
         if(detectAdBlock()) return;
 
@@ -842,15 +865,7 @@
     };
 
     function showCryptoModal() { 
-        if(isEncrypted) { 
-            // 关闭逻辑：清空所有状态
-            isEncrypted = false; 
-            aesKey = ""; 
-            document.getElementById('crypto-password').value = ""; 
-            checkStrength(""); 
-            updateLockUI(); 
-            return; 
-        } 
+        if(isEncrypted) { isEncrypted = false; aesKey = ""; document.getElementById('crypto-password').value = ""; checkStrength(""); updateLockUI(); return; } 
         document.getElementById('crypto-modal').style.display = 'flex'; 
     }
     function closeCryptoModal() { document.getElementById('crypto-modal').style.display = 'none'; }
@@ -920,7 +935,6 @@
             let meta = null, chunks = [], totalRecv = 0, startTime = Date.now(), lastUpdate = 0;
             
             conn.on('data', async d => {
-                // --- TEXT ---
                 if(d.type === 'text') {
                     if(downloadDotsIdx) clearInterval(downloadDotsIdx);
                     const label = d.encrypted ? I18N[currLang].decryptRecv : I18N[currLang].recv;
@@ -932,18 +946,25 @@
                         if(d.encrypted) {
                             let attempts = 0;
                             while(true) {
-                                // [核心] 使用 Promise 弹窗替代 prompt
-                                const pass = await requestPassword();
-                                if(!pass) return; // 取消
+                                // 首次调用不传attemptsLeft
+                                const pass = await requestPassword(attempts > 0 ? 3 - attempts : undefined);
+                                if(!pass) return; 
                                 try {
                                     const res = await fetch(d.data); const blob = await res.blob();
                                     const ptBlob = await FlashDropCrypto.decrypt(blob, pass);
                                     finalTxt = await ptBlob.text();
+                                    // 成功：关闭弹窗
+                                    document.getElementById('pass-input-modal').style.display = 'none';
                                     break; 
                                 } catch(e) {
                                     attempts++;
-                                    if(attempts >= 3) { conn.send({ type: 'security_burn' }); showCustomAlert("❌ SECURITY BREACH: Data Wiped."); resetReceiver(); return; }
-                                    showCustomAlert(`${I18N[currLang].passWrong} ${3 - attempts} ${I18N[currLang].passRemaining}`);
+                                    if(attempts >= 3) { 
+                                        document.getElementById('pass-input-modal').style.display = 'none';
+                                        conn.send({ type: 'security_burn' }); 
+                                        showCustomAlert("❌ SECURITY BREACH: Data Wiped."); 
+                                        resetReceiver(); return; 
+                                    }
+                                    // 失败：循环继续，再次调用requestPassword会触发震动
                                 }
                             }
                         }
@@ -955,7 +976,6 @@
                         if (conn && conn.open) { conn.send({ type: 'confirm_save' }); }
                     };
                 }
-                // --- FILE META ---
                 else if(d.type === 'meta') { 
                     meta = d; startTime = Date.now(); 
                     const stats = document.getElementById('receiveNerdStats'); stats.style.display = 'flex';
@@ -963,7 +983,6 @@
                     const warnText = warnTextMap[currLang] || warnTextMap.en;
                     stats.innerHTML = `<span id="nerd-speed">0.0 MB/s</span><span class="blink-warn">${warnText}</span><span id="nerd-eta" style="color:var(--primary)">ETA: --s</span>`;
                 }
-                // --- FILE CHUNK ---
                 else if(d.type === 'chunk') { 
                     chunks[d.index] = d.data; totalRecv += d.data.byteLength;
                     if(meta) {
@@ -981,7 +1000,6 @@
                         }
                     }
                 }
-                // --- FILE DONE ---
                 else if(d.type === 'done') {
                     if(downloadDotsIdx) clearInterval(downloadDotsIdx);
                     
@@ -998,14 +1016,16 @@
                         if (meta && meta.encrypted) {
                             let attempts = 0;
                             while(true) {
-                                // [核心] 使用 Promise 弹窗
-                                const pass = await requestPassword();
+                                const pass = await requestPassword(attempts > 0 ? 3 - attempts : undefined);
                                 if (!pass) return; 
                                 try {
                                     finalBlob = await FlashDropCrypto.decrypt(finalBlob, pass);
                                     
+                                    // 成功：关闭弹窗，按钮变绿
+                                    document.getElementById('pass-input-modal').style.display = 'none';
                                     btn.innerText = I18N[currLang].saveNow || "💾 SAVE NOW";
                                     btn.style.background = "#10b981";
+                                    
                                     btn.onclick = () => {
                                         const u = window.URL.createObjectURL(finalBlob);
                                         const a = document.createElement('a'); a.href = u;
@@ -1018,8 +1038,12 @@
 
                                 } catch (e) {
                                     attempts++;
-                                    if(attempts >= 3) { conn.send({ type: 'security_burn' }); showCustomAlert("❌ SECURITY BREACH: Data Wiped."); resetReceiver(); return; }
-                                    showCustomAlert(`${I18N[currLang].passWrong} ${3 - attempts} ${I18N[currLang].passRemaining}`);
+                                    if(attempts >= 3) { 
+                                        document.getElementById('pass-input-modal').style.display = 'none';
+                                        conn.send({ type: 'security_burn' }); 
+                                        showCustomAlert("❌ SECURITY BREACH: Data Wiped."); 
+                                        resetReceiver(); return; 
+                                    }
                                 }
                             }
                         } else {
