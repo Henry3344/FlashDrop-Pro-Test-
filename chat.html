@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FlashChat — Secure Temp Room</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root { --primary: #6366f1; --bg: #030712; --card: rgba(30, 41, 59, 0.85); --text: #f8fafc; --self-msg: #4f46e5; --other-msg: #334155; }
+        * { box-sizing: border-box; outline: none; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        
+        .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); pointer-events: none; }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: moveStars linear infinite; }
+        @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-1000px); } }
+
+        /* 顶部导航 */
+        .navbar { height: 60px; background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 100; backdrop-filter: blur(10px); }
+        .logo { font-size: 18px; font-weight: 900; color: white; cursor: pointer; }
+        .logo span { color: var(--primary); }
+        .room-info { font-size: 12px; color: #94a3b8; font-family: monospace; }
+
+        /* 登录/设置层 */
+        #setup-panel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; background: rgba(3, 7, 18, 0.95); display: flex; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(15px); padding: 20px; transition: 0.3s; }
+        .setup-card { background: #111827; padding: 30px; border-radius: 24px; border: 1px solid #374151; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        
+        input { width: 100%; background: #1f2937; border: 1.5px solid #374151; color: white; padding: 14px; border-radius: 12px; margin-bottom: 15px; font-size: 14px; text-align: center; transition: 0.3s; }
+        input:focus { border-color: var(--primary); }
+        
+        .btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
+        .btn-secondary { background: transparent; border: 1.5px solid #374151; color: #94a3b8; margin-top: 10px; }
+
+        /* 聊天区域 */
+        #chat-ui { display: none; flex-direction: column; height: 100%; width: 100%; max-width: 800px; margin: 0 auto; background: rgba(17, 24, 39, 0.5); border-left: 1px solid #334155; border-right: 1px solid #334155; }
+        
+        #msg-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
+        .msg-bubble { max-width: 75%; padding: 10px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; word-wrap: break-word; position: relative; animation: popIn 0.3s ease; }
+        .msg-self { align-self: flex-end; background: var(--self-msg); color: white; border-bottom-right-radius: 4px; }
+        .msg-other { align-self: flex-start; background: var(--other-msg); color: #e2e8f0; border-bottom-left-radius: 4px; }
+        .sys-msg { align-self: center; font-size: 11px; color: #64748b; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 10px; margin: 10px 0; }
+        
+        @keyframes popIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+        /* 输入区域 */
+        .input-area { padding: 15px; background: #0f172a; border-top: 1px solid #334155; display: flex; gap: 10px; align-items: center; }
+        #msg-input { margin: 0; text-align: left; }
+        #btn-send { width: auto; padding: 0 25px; }
+
+        /* 状态指示 */
+        .online-count { position: fixed; top: 70px; right: 20px; background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; border: 1px solid rgba(16, 185, 129, 0.3); display: none; }
+    </style>
+</head>
+<body>
+    <div class="stars-container" id="stars"></div>
+    
+    <nav class="navbar">
+        <div class="logo" onclick="location.href='index.html'">⚡ Flash<span>Chat</span></div>
+        <div class="room-info" id="room-status">Disconnected</div>
+    </nav>
+    <div id="online-badge" class="online-count">🟢 Online</div>
+
+    <div id="setup-panel">
+        <div class="setup-card">
+            <h2 style="margin-bottom: 20px;">🔒 Encrypted Room</h2>
+            <p style="font-size: 12px; color:#94a3b8; margin-bottom: 25px;">No logs. No servers. Temp keys.</p>
+            
+            <div id="step-1">
+                <input type="text" id="room-pass" placeholder="🔑 Set Room Password (Key)" autocomplete="off">
+                <button class="btn" onclick="createRoom()">CREATE NEW ROOM</button>
+                <div style="margin: 15px 0; font-size: 12px; color:#64748b;">— OR —</div>
+                <input type="text" id="join-id" placeholder="ID from Host (e.g. fd-chat-12345)">
+                <button class="btn btn-secondary" onclick="joinRoom()">JOIN EXISTING</button>
+            </div>
+
+            <div id="step-wait" style="display:none;">
+                <div id="qrcode" style="display:flex; justify-content:center; margin: 20px 0;"></div>
+                <div style="font-size: 24px; font-weight: 900; color: #a5b4fc; letter-spacing: 2px;" id="my-id-display">...</div>
+                <p style="font-size: 12px; color: #ef4444; margin-top:10px;">Share ID & Password separately!</p>
+                <button class="btn btn-secondary" onclick="location.reload()" style="margin-top:20px">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="chat-ui">
+        <div id="msg-container"></div>
+        <div class="input-area">
+            <input type="text" id="msg-input" placeholder="Type a secure message..." onkeydown="if(event.key==='Enter') sendMessage()">
+            <button class="btn" id="btn-send" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+<script>
+    /* --- Core: Light Crypto Engine (10k Iterations for Speed) --- */
+    const ChatCrypto = {
+        async deriveKey(pass, salt) {
+            const enc = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(pass), "PBKDF2", false, ["deriveKey"]);
+            return crypto.subtle.deriveKey(
+                { name: "PBKDF2", salt: salt, iterations: 10000, hash: "SHA-256" }, // 10k迭代，兼顾安全与流畅
+                keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
+            );
+        },
+        async encrypt(text, pass) {
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const key = await this.deriveKey(pass, salt);
+            const enc = new TextEncoder();
+            const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, enc.encode(text));
+            // Pack: salt(16) + iv(12) + ciphertext
+            const pkg = new Uint8Array(16 + 12 + ct.byteLength);
+            pkg.set(salt, 0); pkg.set(iv, 16); pkg.set(new Uint8Array(ct), 28);
+            return pkg; 
+        },
+        async decrypt(data, pass) { // data is Uint8Array
+            try {
+                const salt = data.slice(0, 16);
+                const iv = data.slice(16, 28);
+                const ct = data.slice(28);
+                const key = await this.deriveKey(pass, salt);
+                const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, ct);
+                return new TextDecoder().decode(pt);
+            } catch(e) { return null; } // Decrypt failed (wrong password)
+        }
+    };
+
+    /* --- Logic: P2P Room Management --- */
+    let peer = null;
+    let roomPass = "";
+    let connections = []; // Store all active connections
+    let isHost = false;
+    let myId = "";
+
+    // 1. Host creates a room
+    function createRoom() {
+        roomPass = document.getElementById('room-pass').value.trim();
+        if(!roomPass) return alert("请先设置房间密码 (AES Key)！");
+        
+        isHost = true;
+        // Host ID starts with 'fc-' for easier identifying
+        const randomId = "fc-" + Math.floor(Math.random() * 900000 + 100000);
+        initPeer(randomId);
+    }
+
+    // 2. Client joins a room
+    function joinRoom() {
+        roomPass = document.getElementById('room-pass').value.trim();
+        const targetId = document.getElementById('join-id').value.trim();
+        if(!roomPass || !targetId) return alert("请输入 房主ID 和 房间密码！");
+        
+        isHost = false;
+        initPeer(); // Client gets random auto ID
+    }
+
+    function initPeer(customId) {
+        peer = new Peer(customId); // If customId is undefined, PeerJS generates one
+        
+        peer.on('open', (id) => {
+            myId = id;
+            if(isHost) {
+                // Host UI: Show waiting screen
+                document.getElementById('step-1').style.display = 'none';
+                document.getElementById('step-wait').style.display = 'block';
+                document.getElementById('my-id-display').innerText = id;
+                document.getElementById('qrcode').innerHTML = "";
+                new QRCode(document.getElementById('qrcode'), { text: id, width: 140, height: 140 });
+                updateStatus("Waiting for peers...");
+            } else {
+                // Client UI: Connect immediately
+                const destId = document.getElementById('join-id').value.trim();
+                connectToPeer(destId);
+                updateStatus("Connecting to " + destId + "...");
+            }
+        });
+
+        peer.on('connection', (conn) => {
+            handleConnection(conn);
+        });
+        
+        peer.on('error', err => {
+            alert("Connection Error: " + err.type);
+            location.reload();
+        });
+    }
+
+    function connectToPeer(id) {
+        const conn = peer.connect(id, { reliable: true });
+        handleConnection(conn);
+    }
+    /* --- Logic: Message Handling & Routing --- */
+    function handleConnection(conn) {
+        connections.push(conn);
+        
+        conn.on('open', () => {
+            // 连接成功，切换界面
+            document.getElementById('setup-panel').style.display = 'none';
+            document.getElementById('chat-ui').style.display = 'flex';
+            document.getElementById('online-badge').style.display = 'block';
+            updateStatus(isHost ? "Room Active (Host)" : "Connected to Host");
+            
+            // 系统消息
+            renderMessage("System: Secure connection established.", "sys");
+        });
+
+        conn.on('data', async (data) => {
+            // 收到的是加密的 Uint8Array
+            if (data instanceof Uint8Array || data instanceof ArrayBuffer) {
+                // 尝试用当前密码解密
+                const text = await ChatCrypto.decrypt(data, roomPass);
+                if (text) {
+                    renderMessage(text, "other");
+                    
+                    // 如果我是房主，我需要把这条消息转发给其他连接者（简单的广播逻辑）
+                    if(isHost) {
+                        connections.forEach(c => {
+                            if(c !== conn && c.open) c.send(data); // 原样转发加密包，省去解密再加密的开销
+                        });
+                    }
+                } else {
+                    renderMessage("⚠️ Decrypt Fail. Password Mismatch?", "sys");
+                }
+            }
+        });
+
+        conn.on('close', () => {
+            connections = connections.filter(c => c !== conn);
+            if(connections.length === 0 && !isHost) {
+                alert("Host ended the session.");
+                location.reload();
+            } else {
+                renderMessage("System: A peer left.", "sys");
+            }
+        });
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('msg-input');
+        const text = input.value.trim();
+        if(!text) return;
+
+        if(connections.length === 0) {
+            renderMessage("System: No one is here...", "sys");
+            return;
+        }
+
+        // 1. 加密 (Lite模式，极快)
+        const encryptedData = await ChatCrypto.encrypt(text, roomPass);
+
+        // 2. 发送给所有连接者
+        connections.forEach(c => {
+            if(c.open) c.send(encryptedData);
+        });
+
+        // 3. 本地渲染
+        renderMessage(text, "self");
+        input.value = "";
+        input.focus();
+    }
+
+    /* --- UI Rendering --- */
+    function renderMessage(text, type) {
+        const container = document.getElementById('msg-container');
+        const div = document.createElement('div');
+        
+        if (type === 'sys') div.className = 'sys-msg';
+        else div.className = `msg-bubble msg-${type}`;
+        
+        div.innerText = text;
+        container.appendChild(div);
+        
+        // 自动滚动到底部
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function updateStatus(txt) {
+        document.getElementById('room-status').innerText = txt;
+    }
+
+    // Init Background Stars
+    window.onload = () => {
+        const c = document.getElementById('stars');
+        for(let i=0; i<60; i++) {
+            const s = document.createElement('div');
+            s.className = 'star';
+            s.style.width = s.style.height = Math.random()*2+'px';
+            s.style.left = Math.random()*100+'%';
+            s.style.top = Math.random()*100+'%';
+            s.style.animationDuration = Math.random()*20+20+'s';
+            c.appendChild(s);
+        }
+    };
+</script>
+</body>
+</html>
