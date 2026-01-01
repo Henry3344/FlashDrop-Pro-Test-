@@ -1752,7 +1752,6 @@
     function initStars() { const c = document.getElementById('stars'); for(let i=0; i<80; i++) { const s = document.createElement('div'); s.className = 'star'; s.style.width = s.style.height = Math.random()*2+'px'; s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%'; s.style.animationDuration = Math.random()*20+20+'s'; c.appendChild(s); } }
     
     window.onload = () => { initStars(); applyI18N(); initDragAndDrop(); renderHistory(); detectAdBlock(); };
-// ==================== 新增：搜索栏逻辑 ====================
 
 // ==================== 修复版搜索栏逻辑 ====================
 
