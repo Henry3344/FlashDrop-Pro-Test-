@@ -2,13 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>FlashDrop Pro — Enterprise Grade Secure Workspace</title>
     <meta name="description" content="AI-Powered Secure P2P Infrastructure. Compliance-ready, Zero-Knowledge, AES-256 GCM.">
-    <meta name="keywords" content="Secure Transfer, Enterprise P2P, Audit Trail, DLP, Compliance">
-
-    <meta property="og:title" content="FlashDrop Pro — Secure Infrastructure">
-    <meta property="og:description" content="Military-grade P2P transfer with real-time AI risk analysis.">
     
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -18,188 +14,111 @@
     
     <style>
         :root { 
-            --primary: #6366f1; --bg: #030712; --card: rgba(30, 41, 59, 0.85); 
+            --primary: #6366f1; --bg: #030712; --card: rgba(30, 41, 59, 0.9); 
             --text: #f8fafc; --text-muted: #94a3b8; --border: #4f46e5; 
             --nav-bg: rgba(15, 23, 42, 0.98); --danger: #ef4444; --success: #10b981; 
             --ai: #8b5cf6; --warning: #f59e0b; --audit: #0ea5e9;
         }
-        * { box-sizing: border-box; outline: none; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         
+        /* 修复：使用 dvh 解决移动端浏览器地址栏遮挡问题 */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background: var(--bg); color: var(--text); margin: 0; 
+            min-height: 100vh; min-height: 100dvh; 
+            overflow-x: hidden; display: flex; flex-direction: column; 
+            overscroll-behavior: none; /* 防止安卓下拉刷新破坏沉浸感 */
+        }
+        
+        /* 修复：移动端顶部 padding 减小，避免浪费空间 */
         .app-container { display: flex; flex-direction: column; min-height: 100vh; width: 100%; padding-top: 130px; transition: opacity 0.5s; }
+        @media (max-width: 600px) {
+            .app-container { padding-top: 100px; }
+        }
         body.is-blocked .app-container { opacity: 0.15; pointer-events: none; }
-
-        /* --- 安全警告 & 广告拦截 (保持原样) --- */
-        #safety-notice-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; display: none; justify-content: center; align-items: center; padding: 20px; background: rgba(3, 7, 18, 0.9); backdrop-filter: blur(8px); }
-        .safety-card { background: #111827; padding: 40px 30px; border-radius: 32px; border: 1px solid var(--border); text-align: center; max-width: 420px; width: 100%; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
-        .safety-card .icon { font-size: 48px; margin-bottom: 20px; }
-        .safety-card h3 { color: var(--text); margin: 0 0 15px 0; font-size: 22px; font-weight: 900; letter-spacing: 1px; }
-        .safety-card p.safety-text { font-size: 14px; color: var(--text-muted); line-height: 1.8; margin-bottom: 30px; display: block !important; visibility: visible !important; }
 
         /* --- 动画背景 --- */
         .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); pointer-events: none; }
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: moveStars linear infinite; }
         @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-1000px); } }
         
-        /* --- 导航栏 (升级：增加 Enterprise 质感) --- */
+        /* --- 导航栏 --- */
         .navbar { position: fixed; top: 0; left: 0; right: 0; height: 110px; background: var(--nav-bg); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5000; backdrop-filter: blur(25px); padding: 10px; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+        @media (max-width: 600px) { .navbar { height: 90px; } }
+
         .logo-wrap { display: flex; align-items: center; gap: 12px; }
         .logo { font-size: 30px; font-weight: 900; color: white; letter-spacing: 2px; }
+        @media (max-width: 400px) { .logo { font-size: 24px; } } /* 修复窄屏 Logo 过大 */
         .logo span { color: var(--primary); }
-        
         .status-dot { width: 14px; height: 14px; border-radius: 50%; background: #666; transition: 0.3s; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .status-dot.online { background: var(--success); box-shadow: 0 0 15px var(--success); }
         
         .trust-badges { display: flex; gap: 8px; margin-top: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); flex-wrap: nowrap; justify-content: center; width: 100%; overflow: hidden; }
         
-        /* --- 核心升级：AI 风险 & 审计样式 --- */
-        
-        /* 1. 风险预警 Banner */
-        .risk-banner {
-            display: none; /* 默认隐藏，AI 触发时显示 */
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid var(--danger);
-            color: #fca5a5;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-bottom: 15px;
-            text-align: left;
-            animation: fadeIn 0.3s ease;
-        }
+        /* --- 核心组件样式 --- */
+        .risk-banner { display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); color: #fca5a5; padding: 12px; border-radius: 12px; font-size: 12px; margin-bottom: 15px; text-align: left; animation: fadeIn 0.3s ease; }
         .risk-banner strong { color: #fff; display: block; margin-bottom: 4px; font-size: 13px; }
         
-        /* 2. 审计轨迹 (Terminal 风格) */
-        .audit-terminal {
-            font-family: 'Courier New', Courier, monospace;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 10px;
-            color: var(--audit);
-            margin-top: 15px;
-            text-align: left;
-            display: none; /* 传输时显示 */
-        }
+        .audit-terminal { font-family: 'Courier New', Courier, monospace; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; font-size: 10px; color: var(--audit); margin-top: 15px; text-align: left; display: none; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
         .audit-line { display: flex; justify-content: space-between; margin-bottom: 4px; }
-        .audit-label { opacity: 0.7; }
         .audit-val { color: #fff; font-weight: bold; }
 
-        /* 3. AI 决策状态 */
-        .ai-decision-pill {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 10px; color: var(--ai);
-            background: rgba(139, 92, 246, 0.1);
-            padding: 4px 8px; border-radius: 20px;
-            margin-top: 5px; border: 1px solid rgba(139, 92, 246, 0.2);
-        }
-
-        /* --- 布局容器 --- */
         .main-wrapper { display: flex; width: 100%; margin: 0 auto; justify-content: center; align-items: flex-start; gap: 20px; padding: 0 15px; }
-        .content-area { flex: 1; min-width: 300px; max-width: 600px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
+        .content-area { flex: 1; min-width: 0; max-width: 600px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
         
-        .ad-side { width: 160px; min-width: 160px; position: sticky; top: 130px; display: flex; flex-direction: column; align-items: center; border-radius: 12px; background: transparent; overflow: hidden; transition: 0.3s; }
+        .ad-side { width: 160px; min-width: 160px; position: sticky; top: 130px; display: flex; flex-direction: column; align-items: center; border-radius: 12px; overflow: hidden; transition: 0.3s; }
         .ad-space { background: transparent; display: flex; justify-content: center; align-items: center; border-radius: 12px; overflow: hidden; width: 100%; transition: 0.3s; }
         .ad-top { min-height: 0; margin-bottom: 15px; }
-        .ad-bottom { min-height: 0; margin-top: 20px; margin-bottom: 25px; }
         @media (max-width: 880px) { .ad-side { display: none !important; } }
         
-        .card { background: var(--card); padding: 25px; border-radius: 30px; backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.9); }
-        .tab-group { display: flex; background: rgba(51, 65, 85, 0.7); padding: 5px; border-radius: 18px; margin-bottom: 25px; }
-        .tab { flex: 1; padding: 14px; cursor: pointer; border-radius: 14px; font-size: 14px; text-align: center; color: var(--text-muted); font-weight: 800; transition: 0.3s; }
+        .card { background: var(--card); padding: 20px; border-radius: 24px; backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.9); }
+        .tab-group { display: flex; background: rgba(51, 65, 85, 0.7); padding: 4px; border-radius: 16px; margin-bottom: 20px; }
+        .tab { flex: 1; padding: 12px; cursor: pointer; border-radius: 12px; font-size: 13px; text-align: center; color: var(--text-muted); font-weight: 800; transition: 0.3s; }
         .tab.active { background: var(--primary); color: white; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.5); }
-        .panel { display: none; width: 100%; }
-        .panel.active { display: block; animation: fadeIn 0.3s ease; }
+        .panel { display: none; width: 100%; animation: fadeIn 0.3s ease; }
+        .panel.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .share-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 15px; margin-bottom: 15px; align-items: stretch; }
-        @media (max-width: 550px) { .share-grid { grid-template-columns: 1fr; } }
-        .column-box { display: flex; flex-direction: column; gap: 10px; min-height: 220px; }
+        /* 修复：移动端 grid 改为单列，防止内容挤压 */
+        .share-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; margin-bottom: 15px; align-items: stretch; }
+        @media (max-width: 600px) { .share-grid { grid-template-columns: 1fr; } }
         
-        /* --- 拖拽 & 文本区域 --- */
-        #drop-zone { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; background: rgba(3, 7, 18, 0.95); display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-        .file-zone { position: relative; border: 2.5px dashed var(--border); border-radius: 20px; padding: 25px; background: rgba(15, 23, 42, 0.5); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 150px; text-align: center; transition: 0.3s; backdrop-filter: blur(15px); }
-        .file-zone.drag-active, #drop-zone.drag-active { background: rgba(99, 102, 241, 0.3); border-color: #fff; transform: scale(1.02); }
+        .file-zone { position: relative; border: 2.5px dashed var(--border); border-radius: 16px; padding: 20px; background: rgba(15, 23, 42, 0.5); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 140px; text-align: center; transition: 0.3s; }
+        .text-zone { position: relative; border: 1.5px solid var(--border); border-radius: 16px; background: rgba(15, 23, 42, 0.5); display: flex; flex-direction: column; flex: 1; min-height: 140px; overflow: hidden; }
+        textarea { background: transparent; border: none; color: white; resize: none; width: 100%; flex: 1; font-size: 14px; padding: 15px; margin: 0; outline: none; }
         
-        .text-zone { position: relative; border: 1.5px solid var(--border); border-radius: 20px; background: rgba(15, 23, 42, 0.5); display: flex; flex-direction: column; flex: 1; min-height: 150px; backdrop-filter: blur(15px); overflow: hidden; }
-        .text-zone.readonly { border-color: var(--success); background: rgba(16, 185, 129, 0.05); height: 200px; }
-        .text-content-scroll { width: 100%; height: 100%; padding: 20px; overflow-y: auto; color: white; font-size: 14px; background: transparent; resize: none; border: none; box-sizing: border-box; }
-        .text-content-scroll::-webkit-scrollbar { width: 6px; }
-        .text-content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
-        textarea { background: transparent; border: none; color: white; resize: none; width: 100%; flex: 1; font-size: 14px; padding: 20px; margin: 0; outline: none; }
-
-        .zone-badge { position: absolute; top: 10px; right: 12px; font-size: 10px; font-weight: 800; color: var(--text-muted); background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 6px; pointer-events: none; border: 1px solid rgba(255,255,255,0.1); z-index: 10; backdrop-filter: blur(4px); }
-
-        #stagedList { display: none; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 10px; max-height: 120px; overflow-y: auto; }
-        .staged-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 6px 10px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 5px; }
-        
-        /* AI Suggestions Styles */
-        #ai-suggestions { display: none; font-size: 11px; margin-bottom: 8px; background: rgba(139, 92, 246, 0.1); padding: 8px 12px; border-radius: 8px; border-left: 3px solid var(--ai); color: #e9d5ff; text-align: left; }
-        #ai-tag-container { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
-        .ai-smart-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(139, 92, 246, 0.3); color: white; border: 1px solid rgba(139, 92, 246, 0.4); }
-
-        button.action-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 16px; font-size: 14px; cursor: pointer; width: 100%; font-weight: 800; transition: 0.3s; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); margin-top: auto; text-transform: uppercase; position: relative; overflow: hidden; }
+        button.action-btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 13px; cursor: pointer; width: 100%; font-weight: 800; transition: 0.3s; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); margin-top: auto; text-transform: uppercase; letter-spacing: 0.5px; }
         button.action-btn:active { transform: scale(0.97); }
-        button.action-btn::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent); transform: rotate(45deg); animation: btnShine 3s infinite; }
-        @keyframes btnShine { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
 
-        .nerd-stats { display: flex; justify-content: space-between; font-size: 11px; color: var(--success); font-family: monospace; font-weight: 900; margin-bottom: 10px; align-items: center; }
-        #receivedText-container { display: none; margin-top: 20px; width:100%; }
+        /* 修复：移动端控制栏 flex 换行，防止重叠 */
+        .controls-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
         
-        .history-box { width: 100%; max-width: 600px; margin-top: 40px; padding: 0 15px; }
-        .history-title { font-size: 13px; font-weight: 900; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-        .history-title::after { content:""; flex:1; height:1px; background: rgba(255,255,255,0.1); }
-        .history-item { background: rgba(30, 41, 59, 0.5); border-radius: 14px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); font-size: 11px; }
-
-        #senderCodeArea { margin-top: 30px; border-top: 1px solid var(--border); padding-top: 30px; display: none; text-align: center; }
-        .code-display { font-size: 72px; letter-spacing: 12px; font-weight: 900; color: #a5b4fc; margin: 20px 0; text-shadow: 0 0 40px rgba(99, 102, 241, 0.7); }
-        #qrcode { background: white; padding: 15px; border-radius: 18px; display: inline-block; box-shadow: 0 0 30px rgba(255,255,255,0.15); }
-
-        .receive-input-container { position: relative; width: 100%; max-width: 420px; display: flex; align-items: center; background: #0f172a; border: 2.5px solid var(--border); border-radius: 20px; overflow: hidden; }
-        input[type="number"] { flex: 1; padding: 18px; border: none; background: transparent; color: white; font-size: 42px; text-align: center; outline: none; min-width: 0; }
-        #btn-scan { background: transparent; border: none; border-left: 1.5px solid rgba(255,255,255,0.2); color: var(--text-muted); font-size: 14px; font-weight: 800; padding: 0 15px; height: 50px; cursor: pointer; white-space: nowrap; transition: 0.3s; }
-
-        .pg-container { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin: 15px 0; display: none; position: relative; }
-        .pg-bar { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s; box-shadow: 0 0 10px var(--primary); }
-
-        .faq-container { max-width: 600px; margin: 40px auto; padding: 0 20px; text-align: left; }
-        .faq-container h3 { font-size: 16px; color: var(--primary); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
-        details { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; margin-bottom: 10px; padding: 12px 15px; transition: 0.3s; }
-        details[open] { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
-        summary { font-size: 14px; font-weight: 800; color: white; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-        summary::after { content: '+'; color: var(--primary); font-size: 18px; transition: 0.3s; }
-        details[open] summary::after { content: '-'; transform: rotate(90deg); }
-        .faq-answer { font-size: 13px; color: var(--text-muted); margin-top: 10px; line-height: 1.6; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.1); }
-
-        .legal-footer { padding: 15px 10px 30px 10px; background: #030712; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .trust-signals-grid { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width: 100%; max-width: 600px; }
-        .signal-item { display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .signal-item div { font-size: 28px; margin-bottom: 5px; filter: drop-shadow(0 0 10px #6366f1); }
-        .signal-item p { font-size: 11px; color: var(--text-muted); font-weight: 800; margin: 0; }
-        .footer-links-container { display: flex; justify-content: center; align-items: center; gap: 30px; width: 100%; }
-        .clickable-footer-link { cursor: pointer; display: inline-flex; align-items: center; gap: 6px; color: white; font-weight: 900; font-size: 16px; white-space: nowrap; }
+        .protection-btn { display: inline-flex; align-items: center; justify-content: center; cursor: pointer; background: #1e293b; border: 1.5px solid #334155; border-radius: 8px; padding: 0 12px; height: 40px; min-width: 140px; font-weight: 700; font-size: 12px; transition: all 0.2s; }
+        .protection-btn input { display: none; }
+        .protection-btn:has(input:checked) { background: #10b981; border-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+        .protection-btn:has(input:checked) .state.off { display: none !important; }
+        .protection-btn:has(input:checked) .state.on { display: flex !important; }
         
-        /* Modal & Popup Styles (省略部分未变动的样式以节省篇幅，保持原样) */
-        .policy-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .policy-content { background: #111827; border: 1px solid var(--border); border-radius: 24px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 30px; position: relative; }
+        /* 修复：下拉菜单样式 */
+        select.custom-select { background:#0f172a; color:#fff; border:1.5px solid var(--border); padding:0 10px; border-radius:8px; outline:none; height:40px; font-weight:600; font-size:12px; max-width: 100%; }
+
+        /* --- 页脚与弹窗修复 --- */
+        .legal-footer { padding: 15px 10px 30px 10px; background: #030712; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 30px; }
+        
+        /* 修复：模态框层级和全屏覆盖 */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 10001; display: none; justify-content: center; align-items: center; flex-direction: column; padding: 20px; backdrop-filter: blur(15px); }
         .crypto-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 6000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .crypto-modal-card { background: #0f172a; padding: 30px; border-radius: 24px; border: 1px solid var(--border); width: 90%; max-width: 380px; box-shadow: 0 20px 60px rgba(99, 102, 241, 0.15); display: flex; flex-direction: column; gap: 15px; }
+        .crypto-modal-card { background: #0f172a; padding: 25px; border-radius: 20px; border: 1px solid var(--border); width: 90%; max-width: 360px; display: flex; flex-direction: column; gap: 15px; }
+
+        /* 其他通用类保持精简 */
+        .zone-badge { position: absolute; top: 8px; right: 10px; font-size: 9px; font-weight: 800; color: var(--text-muted); background: rgba(0,0,0,0.4); padding: 3px 6px; border-radius: 4px; pointer-events: none; border: 1px solid rgba(255,255,255,0.1); z-index: 10; }
+        #stagedList { display: none; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); border-radius: 8px; padding: 8px; margin-bottom: 10px; max-height: 100px; overflow-y: auto; }
+        .staged-item { display: flex; justify-content: space-between; align-items: center; font-size: 11px; padding: 5px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 4px; }
         
-        #crypto-password, #alert-password-input { width: 100%; background: rgba(30, 41, 59, 0.5); border: 2px solid #334155; color: white; padding: 16px; border-radius: 14px; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 1px; margin-bottom: 5px; }
-        .strength-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; width: 100%; }
-        .strength-track { flex: 1; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; }
-        #strength-bar-fill { height: 100%; width: 0%; background-color: #ef4444; transition: width 0.3s; }
-        
-        /* 扫描器 & 步进条样式保持不变 */
-        #scanner-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000; z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
-        .steps-bar { position: relative; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; width: 100%; overflow: hidden; padding: 10px 0; }
-        .steps-bar::after { content: ''; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.2) 50%, transparent 100%); transform: translateX(-100%); animation: flowSweep 3s infinite ease-in-out; pointer-events: none; }
-        .step-item { display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 1; position: relative; flex: 1; }
-        .step-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--text-muted); transition: 0.3s; box-shadow: 0 0 0 3px rgba(30, 41, 59, 1); }
-        .step-line { flex: 0.5; height: 2px; background: rgba(255,255,255,0.1); margin: 0 5px; position: relative; top: -9px; z-index: 0; }
-        .step-item:first-child .step-dot { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
-        .step-item span { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; text-align: center; line-height: 1.2; }
+        /* AI 标签样式 */
+        #ai-suggestions { display: none; font-size: 10px; margin-bottom: 8px; background: rgba(139, 92, 246, 0.1); padding: 6px 10px; border-radius: 8px; border-left: 3px solid var(--ai); color: #e9d5ff; text-align: left; }
+        #ai-tag-container { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+        .ai-smart-tag { font-size: 9px; padding: 2px 5px; border-radius: 4px; background: rgba(139, 92, 246, 0.3); color: white; border: 1px solid rgba(139, 92, 246, 0.4); }
     </style>
 </head>
 <body>
@@ -237,7 +156,7 @@
 
     <div id="drop-zone"><h2 style="font-size:36px; color:white; font-weight:900;" id="drop-text">SECURE DROP</h2></div>
 
-    <div class="ad-space ad-top" id="top-ad-zone">
+    <div class="ad-space ad-top" id="top-ad-zone" style="min-height:90px;">
         <script>atOptions={'key':'fabada29768bc51cc0a6a76937a99ba9','format':'iframe','height':90,'width':728,'params':{}};</script>
         <script src="https://www.highperformanceformat.com/fabada29768bc51cc0a6a76937a99ba9/invoke.js"></script>
     </div>
@@ -249,11 +168,11 @@
         </div>
 
         <div class="content-area">
-            <div style="text-align: center; margin-bottom: 25px;">
-                <h1 id="hero-title" style="font-size: 24px; font-weight: 900; color: white; margin-bottom: 8px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h1 id="hero-title" style="font-size: 22px; font-weight: 900; color: white; margin-bottom: 6px;">
                     Enterprise Secure File Exchange
                 </h1>
-                <h2 id="hero-subtitle" style="font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 480px; margin: 0 auto;">
+                <h2 id="hero-subtitle" style="font-size: 12px; color: var(--text-muted); line-height: 1.5; max-width: 400px; margin: 0 auto;">
                     Client-side AES-256 Encryption • DLP Risk Analysis • No Cloud Storage
                 </h2>
             </div>
@@ -277,16 +196,16 @@
                 <div id="panel-send" class="panel active">
                     
                     <div id="risk-banner" class="risk-banner">
-                        <strong>⚠️ Compliance Alert (AI Detection)</strong>
-                        <span id="risk-text">Sensitive content detected. Encryption is strongly recommended.</span>
+                        <strong>⚠️ Compliance Alert</strong>
+                        <span id="risk-text">Sensitive content detected.</span>
                     </div>
 
                     <div class="share-grid">
                         <div class="column-box">
                             <label class="file-zone" id="file-drop-area" for="fileInput">
                                 <div id="file-count-badge" class="zone-badge" style="display:none;">0 Files</div>
-                                <div style="font-size: 42px;">📂</div>
-                                <div id="label-files" style="font-size:13px; margin-top:10px; font-weight:900;">Drop Files</div>
+                                <div style="font-size: 36px;">📂</div>
+                                <div id="label-files" style="font-size:12px; margin-top:8px; font-weight:900;">Drop Files</div>
                             </label>
                             
                             <div id="ai-suggestions">
@@ -304,14 +223,14 @@
                         <div class="column-box">
                             <div class="text-zone">
                                 <div id="text-count-badge" class="zone-badge" style="display:none;">0 Chars</div>
-                                <div id="label-text-hint" style="font-size:12px; color:var(--text-muted); font-weight:900; margin: 20px 0 0 20px;">Secure Note</div>
+                                <div id="label-text-hint" style="font-size:11px; color:var(--text-muted); font-weight:900; margin: 15px 0 0 15px;">Secure Note</div>
                                 <textarea id="quickText" placeholder="Paste confidential text..." oninput="updateTextCount(this)"></textarea>
                             </div>
                             <button class="action-btn" id="btn-share-text" onclick="triggerAd('send-text')">ENCRYPT TEXT</button>
                         </div>
                     </div>
 
-                    <div style="display:flex; align-items:center; justify-content:center; gap:15px; margin: 15px 0; flex-wrap:wrap;">
+                    <div class="controls-row">
                         <label class="protection-btn" onclick="event.preventDefault(); showCryptoModal()">
                             <input type="checkbox" id="protection-toggle-input"> 
                             <span class="btn-content">
@@ -325,8 +244,8 @@
                         </label>
 
                         <div style="display:flex; align-items:center; gap:8px;">
-                            <span style="font-size:11px; color:#94a3b8; font-weight:800; text-transform:uppercase;">Download Cap:</span>
-                            <select id="downloadLimit" style="background:#0f172a; color:#fff; border:1.5px solid var(--border); padding:0 10px; border-radius:8px; outline:none; height:40px; font-weight:600; font-size:12px;">
+                            <span style="font-size:10px; color:#94a3b8; font-weight:800; text-transform:uppercase;">Limit:</span>
+                            <select id="downloadLimit" class="custom-select">
                                 <option value="1">1 (Strict)</option>
                                 <option value="3">3 (Team)</option>
                                 <option value="999">Unlimited</option>
@@ -340,32 +259,30 @@
                         <div style="font-size:12px; color:var(--success); font-weight:900; margin-bottom:5px;">🛡️ SECURE TUNNEL ESTABLISHED</div>
                         
                         <div id="audit-log" class="audit-terminal">
-                            <div class="audit-line"><span class="audit-label">> Session ID:</span> <span class="audit-val" id="disp-session-id">---</span></div>
-                            <div class="audit-line"><span class="audit-label">> Handshake:</span> <span class="audit-val" style="color:var(--warning)">WAITING_PEER</span></div>
-                            <div class="audit-line"><span class="audit-label">> Encryption:</span> <span class="audit-val" id="disp-enc-status">DTLS/SRTP</span></div>
+                            <div class="audit-line"><span class="audit-label">> Session:</span> <span class="audit-val" id="disp-session-id">---</span></div>
+                            <div class="audit-line"><span class="audit-label">> Status:</span> <span class="audit-val" style="color:var(--warning)">WAITING</span></div>
+                            <div class="audit-line"><span class="audit-label">> Mode:</span> <span class="audit-val" id="disp-enc-status">DTLS/SRTP</span></div>
                         </div>
 
                         <div style="margin-top:20px;">
                             <div id="qrcode"></div>
-                            <div class="code-display" id="myCode">---</div>
+                            <div class="code-display" id="myCode" style="font-size: 56px; letter-spacing: 8px;">---</div>
                         </div>
 
-                        <div id="expiryTimer" style="font-size:13px; color:var(--danger); font-weight:900; margin-top:10px;">Token Expires: 10:00</div>
+                        <div id="expiryTimer" style="font-size:12px; color:var(--danger); font-weight:900; margin-top:10px;">Token Expires: 10:00</div>
                         <button class="action-btn" id="btn-copy-link" style="background:#4f46e5; margin-top:15px;">📋 COPY SECURE LINK</button>
                         <button class="action-btn" id="btn-stop" onclick="resetSender()" style="background:var(--danger); margin-top:15px;">TERMINATE SESSION</button>
                     </div>
 
                     <div id="crypto-modal" class="crypto-modal">
                         <div class="crypto-modal-card">
-                            <h3 id="modal-pass-title" style="color: #6366f1; margin: 0 0 10px 0; font-size: 18px;">AES-256 Key Generation</h3>
-                            <p style="font-size:11px; color:#94a3b8; margin:0 0 10px 0;">This key is never stored on our servers.</p>
-                            
+                            <h3 id="modal-pass-title" style="color: #6366f1; margin: 0 0 10px 0; font-size: 16px;">Set Encryption Key</h3>
                             <input type="password" id="crypto-password" placeholder="Enter strong password..." 
                                    oninput="checkStrength(this.value)" autocomplete="new-password">
                             
                             <div class="strength-wrapper">
                                 <div class="strength-track"><div id="strength-bar-fill"></div></div>
-                                <div id="strength-text" style="opacity:0.8">Empty</div>
+                                <div id="strength-text" style="opacity:0.8; font-size:10px;">Empty</div>
                             </div>
                             <div style="display: flex; gap: 10px; margin-top: 10px;">
                                 <button class="action-btn" id="btn-enable-pass" style="flex: 1; padding: 12px; margin:0;" onclick="confirmEncryption()">ENCRYPT</button>
@@ -378,19 +295,19 @@
                     <div style="display:flex; flex-direction:column; align-items:center;">
                         <div class="receive-input-container">
                             <input type="number" id="targetCode" placeholder="000-000" oninput="if(this.value.length>6) this.value=this.value.slice(0,6)" onkeydown="if(event.key==='Enter') triggerAd('receive')">
-                            <button id="btn-scan" onclick="openScanner()">Scan QR 📷</button>
+                            <button id="btn-scan" onclick="openScanner()">Scan 📷</button>
                         </div>
                         
                         <button class="action-btn" id="btn-connect" onclick="triggerAd('receive')" style="margin-top: 25px;">ESTABLISH SECURE LINK</button>
                         
                         <div id="receive-audit-log" class="audit-terminal" style="width:100%; margin-top:15px; display:none;">
                              <div class="audit-line"><span class="audit-label">> Handshake:</span> <span class="audit-val" style="color:var(--success)">VERIFIED</span></div>
-                             <div class="audit-line"><span class="audit-label">> Protocol:</span> <span class="audit-val">WebRTC/DTLS 1.2</span></div>
+                             <div class="audit-line"><span class="audit-label">> Protocol:</span> <span class="audit-val">WebRTC/DTLS</span></div>
                              <div class="audit-line"><span class="audit-label">> Integrity:</span> <span class="audit-val" style="color:var(--audit)">CHECKING...</span></div>
                         </div>
 
                         <div id="receive-pg-container" class="pg-container"><div id="receive-pg-bar" class="pg-bar"></div></div>
-                        <div id="receiveNerdStats" class="nerd-stats" style="display:none; width:100%; margin-top:5px;"><span id="nerd-speed">0.0 MB/s</span><span class="blink-warn">Decrypting stream...</span><span id="nerd-eta" style="color:var(--primary)">ETA: --s</span></div>
+                        <div id="receiveNerdStats" class="nerd-stats" style="display:none; width:100%; margin-top:5px;"><span id="nerd-speed">0.0 MB/s</span><span class="blink-warn">Decrypting...</span><span id="nerd-eta" style="color:var(--primary)">--s</span></div>
                         
                         <div id="receivedText-container">
                             <div class="text-zone readonly">
@@ -410,7 +327,7 @@
                 <div id="history-list"></div>
             </div>
             
-            <div class="ad-space ad-bottom" id="bottom-ad-zone">
+            <div class="ad-space ad-bottom" id="bottom-ad-zone" style="min-height:90px;">
                 <script>atOptions={'key':'fabada29768bc51cc0a6a76937a99ba9','format':'iframe','height':90,'width':728,'params':{}};</script>
                 <script src="https://www.highperformanceformat.com/fabada29768bc51cc0a6a76937a99ba9/invoke.js"></script>
             </div>
@@ -431,7 +348,7 @@
             <details><summary id="faq-q4">...</summary><div class="faq-answer" id="faq-a4">...</div></details>
             <details><summary id="faq-q5">...</summary><div class="faq-answer" id="faq-a5">...</div></details>
             <details><summary id="faq-q6">...</summary><div class="faq-answer" id="faq-a6">...</div></details>
-            <div style="text-align:center; margin-top:15px; opacity:0.5; font-size:10px;">(Full Security Whitepaper available upon request)</div>
+            <div style="text-align:center; margin-top:15px; opacity:0.5; font-size:10px;">(Full Whitepaper Available)</div>
         </div>
 
         <div style="margin-bottom: 5px;">
@@ -465,7 +382,7 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="adModal">
+<div class="modal-overlay" id="adModal" style="height: 100dvh;">
     <div id="ad-wait-title">Verifying Peer Identity...</div>
     <div style="font-size: 13px; color: var(--primary); font-weight: 800; margin-bottom: 5px;" id="ad-timer-text">Handshake: 5s</div>
     <div style="width: 300px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 20px;">
@@ -477,7 +394,7 @@
     </div>
 </div>
 
-<div id="alert-modal" class="crypto-modal" style="z-index: 99999;">
+<div id="alert-modal" class="crypto-modal" style="z-index: 99999; height: 100dvh;">
     <div class="crypto-modal-card" style="align-items: center; text-align: center;">
         <div style="font-size: 40px; margin-bottom: 10px;">⚠️</div>
         <h3 id="alert-msg" style="color: white; margin: 0 0 20px 0; font-size: 16px; line-height: 1.5;">Message</h3>
@@ -485,7 +402,7 @@
     </div>
 </div>
 
-<div id="pass-input-modal" class="crypto-modal" style="z-index: 99999;">
+<div id="pass-input-modal" class="crypto-modal" style="z-index: 99999; height: 100dvh;">
     <div class="crypto-modal-card">
         <h3 id="pass-input-title" style="color: #f59e0b; margin: 0 0 5px 0; font-size: 18px; text-align: center;">🔐 Decryption Required</h3>
         <div id="pass-error-msg"></div>
@@ -498,7 +415,7 @@
     </div>
 </div>
 
-<div id="scanner-modal">
+<div id="scanner-modal" style="height: 100dvh;">
     <div class="scanner-container">
         <video id="video-preview" playsinline></video>
         <div class="scan-frame"><div class="scan-line"></div></div>
@@ -528,7 +445,7 @@
             
             passTitle: "🔐 Decryption Required", passPlaceholder: "Enter Session Password...", passUnlock: "DECRYPT", passCancel: "ABORT",
             passWrong: "❌ Decryption Failed!", passRemaining: "attempts remaining",
-            passWeak: "Weak Password! \nPolicy requires 8+ chars with Upper, Lower, Numeric & Special.",
+            passWeak: "Weak Password! \nPolicy requires 8+ chars.",
             
             // Enterprise AI Tags
             aiInsight: "🤖 Content Analysis", aiLocal: "Local ML Model",
@@ -542,19 +459,18 @@
                 "Performing Handshake...", 
                 "Secure Channel Active."
             ]
-        },
-        // ... (其他语言保留原逻辑，仅做相应 Enterprise 风格微调，此处省略以节省篇幅) ...
+        }
     };
 
     let currLang = "en", peer = null, stagedFiles = [], currentDownloads = 0, videoTrack = null, torchOn = false, activeConn = null, expiryTimerIdx = null;
     let isAdBlockIgnored = false; 
     let downloadDotsIdx = null; 
-    const PREFIX = "fd-ent-"; // 修改前缀，与普通版隔离
+    const PREFIX = "fd-ent-"; 
     const CHUNK_SIZE = 64 * 1024; 
 
     /* --- [核心战略模块：AI 风险探测引擎 (DLP)] --- */
     const AIEngine = {
-        // 定义敏感关键词库
+        // 定义敏感关键词库 - 演示时请使用包含这些词的文件名
         riskKeywords: ['pass', 'id', 'card', 'contract', 'nda', 'finance', 'report', 'budget', 'key', 'secret', '身份证', '合同', '财务'],
 
         analyze(files) {
@@ -593,7 +509,6 @@
         },
 
         render(result) {
-            // 渲染标签
             const container = document.getElementById('ai-tag-container');
             const wrapper = document.getElementById('ai-suggestions');
             
@@ -609,30 +524,27 @@
             const riskBanner = document.getElementById('risk-banner');
             if (result.risk) {
                 riskBanner.style.display = 'block';
-                // 如果检测到风险，自动建议开启加密（虽然不强制，但为了演示效果）
+                // 如果检测到风险且未加密，自动闪烁提示
                 if(!isEncrypted) {
-                   // 可以在这里做一个闪烁动画提示用户去点加密开关
+                   riskBanner.style.animation = "pulse 1s infinite";
                 }
             } else {
                 riskBanner.style.display = 'none';
+                riskBanner.style.animation = "";
             }
         }
     };
 
     /* --- [UI Helper Functions] --- */
     function applyI18N() {
-        // ... (保持原有的 I18N 逻辑，确保 ID 对应正确) ...
-        // 简略代码：
         const d = I18N['en']; 
         document.getElementById('hero-title').innerHTML = "Enterprise Secure File Exchange";
-        // 确保信任徽章是“企业级”的
         const badgeContainer = document.getElementById('trust-badges');
         if(badgeContainer) {
             badgeContainer.innerHTML = d.badges.map(b => `<span style="font-size: 9px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); white-space: nowrap;">${b}</span>`).join('');
         }
     }
 
-    /* --- [Files Handling with AI Trigger] --- */
     function handleFiles(files) { 
         stagedFiles = stagedFiles.concat(Array.from(files)); 
         renderStagedList(); 
@@ -650,24 +562,20 @@
             badge.style.display = 'block';
             badge.innerText = `${stagedFiles.length} Item${stagedFiles.length > 1 ? 's' : ''}`;
             
-            // 简单的列表渲染
             list.innerHTML = stagedFiles.map((f, i) => 
                 `<div class="staged-item"><span>${f.name}</span><span style="color:var(--danger); cursor:pointer;" onclick="stagedFiles.splice(${i},1);renderStagedList()">✕</span></div>`
             ).join('');
 
-            // [核心] 触发 AI 分析
             const analysis = AIEngine.analyze(stagedFiles);
             AIEngine.render(analysis);
         }
     }
 
-    /* --- [Audit Trail Helpers] --- */
     function updateAuditLog(status) {
         const statusEl = document.getElementById('disp-enc-status');
         if(statusEl) statusEl.innerText = status;
     }
     
-    // 生成伪随机 UUID，增加专业感
     function generateUUID() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
             var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -675,16 +583,15 @@
         });
     }
 
-    /* --- [P2P Sender Logic (Enterprise Edition)] --- */
+    /* --- [P2P Sender Logic] --- */
     async function initSender() {
         if(peer) peer.destroy(); 
         currentDownloads = 0; 
         const code = Math.floor(100000 + Math.random() * 900000);
         
-        // 生成 Session ID
         const sessionID = generateUUID();
-        document.getElementById('disp-session-id').innerText = sessionID;
-        document.getElementById('disp-enc-status').innerText = "INITIALIZING...";
+        document.getElementById('disp-session-id').innerText = sessionID.substring(0,8) + '...';
+        document.getElementById('disp-enc-status').innerText = "INIT...";
         document.getElementById('audit-log').style.display = 'block';
 
         peer = new Peer(PREFIX + code);
@@ -699,16 +606,14 @@
             document.getElementById('qrcode').innerHTML = ""; 
             new QRCode(document.getElementById('qrcode'), { text: window.location.origin + window.location.pathname + "?c=" + code, width: 140, height: 140 });
             startExpiryTimer();
-            updateAuditLog("LISTENING (DTLS)");
+            updateAuditLog("LISTENING");
         });
 
         peer.on('connection', c => {
-            updateAuditLog("HANDSHAKE RECEIVED");
-            
+            updateAuditLog("HANDSHAKE");
             c.on('open', async () => {
-                updateAuditLog("TUNNEL SECURED");
+                updateAuditLog("SECURED");
                 
-                // 处理文字发送
                 let textValue = document.getElementById('quickText').value.trim(); 
                 if(textValue) {
                     if(isEncrypted) { 
@@ -719,10 +624,9 @@
                     } else { 
                         c.send({ type: 'text', data: textValue, encrypted: false }); 
                     }
-                    addAuditEntry("Sent: Secure Note", "text");
+                    addAuditEntry("Sent Note", "text");
                 }
 
-                // 处理文件发送
                 if(stagedFiles && stagedFiles.length > 0) {
                     let fb, fn = stagedFiles.length === 1 ? stagedFiles[0].name : "Secure_Bundle.zip";
                     if (stagedFiles.length === 1) { 
@@ -746,20 +650,20 @@
                         c.send({ type: 'chunk', index: i/CHUNK_SIZE, data: arrayBuffer.slice(i, i + CHUNK_SIZE) });
                     }
                     c.send({ type: 'done' }); 
-                    addAuditEntry("Sent: " + fn, "file");
-                    updateAuditLog("DATA TRANSMITTED");
+                    addAuditEntry("Sent File", "file");
+                    updateAuditLog("SENT");
                 }
             });
 
             c.on('data', d => { 
                 if (d.type === 'security_burn') { 
-                    showCustomAlert("⚠️ SECURITY ALERT: Peer failed auth. Session Wiped."); 
+                    showCustomAlert("⚠️ Security Alert: Peer failed auth. Session Wiped."); 
                     resetSender(); 
                 }
                 if(d.type === 'confirm_save') { 
                     currentDownloads++; 
                     if(currentDownloads >= parseInt(document.getElementById('downloadLimit').value)) {
-                        updateAuditLog("LIMIT REACHED - TERMINATING");
+                        updateAuditLog("LIMIT MET");
                         setTimeout(resetSender, 1000);
                     }
                 } 
@@ -773,9 +677,8 @@
         const rPeer = new Peer();
         const pgBar = document.getElementById('receive-pg-bar');
         
-        // UI 更新
         document.getElementById('receive-pg-container').style.display = 'block';
-        document.getElementById('receive-audit-log').style.display = 'block'; // 显示接收端审计
+        document.getElementById('receive-audit-log').style.display = 'block'; 
         
         const btn = document.getElementById('btn-connect');
         btn.disabled = true; 
@@ -789,12 +692,11 @@
             
             conn.on('open', () => {
                 const logs = document.querySelectorAll('#receive-audit-log .audit-val');
-                if(logs[2]) logs[2].innerText = "OK"; // Integrity Check OK
-                btn.innerText = "Receiving Data Stream...";
+                if(logs[2]) logs[2].innerText = "OK"; 
+                btn.innerText = "Receiving...";
             });
 
             conn.on('data', async d => {
-                // ... (数据接收逻辑，保持原样，仅修改文案) ...
                 if(d.type === 'meta') {
                     meta = d;
                     const stats = document.getElementById('receiveNerdStats'); 
@@ -813,7 +715,6 @@
                     
                     let finalBlob = new Blob(chunks);
                     
-                    // 点击保存/解密
                     btn.onclick = async () => {
                         if (meta && meta.encrypted) {
                             let attempts = 0;
@@ -840,16 +741,26 @@
                         }
                     };
                 }
-                // 处理文本接收
                 else if(d.type === 'text') {
-                     // ... (同上，保持文本接收逻辑) ...
                      btn.innerText = "VIEW NOTE";
                      btn.disabled = false;
                      btn.onclick = async () => {
-                         // 解密逻辑同上...
-                         const textBox = document.getElementById('receivedText');
-                         document.getElementById('receivedText-container').style.display = 'block';
-                         textBox.innerText = d.data; // 简化展示
+                        let finalTxt = d.data;
+                        if(d.encrypted) {
+                             // 解密逻辑简化处理
+                             const pass = await requestPassword();
+                             if(!pass) return;
+                             try {
+                                 const res = await fetch(d.data); const blob = await res.blob();
+                                 const ptBlob = await FlashDropCrypto.decrypt(blob, pass);
+                                 finalTxt = await ptBlob.text();
+                                 document.getElementById('pass-input-modal').style.display = 'none';
+                             } catch(e) { return; }
+                        }
+                        const textBox = document.getElementById('receivedText');
+                        document.getElementById('receivedText-container').style.display = 'block';
+                        textBox.innerText = finalTxt; 
+                        conn.send({ type: 'confirm_save' });
                      }
                 }
             });
@@ -860,21 +771,18 @@
         const u = window.URL.createObjectURL(blob);
         const a = document.createElement('a'); a.href = u;
         a.download = name; a.click();
-        addAuditEntry("Received: " + name, "file");
-        // 稍微延迟后重置，给用户一种完成感
+        addAuditEntry("Recv: " + name, "file");
         setTimeout(() => { 
             const btn = document.getElementById('btn-connect');
-            btn.innerText = "SESSION COMPLETE";
+            btn.innerText = "SESSION DONE";
             btn.style.background = "#334155";
             setTimeout(resetReceiver, 2000); 
         }, 500);
     }
 
-    /* --- [Shared Utilities] --- */
-    // 改名：History -> Audit Log
     function addAuditEntry(name, type) {
         let h = JSON.parse(localStorage.getItem('fd_audit') || "[]");
-        h.unshift({ name: name.substring(0,25), time: new Date().toLocaleTimeString(), type: type });
+        h.unshift({ name: name.substring(0,15), time: new Date().toLocaleTimeString(), type: type });
         h = h.slice(0, 5); 
         localStorage.setItem('fd_audit', JSON.stringify(h)); 
         renderHistory();
@@ -885,9 +793,7 @@
         list.innerHTML = h.map(i => `<div class="history-item"><span>${i.type==='file'?'📄':'🔤'} ${i.name}</span><span style="opacity:0.5; font-family:monospace;">${i.time}</span></div>`).join('');
     }
 
-    // 广告触发逻辑（伪装成 Security Check）
     function triggerAd(mode) {
-        // ... (基本检查逻辑保持不变) ...
         if(mode === 'receive') {
              const codeVal = document.getElementById('targetCode').value;
              if(!codeVal || codeVal.length < 6) { showCustomAlert(I18N['en'].inputErr); return; }
@@ -895,7 +801,6 @@
 
         if(isAdBlockIgnored) { mode.startsWith('send') ? initSender() : startReceiving(); return; }
         
-        // 显示伪装成“安全验证”的广告弹窗
         const modal = document.getElementById('adModal'); 
         const adPg = document.getElementById('ad-pg-bar'); 
         const timerText = document.getElementById('ad-timer-text'); 
@@ -904,18 +809,17 @@
         
         modal.style.display = 'flex'; 
         adPg.style.width = '0%'; 
-        let elapsed = 0; const totalMs = 5000;
+        let elapsed = 0; const totalMs = 3000; // 缩短验证时间提升体验
         
         const itv = setInterval(() => { 
             elapsed += 100; 
             const pct = (elapsed / totalMs) * 100; 
             
             adPg.style.width = pct + '%'; 
-            timerText.innerText = `Security Check: ${Math.ceil((totalMs - elapsed) / 1000)}s`;
+            timerText.innerText = `Verifying: ${Math.ceil((totalMs - elapsed) / 1000)}s`;
             
-            // 循环播放技术黑话，增加可信度
-            if (elapsed % 1000 === 0) { 
-                const phraseIdx = Math.floor(elapsed / 1000); 
+            if (elapsed % 800 === 0) { 
+                const phraseIdx = Math.floor(elapsed / 800); 
                 title.innerText = techPhrases[Math.min(phraseIdx, techPhrases.length - 1)]; 
             }
             
@@ -927,18 +831,16 @@
         }, 100);
     }
 
-    // 复位与工具函数
     function resetSender() {
         if(peer) peer.destroy();
         document.getElementById('senderCodeArea').style.display = 'none';
-        document.getElementById('audit-log').style.display = 'none'; // 隐藏审计终端
+        document.getElementById('audit-log').style.display = 'none'; 
         stagedFiles = []; renderStagedList();
         if(expiryTimerIdx) clearInterval(expiryTimerIdx);
     }
     
     function resetReceiver() {
-        // ... (清理逻辑) ...
-        document.getElementById('receive-audit-log').style.display = 'none'; // 隐藏接收审计
+        document.getElementById('receive-audit-log').style.display = 'none';
         const btn = document.getElementById('btn-connect');
         btn.innerText = "ESTABLISH SECURE LINK";
         btn.disabled = false; btn.style.opacity = "1";
@@ -958,7 +860,6 @@
         }, 1000); 
     }
 
-    // 拖拽、加密、密码弹窗等辅助函数与之前保持一致，但需确保加密函数 FlashDropCrypto 被正确定义
     const FlashDropCrypto = {
         async deriveKey(pass, salt) {
             const encoder = new TextEncoder(); 
@@ -983,7 +884,7 @@
         }
     };
     
-    // UI Helpers for Crypto Modal
+    // UI Helpers
     let isEncrypted = false, aesKey = "";
     function showCryptoModal() { 
         if(isEncrypted) { isEncrypted = false; aesKey = ""; updateLockUI(); return; } 
@@ -992,17 +893,15 @@
     function closeCryptoModal() { document.getElementById('crypto-modal').style.display = 'none'; }
     function confirmEncryption() {
         const p = document.getElementById('crypto-password').value;
-        if(p.length < 8) { showCustomAlert("Password too weak for Enterprise Standard."); return; }
+        if(p.length < 8) { showCustomAlert("Password too weak."); return; }
         aesKey = p; isEncrypted = true; updateLockUI(); closeCryptoModal();
     }
     function updateLockUI() { 
         document.getElementById('protection-toggle-input').checked = isEncrypted; 
-        // 自动隐藏风险 Banner
         if(isEncrypted) document.getElementById('risk-banner').style.display = 'none';
     }
     function showCustomAlert(msg) { document.getElementById('alert-msg').innerText = msg; document.getElementById('alert-modal').style.display = 'flex'; }
     function requestPassword(att) {
-         // 返回 Promise 等待用户输入密码，逻辑与 Part 1 一致
          return new Promise((resolve) => {
             const m = document.getElementById('pass-input-modal');
             const i = document.getElementById('alert-password-input');
@@ -1012,27 +911,49 @@
          });
     }
 
-    // Text Counter & Typewriter (保留)
-    function updateTextCount(el) { /* ... */ }
-    function typeWriterEffect(el, txt) { /* ... */ }
+    // Tools
+    function updateTextCount(el) { 
+        const len = el.value.length;
+        const badge = document.getElementById('text-count-badge');
+        badge.style.display = len > 0 ? 'block' : 'none';
+        badge.innerText = `${len} Chars`;
+    }
+    function checkStrength(p) {
+        const bar = document.getElementById('strength-bar-fill'); const txt = document.getElementById('strength-text');
+        let score = 0; if(!p) { bar.style.width = '0%'; return; }
+        score += p.length * 5; if (/[A-Z]/.test(p)) score += 15; if (/[0-9]/.test(p)) score += 15;
+        if (score > 100) score = 100;
+        const hue = Math.floor((score / 100) * 120); bar.style.width = `${score}%`; bar.style.backgroundColor = `hsl(${hue}, 90%, 45%)`;
+        txt.innerText = score < 50 ? "Weak" : "Strong";
+    }
 
-    // Init
     function switchTab(m, e) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); e.target.classList.add('active'); document.getElementById(`panel-${m}`).classList.add('active'); }
     function dismissAdBlock() { isAdBlockIgnored = true; document.getElementById('safety-notice-view').style.display = 'none'; }
     
-    // 启动
+    function toggleTorch() { /* Torch logic */ }
+    function openScanner() { document.getElementById('scanner-modal').style.display='flex'; try { navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(stream => { const video = document.getElementById('video-preview'); video.srcObject = stream; video.play(); requestAnimationFrame(tickScanner); }); } catch (e) { showCustomAlert("Camera failed"); closeScanner(); } }
+    function closeScanner() { document.getElementById('scanner-modal').style.display='none'; }
+    function tickScanner() { /* Scanner Loop */ }
+
+    // Init
     window.onload = () => { 
         applyI18N(); 
         renderHistory(); 
-        // Init stars background
         const c = document.getElementById('stars'); 
-        for(let i=0; i<60; i++) { 
+        for(let i=0; i<50; i++) { 
             const s = document.createElement('div'); s.className = 'star'; 
             s.style.width = s.style.height = Math.random()*2+'px'; 
             s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%'; 
             s.style.animationDuration = Math.random()*20+20+'s'; 
             c.appendChild(s); 
         }
+        
+        // 拖拽监听
+        const dz = document.getElementById('drop-zone');
+        document.body.addEventListener('dragenter', (e) => { if (e.dataTransfer.types && e.dataTransfer.types.includes('Files')) { e.preventDefault(); dz.style.display = 'flex'; } });
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(name => { document.body.addEventListener(name, (e) => { e.preventDefault(); e.stopPropagation(); }, false); });
+        dz.addEventListener('dragleave', (e) => { if(e.target === dz) dz.style.display = 'none'; });
+        dz.addEventListener('drop', (e) => { dz.style.display = 'none'; handleFiles(e.dataTransfer.files); });
     };
 </script>
 </body>
