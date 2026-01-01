@@ -18,7 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     
     <style>
-        :root { --primary: #6366f1; --bg: #030712; --card: rgba(30, 41, 59, 0.85); --text: #f8fafc; --text-muted: #94a3b8; --border: #4f46e5; --nav-bg: rgba(15, 23, 42, 0.98); --danger: #ef4444; --success: #10b981; --ai: #8b5cf6; }
+        :root { --primary: #6366f1; --bg: #030712; --card: rgba(30, 41, 59, 0.85); --text: #f8fafc; --text-muted: #94a3b8; --border: #4f46e5; --nav-bg: rgba(15, 23, 42, 0.98); --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --ai: #8b5cf6; }
         * { box-sizing: border-box; outline: none; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
         
@@ -43,14 +43,21 @@
         .logo { font-size: 30px; font-weight: 900; color: white; letter-spacing: 2px; }
         .logo span { color: var(--primary); }
         
-        /* [修改] 状态指示灯区域样式 */
+        /* [修改] 状态指示灯区域样式 (新增 checking 状态) */
         .status-container { display: flex; flex-direction: column; align-items: center; margin-right: 12px; }
         .status-dot { width: 14px; height: 14px; border-radius: 50%; background: #666; transition: 0.3s; box-shadow: 0 0 10px rgba(0,0,0,0.5); margin-bottom: 2px; }
+        
         .status-dot.online { background: var(--success); box-shadow: 0 0 15px var(--success); }
         .status-dot.offline { background: var(--danger); box-shadow: 0 0 15px var(--danger); }
+        
+        /* 黄色呼吸灯效果 */
+        .status-dot.checking { background: var(--warning); box-shadow: 0 0 15px var(--warning); animation: pulse-yellow 1.5s infinite; }
+        @keyframes pulse-yellow { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
         .status-text { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.3s; }
         .status-text.online { color: var(--success); }
         .status-text.offline { color: var(--danger); }
+        .status-text.checking { color: var(--warning); }
 
         .trust-badges { display: flex; gap: 8px; margin-top: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); flex-wrap: nowrap; justify-content: center; width: 100%; overflow: hidden; }
         .trust-badges span { background: rgba(99, 102, 241, 0.2); padding: 4px 8px; border-radius: 6px; border: 1.5px solid var(--border); color: #c7d2fe; white-space: nowrap; flex-shrink: 0; }
@@ -302,8 +309,8 @@
     <nav class="navbar">
         <div class="logo-wrap">
             <div class="status-container">
-                <div id="status-dot" class="status-dot online"></div>
-                <div id="status-text" class="status-text online">Online</div>
+                <div id="status-dot" class="status-dot checking"></div>
+                <div id="status-text" class="status-text checking">Checking...</div>
             </div>
             
             <div class="logo">⚡ Flash<span>Drop</span> Pro</div>
@@ -622,12 +629,12 @@
         el.innerText = res;
     }
 
-    /* --- [多语言配置中心：含Online/Offline状态] --- */
+    /* --- [多语言配置中心：含 Checking/Online/Offline 状态] --- */
     const I18N = {
         en: { 
             tag: "EN", 
-            /* [新增] 状态文字 */
-            on: "Online", off: "Offline",
+            /* [新增] 三种网络状态 */
+            chk: "Checking...", on: "Online", off: "Offline",
             
             tabSend: "Send", tabReceive: "Receive", 
             badges: ["🔒 P2P Encrypted", "🕵️ No Logs", "⚡ High Speed", "📂 Auto-Wipe"], 
@@ -685,8 +692,8 @@
         },
         zh: { 
             tag: "CN",
-            /* [新增] 状态文字 */
-            on: "在线", off: "离线",
+            /* [新增] 三种网络状态 */
+            chk: "检测中...", on: "在线", off: "离线",
 
             tabSend: "发送", tabReceive: "接收", 
             badges: ["🔒 P2P 加密", "🕵️ 零日志", "⚡ 极速传输", "📂 阅后即焚"], 
@@ -744,8 +751,8 @@
         },
         ja: { 
             tag: "JP",
-            /* [新增] 状态文字 */
-            on: "オンライン", off: "オフライン",
+            /* [新增] 三种网络状态 */
+            chk: "確認中...", on: "オンライン", off: "オフライン",
 
             tabSend: "送信", tabReceive: "受信", 
             badges: ["🔒 P2P暗号化", "🕵️ ログなし", "⚡ 高速転送", "📂 自動消去"], 
@@ -801,8 +808,8 @@
         },
         ko: { 
             tag: "KR",
-            /* [新增] 状态文字 */
-            on: "온라인", off: "오프라인",
+            /* [新增] 三种网络状态 */
+            chk: "확인 중...", on: "온라인", off: "오프라인",
 
             tabSend: "보내기", tabReceive: "받기", 
             badges: ["🔒 P2P 암호화", "🕵️ 로그 없음", "⚡ 고속 전송", "📂 자동 삭제"], 
@@ -858,8 +865,8 @@
         },
         es: { 
             tag: "ES",
-            /* [新增] 状态文字 */
-            on: "En línea", off: "Desconectado",
+            /* [新增] 三种网络状态 */
+            chk: "Comprobando...", on: "En línea", off: "Desconectado",
 
             tabSend: "Enviar", tabReceive: "Recibir", 
             badges: ["🔒 Cifrado P2P", "🕵️ Sin Registros", "⚡ Alta Velocidad", "📂 Auto-Borrado"], 
@@ -915,8 +922,8 @@
         },
         hi: { 
             tag: "HI",
-            /* [新增] 状态文字 */
-            on: "ऑनलाइन", off: "ऑफलाइन",
+            /* [新增] 三种网络状态 */
+            chk: "जाँच हो रही है...", on: "ऑनलाइन", off: "ऑफ़लाइन",
 
             tabSend: "भेजें", tabReceive: "प्राप्त करें", 
             badges: ["🔒 P2P एन्क्रिप्शन", "🕵️ कोई लॉग नहीं", "⚡ तीव्र गति", "📂 ऑटो-वाइप"], 
@@ -1058,24 +1065,24 @@
         }
     };
 
-    /* [新增] 状态切换函数 */
-    function updateConnectionStatus(isOnline) {
+    /* [新增] 三态指示灯切换逻辑 */
+    function updateConnectionStatus(status) { // status: 'checking', 'online', 'offline'
         const dot = document.getElementById('status-dot');
         const text = document.getElementById('status-text');
         
-        if (isOnline) {
-            dot.classList.remove('offline');
-            dot.classList.add('online');
-            text.classList.remove('offline');
-            text.classList.add('online');
-            text.innerText = (I18N[currLang] || I18N['en']).on;
-        } else {
-            dot.classList.remove('online');
-            dot.classList.add('offline');
-            text.classList.remove('online');
-            text.classList.add('offline');
-            text.innerText = (I18N[currLang] || I18N['en']).off;
-        }
+        // 重置所有状态类
+        dot.classList.remove('online', 'offline', 'checking');
+        text.classList.remove('online', 'offline', 'checking');
+        
+        // 添加新状态
+        dot.classList.add(status);
+        text.classList.add(status);
+        
+        // 更新文字
+        const d = I18N[currLang] || I18N['en'];
+        if(status === 'online') text.innerText = d.on;
+        else if(status === 'offline') text.innerText = d.off;
+        else text.innerText = d.chk; // checking
     }
 
     function applyI18N() {
@@ -1085,12 +1092,12 @@
         const tagEl = document.getElementById('currentLangTag');
         if(tagEl) tagEl.innerText = d.tag;
         
-        // [修改] 更新状态文字
+        // [修改] 刷新状态文字
         const statusText = document.getElementById('status-text');
         if(statusText) {
-            // 检查当前是不是红色（离线）状态
-            const isOffline = statusText.classList.contains('offline');
-            statusText.innerText = isOffline ? d.off : d.on;
+            if(statusText.classList.contains('online')) statusText.innerText = d.on;
+            else if(statusText.classList.contains('offline')) statusText.innerText = d.off;
+            else statusText.innerText = d.chk;
         }
         
         const map = {
@@ -1336,15 +1343,15 @@
         peer = new Peer(PREFIX + code);
         
         peer.on('open', () => {
-            updateConnectionStatus(true); // Online
+            updateConnectionStatus('online'); // Online
             const area = document.getElementById('senderCodeArea'); if (area) { area.style.display = 'block'; setTimeout(() => { area.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200); }
             document.getElementById('myCode').innerText = code; document.getElementById('qrcode').innerHTML = ""; 
             new QRCode(document.getElementById('qrcode'), { text: window.location.origin + window.location.pathname + "?c=" + code, width: 140, height: 140 });
             startExpiryTimer();
         });
         
-        peer.on('error', () => { updateConnectionStatus(false); });
-        peer.on('disconnected', () => { updateConnectionStatus(false); });
+        peer.on('error', () => { updateConnectionStatus('offline'); });
+        peer.on('disconnected', () => { updateConnectionStatus('offline'); });
 
         peer.on('connection', c => {
             c.on('data', d => { 
@@ -1388,7 +1395,7 @@
         downloadDotsIdx = setInterval(() => { dots = (dots + 1) % 4; btn.innerText = "Downloading" + ".".repeat(dots); }, 400);
 
         rPeer.on('open', () => {
-            updateConnectionStatus(true); // Online
+            updateConnectionStatus('online'); // Online
             const conn = rPeer.connect(PREFIX + code, { reliable: true }); activeConn = conn;
             let meta = null, chunks = [], totalRecv = 0, startTime = Date.now(), lastUpdate = 0;
             
@@ -1511,8 +1518,8 @@
             });
         });
         
-        rPeer.on('error', () => { updateConnectionStatus(false); });
-        rPeer.on('disconnected', () => { updateConnectionStatus(false); });
+        rPeer.on('error', () => { updateConnectionStatus('offline'); });
+        rPeer.on('disconnected', () => { updateConnectionStatus('offline'); });
     }
 
     function addHistory(name, type) {
@@ -1564,7 +1571,7 @@
         if(expiryTimerIdx) clearInterval(expiryTimerIdx); 
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
         setTimeout(() => window.scrollTo(0,0), 300);
-        updateConnectionStatus(false); // Reset to offline on stop
+        updateConnectionStatus('offline'); // Reset to offline on stop
     }
     
     function resetReceiver() { 
@@ -1582,7 +1589,7 @@
         const badge = document.getElementById('recv-text-count');
         if(badge) badge.style.display = 'none';
         activeConn = null; 
-        updateConnectionStatus(false); // Reset to offline
+        updateConnectionStatus('offline'); // Reset to offline
     }
     function switchTab(m, e) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); e.target.classList.add('active'); document.getElementById(`panel-${m}`).classList.add('active'); }
     
