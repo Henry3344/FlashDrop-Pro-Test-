@@ -74,14 +74,26 @@
         .file-zone { position: relative; border: 2.5px dashed var(--border); border-radius: 20px; padding: 25px; background: rgba(15, 23, 42, 0.5); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 150px; text-align: center; transition: 0.3s; backdrop-filter: blur(15px); }
         .file-zone.drag-active, #drop-zone.drag-active { background: rgba(99, 102, 241, 0.3); border-color: #fff; transform: scale(1.02); }
         
+        /* Text Zones */
         .text-zone { position: relative; border: 1.5px solid var(--border); border-radius: 20px; padding: 20px; background: rgba(15, 23, 42, 0.5); display: flex; flex-direction: column; flex: 1; min-height: 150px; backdrop-filter: blur(15px); }
-        /* 接收端只读模式下的样式微调 */
-        .text-zone.readonly { border-color: var(--success); background: rgba(16, 185, 129, 0.05); }
+        
+        /* [修改] 接收端只读模式：限制高度，启用滚动，样式统一 */
+        .text-zone.readonly { 
+            border-color: var(--success); 
+            background: rgba(16, 185, 129, 0.05); 
+            max-height: 200px; /* 固定高度 */
+            overflow-y: auto;  /* 超出滚动 */
+            min-height: 200px;
+        }
+        /* 自定义滚动条 */
+        .text-zone.readonly::-webkit-scrollbar { width: 6px; }
+        .text-zone.readonly::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        .text-zone.readonly::-webkit-scrollbar-track { background: transparent; }
         
         textarea { background: transparent; border: none; color: white; resize: none; width: 100%; flex: 1; font-size: 14px; margin-top: 8px; }
 
         /* 右上角计数器小标签样式 */
-        .zone-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; font-weight: 800; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; pointer-events: none; border: 1px solid rgba(255,255,255,0.05); }
+        .zone-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; font-weight: 800; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; pointer-events: none; border: 1px solid rgba(255,255,255,0.05); z-index: 10; }
 
         #stagedList { display: none; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 10px; max-height: 120px; overflow-y: auto; }
         .staged-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 6px 10px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 5px; }
@@ -280,6 +292,7 @@
                                 </div>
                                 <div id="ai-tag-container"></div>
                             </div>
+                            
                             <div id="stagedList"></div>
                             <button class="action-btn" id="btn-share-files" onclick="triggerAd('send-file')">SHARE FILES</button>
                         </div>
@@ -360,7 +373,7 @@
                         <div id="receiveNerdStats" class="nerd-stats" style="display:none; width:100%; margin-top:5px;"><span id="nerd-speed">0.0 MB/s</span><span class="blink-warn">Downloading... Keep Open!</span><span id="nerd-eta" style="color:var(--primary)">ETA: --s</span></div>
                         
                         <div id="receivedText-container">
-                            <div class="text-zone readonly" style="min-height: 200px; position:relative;">
+                            <div id="recv-scroll-box" class="text-zone readonly" style="position:relative;">
                                 <div id="recv-text-count" class="zone-badge" style="display:none;">0 Chars</div>
                                 <div id="receivedText" style="white-space: pre-wrap; word-break: break-all; color: var(--text); font-family: monospace; font-size: 14px; line-height: 1.6;"></div>
                             </div>
@@ -593,13 +606,11 @@
             Array.from(files).forEach(f => {
                 totalSize += f.size;
                 const ext = f.name.split('.').pop().toLowerCase();
-                
                 if(exts.img.includes(ext)) tags.add('img');
                 else if(exts.vid.includes(ext)) tags.add('vid');
                 else if(exts.doc.includes(ext)) tags.add('doc');
                 else if(exts.code.includes(ext)) tags.add('code');
                 else if(exts.zip.includes(ext)) tags.add('zip');
-                
                 if(f.size > 100 * 1024 * 1024) tags.add('big');
             });
             return Array.from(tags);
@@ -645,13 +656,11 @@
             }
         }
         document.getElementById('alert-password-input').placeholder = d.passPlaceholder;
-        
         for(let i=1; i<=9; i++) {
              const q = document.getElementById(`faq-q${i}`); const a = document.getElementById(`faq-a${i}`);
              if(q && d[`faqQ${i}`]) q.innerText = d[`faqQ${i}`];
              if(a && d[`faqA${i}`]) a.innerText = d[`faqA${i}`];
         }
-
         const badgeContainer = document.getElementById('trust-badges');
         if(badgeContainer) {
             badgeContainer.innerHTML = d.badges.map(b => `<span class="status-tag" style="font-size: 9px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); white-space: nowrap; letter-spacing: 0.5px;">${b}</span>`).join('');
@@ -679,13 +688,10 @@
                 errDiv.innerText = "";
                 inp.value = ""; 
             }
-            
             modal.style.display = 'flex';
             inp.focus();
-
             const cleanup = () => { btnOk.onclick = null; btnCancel.onclick = null; inp.onkeydown = null; };
             const confirm = () => { const val = inp.value; if(val) { cleanup(); resolve(val); } };
-
             btnOk.onclick = confirm;
             btnCancel.onclick = () => { cleanup(); modal.style.display = 'none'; resolve(null); };
             inp.onkeydown = (e) => { if(e.key === 'Enter') confirm(); };
@@ -768,7 +774,6 @@
     }
     function updateLockUI() { document.getElementById('protection-toggle-input').checked = isEncrypted; }
     
-    /* [修改] 简单的 handleFiles 只负责添加数据，渲染交给 renderStagedList */
     function handleFiles(files) { 
         stagedFiles = stagedFiles.concat(Array.from(files)); 
         renderStagedList(); 
@@ -784,7 +789,7 @@
         return '📄'; 
     }
 
-    /* [核心修改] 渲染时联动 AI 分析：删除/添加都会触发 */
+    /* 渲染暂存文件列表并联动 AI */
     function renderStagedList() { 
         const list = document.getElementById('stagedList'); 
         list.style.display = stagedFiles.length ? 'block' : 'none'; 
@@ -803,7 +808,6 @@
         }
 
         // 文件变动 -> 触发 AI 分析
-        // 这里的关键是每次 render 都重新计算 AI 标签，哪怕是删除操作
         const aiTags = AIEngine.analyze(stagedFiles);
         AIEngine.renderTags(aiTags);
     }
@@ -819,23 +823,40 @@
         }
     }
 
-    /* [新增] 打字机特效函数 */
+    /* [核心] 极速打字机特效 (Adaptive Speed) */
     function typeWriterEffect(element, text) {
-        element.innerText = ""; // 清空
+        element.innerText = "";
         let i = 0;
-        const speed = text.length > 200 ? 1 : 10; // 内容多就快一点
         const badge = document.getElementById('recv-text-count');
-        
+        const scrollBox = document.getElementById('recv-scroll-box'); // 获取滚动容器
+        if(badge) badge.style.display = 'block';
+
+        // 智能速度：字越多，每一帧吐出的字就越多
+        // 目标是在 0.8秒 - 1秒 内展示完所有内容
+        const step = Math.max(1, Math.floor(text.length / 40)); 
+
         function type() {
             if (i < text.length) {
-                element.innerText += text.charAt(i);
-                i++;
-                // 实时更新接收端字符计数器
-                if(badge) {
-                    badge.style.display = 'block';
-                    badge.innerText = `${i} Chars`;
+                // 每次追加 step 个字符
+                const chunk = text.slice(i, i + step);
+                element.innerText += chunk;
+                i += step;
+                
+                // 实时更新计数
+                if(badge) badge.innerText = Math.min(i, text.length) + " Chars";
+                
+                // [关键] 自动滚动到底部
+                if(scrollBox) {
+                    scrollBox.scrollTop = scrollBox.scrollHeight;
                 }
-                setTimeout(type, speed);
+
+                // 极速回调
+                requestAnimationFrame(type);
+            } else {
+                // 确保最后状态正确
+                element.innerText = text;
+                if(badge) badge.innerText = text.length + " Chars";
+                if(scrollBox) scrollBox.scrollTop = scrollBox.scrollHeight;
             }
         }
         type();
@@ -860,21 +881,17 @@
             });
             c.on('open', async () => {
                 let textValue = document.getElementById('quickText').value.trim(); 
-                
                 if(textValue) {
                     if(isEncrypted) { const encryptedTextBlob = await FlashDropCrypto.encrypt(new Blob([textValue]), aesKey); const reader = new FileReader(); reader.onload = () => c.send({ type: 'text', data: reader.result, encrypted: true }); reader.readAsDataURL(encryptedTextBlob); } 
                     else { c.send({ type: 'text', data: textValue, encrypted: false }); }
                     addHistory("Sent: Text", "text");
                 }
-
                 if(stagedFiles && stagedFiles.length > 0) {
                     let fb, fn = stagedFiles.length === 1 ? stagedFiles[0].name : "Bundle.zip";
                     if (stagedFiles.length === 1) { fb = stagedFiles[0]; } 
                     else { const zip = new JSZip(); stagedFiles.forEach(f => zip.file(f.name, f)); fb = await zip.generateAsync({type: "blob"}); }
                     if(isEncrypted) { fb = await FlashDropCrypto.encrypt(fb, aesKey); fn += ".enc"; }
-                    
                     c.send({ type: 'meta', name: fn, size: fb.size, encrypted: isEncrypted });
-
                     const arrayBuffer = await fb.arrayBuffer();
                     for (let i = 0; i < fb.size; i += CHUNK_SIZE) {
                         while (c.bufferSize > 1024 * 1024) { await new Promise(r => setTimeout(r, 50)); }
@@ -935,10 +952,10 @@
                             }
                         }
                         
-                        // [修改] 使用打字机特效显示文字
+                        // [关键] 触发极速打字机 + 自动滚屏
                         const textBox = document.getElementById('receivedText');
                         document.getElementById('receivedText-container').style.display = 'block';
-                        typeWriterEffect(textBox, finalTxt); // 触发特效
+                        typeWriterEffect(textBox, finalTxt); 
 
                         pgBar.style.width = '100%';
                         btn.onclick = () => triggerAd('receive');
@@ -973,7 +990,6 @@
                 }
                 else if(d.type === 'done') {
                     if(downloadDotsIdx) clearInterval(downloadDotsIdx);
-                    
                     const label = (meta && meta.encrypted) ? I18N[currLang].decryptSave : I18N[currLang].save;
                     const bg = (meta && meta.encrypted) ? "#f59e0b" : "#10b981";
                     btn.innerText = label; btn.style.background = bg; btn.disabled = false; btn.style.opacity = "1";
@@ -1043,7 +1059,6 @@
         document.getElementById('receivedText').innerText = "";
         document.getElementById('receivedText-container').style.display = 'none';
         
-        // 重置计数器
         const badge = document.getElementById('recv-text-count');
         if(badge) badge.style.display = 'none';
 
@@ -1093,7 +1108,6 @@
         document.getElementById('receive-pg-container').style.display = 'none'; 
         document.getElementById('receiveNerdStats').style.display = 'none'; 
         document.getElementById('receivedText-container').style.display = 'none'; 
-        // 确保接收端计数器也被隐藏
         const badge = document.getElementById('recv-text-count');
         if(badge) badge.style.display = 'none';
         
