@@ -52,7 +52,18 @@
         .status-text.online { color: var(--success); }
         .status-text.offline { color: var(--danger); }
 
-        .trust-badges { display: flex; gap: 8px; margin-top: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); flex-wrap: nowrap; justify-content: center; width: 100%; overflow: hidden; }
+/* CSS 保持不变，但添加一个小调整确保 badges 不被挤掉 */
+.trust-badges {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;  /* 原有 */
+    width: 100%;
+    flex-wrap: wrap;  /* 新增：窄屏自动换行，避免溢出隐藏 */
+    padding: 0 15px;
+    box-sizing: border-box;
+}
         .trust-badges span { background: rgba(99, 102, 241, 0.2); padding: 4px 8px; border-radius: 6px; border: 1.5px solid var(--border); color: #c7d2fe; white-space: nowrap; flex-shrink: 0; }
         
         /* AI Badge Style */
@@ -424,41 +435,41 @@
 
 <div class="app-container" id="app">
     <div class="stars-container" id="stars"></div>
-    <nav class="navbar">
-        <div class="logo-wrap">
-            <div class="status-container">
-                <div id="status-dot" class="status-dot online"></div>
-                <div id="status-text" class="status-text online">Online</div>
-            </div>
-            
-            <div class="logo">⚡ Flash<span>Drop</span> Pro</div>
-            <div id="currentLangTag" style="font-size:11px; color:var(--primary); font-weight:900; margin-left:12px; border:1.5px solid var(--primary); padding:2px 6px; border-radius:6px;">EN</div>
+<nav class="navbar">
+    <div class="logo-wrap">
+        <div class="status-container">
+            <div id="status-dot" class="status-dot online"></div>
+            <div id="status-text" class="status-text online">Online</div>
+        </div>
+        
+        <div class="logo">⚡ Flash<span>Drop</span> Pro</div>
+        <div id="currentLangTag" style="font-size:11px; color:var(--primary); font-weight:900; margin-left:12px; border:1.5px solid var(--primary); padding:2px 6px; border-radius:6px;">EN</div>
+    </div>
+
+    <!-- 修复：搜索栏独立一行 -->
+    <div class="search-bar-container">
+        <div class="search-bar" id="searchBar">
+            <div class="search-text" id="searchPlaceholder">Search Blog...</div>
+            <div class="search-divider"></div>
+            <div class="search-icon">🔍</div>
         </div>
 
-<!-- 新增：搜索栏 -->
-        <div class="search-bar-container">
-            <div class="search-bar" id="searchBar">
-                <div class="search-text" id="searchPlaceholder">Loading blogs...</div>
-                <div class="search-divider"></div>
-                <div class="search-icon">🔍</div>
+        <div class="search-dropdown" id="searchDropdown">
+            <div class="dropdown-section">
+                <div class="dropdown-title">热门文章</div>
+                <div id="hotList"><div class="dropdown-item" style="color:var(--text-muted);font-size:12px;">加载中...</div></div>
             </div>
-
-            <!-- 下拉列表 -->
-            <div class="search-dropdown" id="searchDropdown">
-                <div class="dropdown-section">
-                    <div class="dropdown-title">热门文章</div>
-                    <div id="hotList"></div>
-                </div>
-                <div class="dropdown-divider"></div>
-                <div class="dropdown-section">
-                    <div class="dropdown-title">最近访问</div>
-                    <div id="historyList"></div>
-                </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-section">
+                <div class="dropdown-title">最近访问</div>
+                <div id="historyList"></div>
             </div>
         </div>
+    </div>
 
-        <div class="trust-badges" id="trust-badges" style="display: flex; justify-content: center; align-items: center; gap: 5px; margin-top: 8px; width: 100%; flex-wrap: nowrap;"></div>
-    </nav>
+    <!-- 修复：trust-badges 放回正常位置，不会消失 -->
+    <div class="trust-badges" id="trust-badges"></div>
+</nav>
 
     <div id="drop-zone"><h2 style="font-size:36px; color:white; font-weight:900;" id="drop-text">DROP TO STAGE</h2></div>
 
@@ -1743,134 +1754,133 @@
     window.onload = () => { initStars(); applyI18N(); initDragAndDrop(); renderHistory(); detectAdBlock(); };
 // ==================== 新增：搜索栏逻辑 ====================
 
-    let blogPosts = [];
-    let currentIndex = 0;
-    let carouselInterval = null;
+// ==================== 修复版搜索栏逻辑 ====================
 
-    // 加载 post.html 中的博客列表
-    async function loadBlogPosts() {
-        try {
-            const res = await fetch('/post.html?' + Date.now()); // 防缓存
-            const text = await res.text();
-            // 提取 JSON（因为 post.html 是脚本输出）
-            const jsonMatch = text.match(/\[[\s\S]*\]/);
-            if (jsonMatch) {
-                blogPosts = JSON.parse(jsonMatch[0]);
+let blogPosts = [];
+let currentIndex = 0;
+let carouselInterval = null;
+
+async function loadBlogPosts() {
+    try {
+        const res = await fetch('/post.html?' + Date.now());
+        if (!res.ok) throw new Error('Not found');
+        const text = await res.text();
+        const jsonMatch = text.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+            blogPosts = JSON.parse(jsonMatch[0]);
+            if (blogPosts.length > 0) {
                 startCarousel();
                 renderHotList();
-            } else {
-                document.getElementById('searchPlaceholder').innerText = 'No blogs found';
+                return;
             }
-        } catch (e) {
-            document.getElementById('searchPlaceholder').innerText = 'Load failed';
         }
+        throw new Error('Empty');
+    } catch (e) {
+        // 加载失败降级处理
+        document.getElementById('searchPlaceholder').innerText = 'Search Blog...';
+        document.getElementById('hotList').innerHTML = '<div class="dropdown-item" style="color:var(--text-muted);font-size:12px;">暂无热门文章</div>';
     }
+}
 
-    // 轮播
-    function startCarousel() {
-        if (blogPosts.length === 0) return;
-        const placeholder = document.getElementById('searchPlaceholder');
+function startCarousel() {
+    if (blogPosts.length === 0) return;
+    const placeholder = document.getElementById('searchPlaceholder');
+    placeholder.innerText = blogPosts[currentIndex].title;
+
+    clearInterval(carouselInterval);
+    carouselInterval = setInterval(() => {
+        currentIndex = (currentIndex + 1) % blogPosts.length;
         placeholder.innerText = blogPosts[currentIndex].title;
+    }, 3500);
+}
 
-        carouselInterval = setInterval(() => {
-            currentIndex = (currentIndex + 1) % blogPosts.length;
-            placeholder.innerText = blogPosts[currentIndex].title;
-        }, 3500);
+function renderHotList() {
+    const container = document.getElementById('hotList');
+    if (blogPosts.length === 0) {
+        container.innerHTML = '<div class="dropdown-item" style="color:var(--text-muted);font-size:12px;">暂无热门文章</div>';
+        return;
     }
+    const hot = blogPosts.slice(0, 5);
+    container.innerHTML = hot.map(p => 
+        `<div class="dropdown-item" data-url="${p.url}" data-title="${p.title}">${p.title}</div>`
+    ).join('');
+}
 
-    // 渲染热门（前5）
-    function renderHotList() {
-        const container = document.getElementById('hotList');
-        const hot = blogPosts.slice(0, 5);
-        container.innerHTML = hot.map(p => 
-            `<div class="dropdown-item" data-url="${p.url}">${p.title}</div>`
-        ).join('');
+function renderHistoryList() {
+    const container = document.getElementById('historyList');
+    let history = JSON.parse(localStorage.getItem('fd_search_history') || '[]');
+    history = history.slice(0, 5);
+    if (history.length === 0) {
+        container.innerHTML = '<div class="dropdown-item" style="color:var(--text-muted);font-size:12px;">暂无记录</div>';
+        return;
     }
+    container.innerHTML = history.map(item => 
+        `<div class="dropdown-item" data-url="${item.url}" data-title="${item.title}">${item.title}</div>`
+    ).join('');
+}
 
-    // 渲染历史记录（最近5）
-    function renderHistoryList() {
-        const container = document.getElementById('historyList');
-        let history = JSON.parse(localStorage.getItem('fd_search_history') || '[]');
-        history = history.slice(0, 5);
-        if (history.length === 0) {
-            container.innerHTML = '<div class="dropdown-item" style="color:var(--text-muted);font-size:12px;">暂无记录</div>';
-            return;
+function addToHistory(title, url) {
+    let history = JSON.parse(localStorage.getItem('fd_search_history') || '[]');
+    history = history.filter(h => h.url !== url);
+    history.unshift({title, url});
+    history = history.slice(0, 10);
+    localStorage.setItem('fd_search_history', JSON.stringify(history));
+}
+
+function navigateTo(url, title) {
+    if (!url) return;
+    addToHistory(title || 'Blog', url);
+    window.location.href = url;
+}
+
+function initSearchBar() {
+    const bar = document.getElementById('searchBar');
+    const dropdown = document.getElementById('searchDropdown');
+    const placeholder = document.getElementById('searchPlaceholder');
+    const icon = document.querySelector('.search-icon');
+
+    bar.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('show');
+        renderHistoryList();
+    });
+
+    dropdown.addEventListener('click', (e) => {
+        const item = e.target.closest('.dropdown-item');
+        if (item && item.dataset.url) {
+            navigateTo(item.dataset.url, item.dataset.title || item.innerText.trim());
         }
-        container.innerHTML = history.map(item => 
-            `<div class="dropdown-item" data-url="${item.url}">${item.title}</div>`
-        ).join('');
-    }
+    });
 
-    // 添加到历史
-    function addToHistory(title, url) {
-        let history = JSON.parse(localStorage.getItem('fd_search_history') || '[]');
-        // 去重
-        history = history.filter(h => h.url !== url);
-        history.unshift({title, url});
-        history = history.slice(0, 10); // 最多存10条
-        localStorage.setItem('fd_search_history', JSON.stringify(history));
-    }
-
-    // 跳转并记录
-    function navigateTo(url, title) {
-        if (url) {
-            addToHistory(title, url);
-            window.location.href = url;
+    // 点击放大镜或占位文字：如果有轮播项就跳当前，否则跳博客目录
+    const clickToNavigate = () => {
+        if (blogPosts.length > 0) {
+            const current = blogPosts[currentIndex];
+            navigateTo(current.url, current.title);
+        } else {
+            navigateTo('/blog/', 'Blog');
         }
-    }
-
-    // 初始化搜索栏事件
-    function initSearchBar() {
-        const bar = document.getElementById('searchBar');
-        const dropdown = document.getElementById('searchDropdown');
-        const placeholder = document.getElementById('searchPlaceholder');
-
-        bar.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdown.classList.toggle('show');
-            renderHistoryList();
-        });
-
-        // 点击下拉项
-        dropdown.addEventListener('click', (e) => {
-            const item = e.target.closest('.dropdown-item');
-            if (item && item.dataset.url) {
-                const title = item.innerText.trim();
-                navigateTo(item.dataset.url, title);
-            }
-        });
-
-        // 点击放大镜或当前标题也跳转当前轮播项
-        document.querySelector('.search-icon').addEventListener('click', (e) => {
-            e.stopPropagation();
-            const current = blogPosts[currentIndex];
-            if (current) navigateTo(current.url, current.title);
-        });
-
-        placeholder.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const current = blogPosts[currentIndex];
-            if (current) navigateTo(current.url, current.title);
-        });
-
-        // 点击页面其他地方关闭下拉
-        document.addEventListener('click', () => {
-            dropdown.classList.remove('show');
-        });
-
-        // 加载博客数据
-        loadBlogPosts();
-    }
-
-    // ==================== 原有 window.onload 修改 ====================
-    window.onload = () => { 
-        initStars(); 
-        applyI18N(); 
-        initDragAndDrop(); 
-        renderHistory(); 
-        detectAdBlock(); 
-        initSearchBar();  // 新增初始化
     };
+
+    icon.addEventListener('click', (e) => { e.stopPropagation(); clickToNavigate(); });
+    placeholder.addEventListener('click', (e) => { e.stopPropagation(); clickToNavigate(); });
+
+    document.addEventListener('click', () => {
+        dropdown.classList.remove('show');
+    });
+
+    loadBlogPosts();  // 启动加载
+}
+
+// window.onload 最后加上
+window.onload = () => { 
+    initStars(); 
+    applyI18N(); 
+    initDragAndDrop(); 
+    renderHistory(); 
+    detectAdBlock(); 
+    initSearchBar(); 
+};
 </script>
 </body>
 </html>
