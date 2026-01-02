@@ -949,7 +949,7 @@
         }
     };
 
-    /* --- [修改] 网络状态监测：只检测物理网络 --- */
+    /* --- [网络状态监测：只检测物理网络] --- */
     function checkNetworkStatus() {
         const isOnline = navigator.onLine;
         const dot = document.getElementById('status-dot');
@@ -975,7 +975,6 @@
         const tagEl = document.getElementById('currentLangTag');
         if(tagEl) tagEl.innerText = d.tag;
         
-        // 刷新状态文字
         checkNetworkStatus();
 
         const map = {
@@ -1101,7 +1100,7 @@
             document.getElementById('myCode').innerText = code; document.getElementById('qrcode').innerHTML = ""; 
             new QRCode(document.getElementById('qrcode'), { text: window.location.origin + window.location.pathname + "?c=" + code, width: 140, height: 140 });
             startExpiryTimer();
-            /* [修改] 自动隐藏AI区域（因为用不上它一直显示） */
+            /* [确认] 自动隐藏AI区域 */
             document.getElementById('ai-suggestions').style.display = 'none';
         });
         
@@ -1226,9 +1225,9 @@
         quickText.value = ""; quickText.blur();
         updateTextCount(quickText);
         if(expiryTimerIdx) clearInterval(expiryTimerIdx); 
-        /* [修改] 滚回最上边 */
-        window.scrollTo({ top: 0, behavior: 'smooth' }); 
-        setTimeout(() => window.scrollTo(0,0), 300);
+        /* [修改] 强制滚回最上边（双重保险） */
+        window.scrollTo(0, 0); 
+        document.documentElement.scrollTop = 0;
     }
     
     function resetReceiver() { 
@@ -1246,8 +1245,9 @@
         const badge = document.getElementById('recv-text-count');
         if(badge) badge.style.display = 'none';
         activeConn = null; 
-        /* [修改] 滚回最上边 */
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        /* [修改] 强制滚回最上边（双重保险） */
+        window.scrollTo(0, 0); 
+        document.documentElement.scrollTop = 0;
     }
     function switchTab(m, e) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); e.target.classList.add('active'); document.getElementById(`panel-${m}`).classList.add('active'); }
     
