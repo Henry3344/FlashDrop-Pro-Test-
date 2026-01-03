@@ -975,7 +975,7 @@
     const PREFIX = "fd-pro-";
     const CHUNK_SIZE = 64 * 1024; 
 
-    /* --- [AI 引擎升级：隐私敏感词检测] --- */
+    /* --- [AI 引擎升级：实时检测与清空联动] --- */
     const AIEngine = {
         analyze(files) {
             const tags = new Set();
@@ -1031,9 +1031,10 @@
             const wrapper = document.getElementById('ai-suggestions');
             const alertBox = document.getElementById('ai-privacy-alert');
 
-            // 如果没有标签，隐藏 AI 区域
-            if(data.tags.length === 0) { 
+            // [核心修复] 如果没有标签（即文件被清空），强制隐藏整个 AI 区域
+            if(!data || !data.tags || data.tags.length === 0) { 
                 wrapper.style.display = 'none'; 
+                alertBox.style.display = 'none';
                 return; 
             }
             
@@ -1042,7 +1043,6 @@
             // 渲染隐私警告
             if (data.risk) {
                 alertBox.style.display = 'block';
-                // 动态获取当前语言的警告语
                 const d = I18N[currLang] || I18N['en'];
                 alertBox.innerText = d.privWarn;
             } else {
@@ -1055,7 +1055,7 @@
         }
     };
 
-    /* [修改核心] 网络状态检测逻辑：只看设备是否联网 */
+    /* [核心] 网络状态检测逻辑：只看设备是否联网 */
     function updateNetworkStatus() {
         const isOnline = navigator.onLine;
         const dot = document.getElementById('status-dot');
@@ -1076,18 +1076,16 @@
         }
     }
 
-    // 监听系统网络事件
     window.addEventListener('online', updateNetworkStatus);
     window.addEventListener('offline', updateNetworkStatus);
 
     function applyI18N() {
         const userLang = navigator.language.split('-')[0];
         currLang = I18N[userLang] ? userLang : "en";
-        const d = I18N[currLang] || I18N['en']; // Fallback
+        const d = I18N[currLang] || I18N['en']; 
         const tagEl = document.getElementById('currentLangTag');
         if(tagEl) tagEl.innerText = d.tag;
         
-        // 刷新状态文字
         updateNetworkStatus();
         
         const map = {
@@ -1272,12 +1270,16 @@
         return '📁'; 
     }
 
+    // [核心修复] renderStagedList 负责调用 AI 引擎
     function renderStagedList() { 
         const list = document.getElementById('stagedList'); 
+        
+        // 即使 stagedFiles 为空，也要执行逻辑来清空 UI
         if (stagedFiles.length === 0) {
             list.style.display = 'none';
             document.getElementById('file-count-badge').style.display = 'none';
-            AIEngine.renderTags([]); 
+            // 关键：传空数据给 AIEngine，它会自动隐藏 AI 区域
+            AIEngine.renderTags({ tags: [], risk: false }); 
         } else {
             list.style.display = 'block';
             const badge = document.getElementById('file-count-badge');
@@ -1286,6 +1288,8 @@
             list.innerHTML = stagedFiles.map((f, i) => 
                 `<div class="staged-item"><span>${getFileIcon(f.name)} ${f.name.length > 15 ? f.name.substring(0,12)+'...' : f.name}</span><span style="color:var(--danger); cursor:pointer; font-weight:bold; padding:0 5px;" onclick="stagedFiles.splice(${i},1);renderStagedList()">✕</span></div>`
             ).join('');
+            
+            // 有文件时，正常分析并显示 AI
             const aiTags = AIEngine.analyze(stagedFiles);
             AIEngine.renderTags(aiTags);
         }
@@ -1326,19 +1330,16 @@
         if(peer) peer.destroy(); currentDownloads = 0; const code = Math.floor(100000 + Math.random() * 900000);
         peer = new Peer(PREFIX + code);
         
-        // [修改核心] 点击发送后，立即隐藏 AI Insights 面板
+        // [保持] 点击发送后，立即隐藏 AI Insights 面板
         document.getElementById('ai-suggestions').style.display = 'none';
 
         peer.on('open', () => {
-            // [修改] 移除这里对 updateConnectionStatus 的调用，交给 window 事件接管
             const area = document.getElementById('senderCodeArea'); if (area) { area.style.display = 'block'; setTimeout(() => { area.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200); }
             document.getElementById('myCode').innerText = code; document.getElementById('qrcode').innerHTML = ""; 
             new QRCode(document.getElementById('qrcode'), { text: window.location.origin + window.location.pathname + "?c=" + code, width: 140, height: 140 });
             startExpiryTimer();
         });
         
-        // [修改] 移除 peer.on error/disconnected 对状态灯的影响
-
         peer.on('connection', c => {
             c.on('data', d => { 
                 if (d.type === 'security_burn') { showCustomAlert("⚠️ SECURITY ALERT: Recipient failed authentication 3 times."); resetSender(); return; }
@@ -1381,7 +1382,6 @@
         downloadDotsIdx = setInterval(() => { dots = (dots + 1) % 4; btn.innerText = "Downloading" + ".".repeat(dots); }, 400);
 
         rPeer.on('open', () => {
-            // [修改] 移除这里对 updateConnectionStatus 的调用
             const conn = rPeer.connect(PREFIX + code, { reliable: true }); activeConn = conn;
             let meta = null, chunks = [], totalRecv = 0, startTime = Date.now(), lastUpdate = 0;
             
@@ -1503,8 +1503,6 @@
                 }
             });
         });
-        
-        // [修改] 移除 peer.on error/disconnected 对状态灯的影响
     }
 
     function addHistory(name, type) {
@@ -1556,7 +1554,7 @@
         if(expiryTimerIdx) clearInterval(expiryTimerIdx); 
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
         setTimeout(() => window.scrollTo(0,0), 300);
-        // [修改] 移除 resetSender 里的离线状态强制切换，保持设备真实联网状态显示
+        // [修改] 移除 resetSender 里的离线状态强制切换
     }
     
     function resetReceiver() { 
