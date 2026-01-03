@@ -695,17 +695,14 @@
     function togglePwd(inputId, btn) { const input = document.getElementById(inputId); if (input.type === "password") { input.type = "text"; btn.innerText = "🙉"; } else { input.type = "password"; btn.innerText = "🙈"; } }
     async function updateFingerprint(val, elId, hintId) { const el = document.getElementById(elId); const hint = document.getElementById(hintId); if (!val) { el.innerText = ""; el.style.display = 'none'; if(hint) hint.style.display = 'none'; return; } el.style.display = 'block'; if(hint) hint.style.display = 'block'; const msgBuffer = new TextEncoder().encode(val); const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer); const hashArray = Array.from(new Uint8Array(hashBuffer)); const emojis = ["⚡","🛡️","🚀","🤖","💎","🔥","🌟","🌊","🐯","🐵","🍎","🍀","🎲","🧩","🔮","🎵","🎩","👻","🌵","🍕","🌙","☀️","🌈","❄️"]; let res = ""; for(let i=0; i<4; i++) { res += emojis[hashArray[i] % emojis.length]; } el.innerText = res; }
 
-    /* --- [I18N 配置 - 更新为真诚广告语] --- */
+    /* --- [I18N 配置] --- */
     const I18N = {
         en: { 
             tag: "EN", on: "Online", off: "Offline",
-            // [Updated] Sincere Ad Message
             adWait: "To support the developer, please keep this ad open.",
-            // Security Grid translations
             secFpTitle: "🔐 Security Fingerprint", secFpDesc: "Visual verification prevents Man-in-the-Middle attacks.",
             secAiTitle: "🧠 AI Privacy Guard", secAiList: "<li>Detects IDs, Cards, Keys</li><li>Warns BEFORE you send</li><li>Suggests AES-256 automatically</li>",
             secBurnTitle: "🔥 Security Burn™", secBurnDesc: "3 wrong password attempts = Connection DESTROYED instantly.", secAccessTitle: "🎯 Controlled Access", secAccessDesc: "Limit downloads & Auto-expiration.",
-            // Existing...
             tabSend: "Send", tabReceive: "Receive", badges: ["🔒 P2P Encrypted", "🕵️ No Logs", "⚡ High Speed", "📂 Auto-Wipe"], drop: "DROP TO STAGE", fileLab: "Drop / Click", shareF: "SHARE FILES", shareT: "SHARE TEXT", connect: "DOWNLOAD", save: "📥 SAVE", recv: "RECEIVE", decryptRecv: "🔓 DECRYPT & VIEW", decryptSave: "🔓 DECRYPT & SAVE", saveNow: "💾 SAVE NOW", exp: "Expires: ", copyLink: "📋 COPY LINK", stop: "STOP", guide: "Scan QR or enter code on receiver device.", coffee: "Buy me a coffee", hPriv: "Privacy", hSite: "About Site", hUs: "About Us", inputErr: "Enter 6-digit code.", orScan: "or scan 📷", doneRemind: "DONE! Click SAVE above.", histTitle: "Recent History", fileErr: "Please select files first.", textErr: "Please enter text first.",
             passTitle: "🔐 Enter Password", passPlaceholder: "Type password...", passUnlock: "UNLOCK", passCancel: "CANCEL", passWrong: "Wrong Password!", passRemaining: "attempts left", passWeak: "For safety: 8+ chars, 1 Upper, 1 Lower, 1 Number, 1 Symbol.", hashHintSend: "Visual Check: If receiver's emojis match these, the key is correct!", hashHintRecv: "Visual Check: If the key matches, the emojis will match!",
             aiNote: "(Selected types)", privWarn: "⚠️ Privacy Alert: Filenames indicate sensitive info. AES-256 recommended!",
@@ -717,13 +714,10 @@
         },
         zh: { 
             tag: "CN", on: "在线", off: "离线",
-            // [Updated] Sincere Ad Message
             adWait: "为了支持开发者，请不要关闭广告界面。",
-            // Security Grid translations
             secFpTitle: "🔐 安全指纹验证", secFpDesc: "可视化验证防止中间人攻击。Emoji 一致即安全。",
             secAiTitle: "🧠 AI 隐私卫士", secAiList: "<li>自动检测证件、卡号、私钥</li><li>发送前发出警告</li><li>自动建议 AES-256 加密</li>",
             secBurnTitle: "🔥 Security Burn™", secBurnDesc: "密码错误 3 次 = 连接立即销毁。数据永久消失。", secAccessTitle: "🎯 访问控制", secAccessDesc: "限制下载次数 (1/3/5) 及自动过期。",
-            // Existing...
             tabSend: "发送", tabReceive: "接收", badges: ["🔒 P2P 加密", "🕵️ 零日志", "⚡ 极速传输", "📂 阅后即焚"], drop: "松手上传", fileLab: "拖拽 / 点击", shareF: "分享文件", shareT: "分享文字", connect: "立即下载", save: "📥 保存文件", recv: "👀 查看文字", decryptRecv: "🔓 解密并查看", decryptSave: "🔓 解密并保存", saveNow: "💾 点击保存", exp: "有效期: ", copyLink: "📋 复制链接", stop: "停止分享", guide: "请对方扫描二维码或输入下方验证码。", coffee: "请我喝杯咖啡", hPriv: "隐私政策", hSite: "关于网站", hUs: "关于我们", inputErr: "请输入6位验证码。", orScan: "扫码接收 📷", doneRemind: "传输完成！点击上方按钮保存。", histTitle: "最近记录", fileErr: "请先选择文件。", textErr: "请先输入文字。",
             passTitle: "🔐 输入密码", passPlaceholder: "在此输入...", passUnlock: "解锁", passCancel: "取消", passWrong: "❌ 密码错误！", passRemaining: "次尝试机会。", passWeak: "为了安全：至少8位，需包含大写、小写、数字及符号。", hashHintSend: "AES-256密钥设置好后，只要接收方的emoji与下方的emoji相符即为密钥正确！", hashHintRecv: "只要输入的AES-256密钥一致，emoji就会一致！",
             aiNote: "(以下是你已选中的文件类型)", privWarn: "⚠️ 隐私提醒：文件名包含敏感信息。强烈建议开启 AES-256 加密！",
@@ -799,18 +793,22 @@
         }
     };
 
-    /* --- [AI 引擎 - 文字隐私嗅探] --- */
+    /* --- [AI 引擎 - 文字隐私嗅探 (控制面板显隐)] --- */
     function checkTextPrivacy(text) {
         const container = document.getElementById('text-ai-suggestions');
         const alertBox = document.getElementById('text-privacy-alert');
-        if (!container || !alertBox) return; // 安全防御
+        
+        // 容错处理：万一 HTML 结构还没加载好，避免报错
+        if (!container || !alertBox) return;
 
         if (!text || text.trim().length === 0) {
-            container.style.display = 'none';
+            container.style.display = 'none'; // 无内容隐藏面板
             return;
         }
         
         const lowerText = text.toLowerCase();
+        
+        // 1. 扩充版关键词库
         const triggers = [
             "password", "passwd", "secret", "private key", "api_key", "access_token", 
             "mnemonics", "wallet", "credit card", "cvv", "ssn", "passport", "visa", 
@@ -818,9 +816,12 @@
             "密码", "私钥", "助记词", "银行卡", "身份证", "护照", "签证", "账单",
             "-----begin private key-----", "0x" 
         ];
+        
+        // 2. 正则：13-19位数字 (疑似卡号)
         const cardRegex = /\b\d{13,19}\b/;
         
         let detected = false;
+        
         if (cardRegex.test(text.replace(/[\s-]/g, ''))) { 
             detected = true;
         } else {
@@ -833,12 +834,12 @@
         }
 
         if (detected) {
-            container.style.display = 'block';
+            container.style.display = 'block'; // 命中！显示整个紫色面板
             alertBox.style.display = 'block';
             const d = I18N[currLang] || I18N['en'];
             alertBox.innerText = d.textPrivWarn || "⚠️ Sensitive Info Detected!";
         } else {
-            container.style.display = 'none';
+            container.style.display = 'none'; // 未命中，隐藏
         }
     }
 
@@ -878,6 +879,7 @@
             const textBox = document.getElementById('quickText');
             textBox.value += (textBox.value ? "\n" : "") + text.trim();
             updateTextCount(textBox);
+            // 识别完成后，立即触发 AI 检查
             checkTextPrivacy(textBox.value);
             showCustomAlert((I18N[currLang] || I18N['en']).ocrDone || "Text Extracted!");
         } catch (e) { showCustomAlert("OCR Error: " + e.message); } 
@@ -1011,11 +1013,20 @@
     function typeWriterEffect(element, text) { element.innerText = ""; let i = 0; const badge = document.getElementById('recv-text-count'); const scrollBox = document.getElementById('recv-scroll-box'); if(badge) badge.style.display = 'block'; const step = Math.max(1, Math.floor(text.length / 50)); function type() { if (i < text.length) { const chunk = text.slice(i, i + step); element.innerText += chunk; i += step; if(badge) badge.innerText = Math.min(i, text.length) + " Chars"; if(scrollBox) scrollBox.scrollTop = scrollBox.scrollHeight; requestAnimationFrame(type); } else { element.innerText = text; if(badge) badge.innerText = text.length + " Chars"; if(scrollBox) scrollBox.scrollTop = scrollBox.scrollHeight; } } type(); }
     function checkUrlCode() { const urlParams = new URLSearchParams(window.location.search); const code = urlParams.get('c'); if (code) { document.getElementById('tab-receive').click(); document.getElementById('targetCode').value = code; } }
     async function initSender() { if(peer) peer.destroy(); currentDownloads = 0; const code = Math.floor(100000 + Math.random() * 900000); peer = new Peer(PREFIX + code); document.getElementById('ai-suggestions').style.display = 'none'; 
+        // [修复] 确保在重置时隐藏 text 面板，并且不会因为元素不存在而报错
         const textPanel = document.getElementById('text-ai-suggestions');
-        if(textPanel) textPanel.style.display = 'none'; 
-        const quickText = document.getElementById('quickText'); quickText.value = ""; quickText.blur(); updateTextCount(quickText); if(expiryTimerIdx) clearInterval(expiryTimerIdx); window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => window.scrollTo(0,0), 300); 
+        if (textPanel) textPanel.style.display = 'none';
+        
         peer.on('open', () => { const area = document.getElementById('senderCodeArea'); if (area) { area.style.display = 'block'; setTimeout(() => { area.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200); } document.getElementById('myCode').innerText = code; document.getElementById('qrcode').innerHTML = ""; new QRCode(document.getElementById('qrcode'), { text: window.location.origin + window.location.pathname + "?c=" + code, width: 140, height: 140 }); document.getElementById('btn-copy-link').onclick = () => { const link = `${window.location.origin}${window.location.pathname}?c=${code}`; navigator.clipboard.writeText(link).then(() => { showCustomAlert("Link Copied! Send it to friend."); }); }; startExpiryTimer(); }); peer.on('connection', c => { c.on('data', d => { if (d.type === 'security_burn') { showCustomAlert("⚠️ SECURITY ALERT: Recipient failed authentication 3 times."); resetSender(); return; } if(d.type === 'confirm_save') { currentDownloads++; if(currentDownloads >= parseInt(document.getElementById('downloadLimit').value)) resetSender(); } }); c.on('open', async () => { let textValue = document.getElementById('quickText').value.trim(); if(textValue) { if(isEncrypted) { const encryptedTextBlob = await FlashDropCrypto.encrypt(new Blob([textValue]), aesKey); const reader = new FileReader(); reader.onload = () => c.send({ type: 'text', data: reader.result, encrypted: true }); reader.readAsDataURL(encryptedTextBlob); } else { c.send({ type: 'text', data: textValue, encrypted: false }); } addHistory("Sent: Text", "text"); } if(stagedFiles && stagedFiles.length > 0) { let fb, fn = stagedFiles.length === 1 ? stagedFiles[0].name : "Bundle.zip"; if (stagedFiles.length === 1) { fb = stagedFiles[0]; } else { const zip = new JSZip(); stagedFiles.forEach(f => zip.file(f.name, f)); fb = await zip.generateAsync({type: "blob"}); } if(isEncrypted) { fb = await FlashDropCrypto.encrypt(fb, aesKey); fn += ".enc"; } c.send({ type: 'meta', name: fn, size: fb.size, encrypted: isEncrypted }); const arrayBuffer = await fb.arrayBuffer(); for (let i = 0; i < fb.size; i += CHUNK_SIZE) { while (c.bufferSize > 1024 * 1024) { await new Promise(r => setTimeout(r, 50)); } c.send({ type: 'chunk', index: i/CHUNK_SIZE, data: arrayBuffer.slice(i, i + CHUNK_SIZE) }); } c.send({ type: 'done' }); addHistory("Sent: " + fn, "file"); } }); }); }
+    function startReceiving() { const code = document.getElementById('targetCode').value; const rPeer = new Peer(); const pgBar = document.getElementById('receive-pg-bar'); document.getElementById('receive-pg-container').style.display = 'block'; const btn = document.getElementById('btn-connect'); btn.disabled = true; btn.style.opacity = "0.7"; let dots = 0; if(downloadDotsIdx) clearInterval(downloadDotsIdx); downloadDotsIdx = setInterval(() => { dots = (dots + 1) % 4; btn.innerText = "Downloading" + ".".repeat(dots); }, 400); rPeer.on('open', () => { const conn = rPeer.connect(PREFIX + code, { reliable: true }); activeConn = conn; let meta = null, chunks = [], totalRecv = 0, startTime = Date.now(), lastUpdate = 0; conn.on('data', async d => { if(d.type === 'text') { if(downloadDotsIdx) clearInterval(downloadDotsIdx); const label = d.encrypted ? I18N[currLang].decryptRecv : I18N[currLang].recv; const bg = d.encrypted ? "#f59e0b" : "#10b981"; btn.innerText = label; btn.style.background = bg; btn.disabled = false; btn.style.opacity = "1"; btn.onclick = async () => { let finalTxt = d.data; if(d.encrypted) { let attempts = 0; while(true) { const pass = await requestPassword(attempts > 0 ? 3 - attempts : undefined); if (!pass) return; try { const res = await fetch(d.data); const blob = await res.blob(); const ptBlob = await FlashDropCrypto.decrypt(blob, pass); finalTxt = await ptBlob.text(); document.getElementById('pass-input-modal').style.display = 'none'; break; } catch(e) { attempts++; if(attempts >= 3) { document.getElementById('pass-input-modal').style.display = 'none'; conn.send({ type: 'security_burn' }); showCustomAlert("❌ SECURITY BREACH: Data Wiped."); resetReceiver(); return; } } } } const textBox = document.getElementById('receivedText'); document.getElementById('receivedText-container').style.display = 'block'; typeWriterEffect(textBox, finalTxt); pgBar.style.width = '100%'; btn.onclick = () => triggerAd('receive'); btn.innerText = I18N[currLang].connect; btn.style.background = "var(--primary)"; if (conn && conn.open) { conn.send({ type: 'confirm_save' }); } }; } else if(d.type === 'meta') { meta = d; startTime = Date.now(); const stats = document.getElementById('receiveNerdStats'); stats.style.display = 'flex'; const warnText = { en: "Downloading... Keep Open!", zh: "正在下载... 请勿关闭页面！" }[currLang] || "Downloading... Keep Open!"; stats.innerHTML = `<span id="nerd-speed">0.0 MB/s</span><span class="blink-warn">${warnText}</span><span id="nerd-eta" style="color:var(--primary)">ETA: --s</span>`; } else if(d.type === 'chunk') { chunks.push(d.data); totalRecv += d.data.byteLength; if(meta) { pgBar.style.width = (totalRecv / meta.size * 100) + '%'; const now = Date.now(); if (now - lastUpdate > 500 || totalRecv === meta.size) { const duration = (now - startTime) / 1000; const speed = duration > 0 ? (totalRecv / 1024 / 1024 / duration) : 0; const remainingBytes = meta.size - totalRecv; const eta = speed > 0 ? (remainingBytes / 1024 / 1024 / speed) : 0; const spdEl = document.getElementById('nerd-speed'); const etaEl = document.getElementById('nerd-eta'); if(spdEl) spdEl.innerText = speed.toFixed(1) + ' MB/s'; if(etaEl) etaEl.innerText = 'ETA: ' + Math.ceil(eta) + 's'; lastUpdate = now; } } } else if(d.type === 'done') { if(downloadDotsIdx) clearInterval(downloadDotsIdx); const label = (meta && meta.encrypted) ? I18N[currLang].decryptSave : I18N[currLang].save; const bg = (meta && meta.encrypted) ? "#f59e0b" : "#10b981"; btn.innerText = label; btn.style.background = bg; btn.disabled = false; btn.style.opacity = "1"; document.getElementById('receiveNerdStats').innerHTML = `<span style="color:var(--success); width:100%; text-align:center;">✅ TRANSFER COMPLETE</span>`; pgBar.style.width = '100%'; let finalBlob = new Blob(chunks); btn.onclick = async () => { if (meta && meta.encrypted) { let attempts = 0; while(true) { const pass = await requestPassword(attempts > 0 ? 3 - attempts : undefined); if (!pass) return; try { finalBlob = await FlashDropCrypto.decrypt(finalBlob, pass); document.getElementById('pass-input-modal').style.display = 'none'; btn.innerText = "💾 SAVE NOW"; btn.style.background = "#10b981"; btn.onclick = () => { const u = window.URL.createObjectURL(finalBlob); const a = document.createElement('a'); a.href = u; a.download = meta.name.replace('.enc', ''); a.click(); if (conn && conn.open) { conn.send({ type: 'confirm_save' }); } addHistory("Received: " + meta.name.replace('.enc', ''), "file"); setTimeout(() => { resetReceiver(); rPeer.destroy(); }, 1000); }; return; } catch (e) { attempts++; if(attempts >= 3) { document.getElementById('pass-input-modal').style.display = 'none'; conn.send({ type: 'security_burn' }); showCustomAlert("❌ SECURITY BREACH: Data Wiped."); resetReceiver(); return; } } } } else { const u = window.URL.createObjectURL(finalBlob); const a = document.createElement('a'); a.href = u; a.download = meta.name.replace('.enc', ''); a.click(); if (conn && conn.open) { conn.send({ type: 'confirm_save' }); } addHistory("Received: " + meta.name.replace('.enc', ''), "file"); setTimeout(() => { resetReceiver(); rPeer.destroy(); }, 1000); } }; } }); }); }
+    function addHistory(name, type) { let h = JSON.parse(localStorage.getItem('fd_history') || "[]"); h.unshift({ name: name.substring(0,25), time: new Date().toLocaleTimeString(), type: type }); h = h.slice(0, 5); localStorage.setItem('fd_history', JSON.stringify(h)); renderHistory(); }
+    function renderHistory() { const list = document.getElementById('history-list'); const h = JSON.parse(localStorage.getItem('fd_history') || "[]"); list.innerHTML = h.map(i => `<div class="history-item"><span>${i.type==='file'?'📄':'🔤'} ${i.name}</span><span style="opacity:0.5">${i.time}</span></div>`).join(''); }
+    function copyReceivedText() { navigator.clipboard.writeText(document.getElementById('receivedText').innerText); showCustomAlert("Copied!"); document.getElementById('receivedText').innerText = ""; document.getElementById('receivedText-container').style.display = 'none'; document.getElementById('recv-text-count').style.display = 'none'; if(activeConn && activeConn.open) { activeConn.send({ type: 'confirm_save' }); } resetReceiver(); }
+    function detectAdBlock() { if(isAdBlockIgnored) return false; setTimeout(() => { if(isAdBlockIgnored) return; const topAd = document.getElementById('top-ad-zone'); const hasContent = topAd.getElementsByTagName('iframe').length > 0 || topAd.getElementsByTagName('ins').length > 0; if (topAd.offsetHeight < 20 || !hasContent) { document.getElementById('safety-notice-view').style.display = 'flex'; document.querySelectorAll('.ad-space, .ad-side').forEach(el => el.style.display = 'none'); } }, 4000); return false; }
+    function closePolicy() { document.getElementById('policyModal').style.display = 'none'; }
+    function startExpiryTimer() { let sec = 600; if(expiryTimerIdx) clearInterval(expiryTimerIdx); expiryTimerIdx = setInterval(() => { sec--; document.getElementById('expiryTimer').innerText = `${I18N[currLang].exp}${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`; if(sec <= 0) resetSender(); }, 1000); }
     function resetSender() { if(peer) peer.destroy(); document.getElementById('senderCodeArea').style.display = 'none'; stagedFiles = []; renderStagedList(); document.getElementById('ai-suggestions').style.display = 'none'; 
+        // [修复] 安全清理 text panel
         const textPanel = document.getElementById('text-ai-suggestions');
         if(textPanel) textPanel.style.display = 'none'; 
         const quickText = document.getElementById('quickText'); quickText.value = ""; quickText.blur(); updateTextCount(quickText); if(expiryTimerIdx) clearInterval(expiryTimerIdx); window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => window.scrollTo(0,0), 300); 
