@@ -1074,12 +1074,19 @@
     function handleFiles(files) { stagedFiles = stagedFiles.concat(Array.from(files)); renderStagedList(); }
     function getFileIcon(name) { const ext = name.split('.').pop().toLowerCase(); if (['jpg','jpeg','png','gif','webp','svg','bmp'].includes(ext)) return '🖼️'; if (['mp4','mov','avi','mkv','webm','3gp'].includes(ext)) return '🎬'; if (['mp3','wav','ogg','flac','m4a'].includes(ext)) return '🎵'; if (['zip','rar','7z','tar','gz','iso','dmg'].includes(ext)) return '📦'; if (['html','css','js','py','c','cpp','json','java'].includes(ext)) return '💻'; if (['pdf','doc','docx','xls','xlsx','ppt','txt'].includes(ext)) return '📄'; return '📁'; }
 
+    /* --- [修改] 单独的文件删除函数，确保AI引擎立刻重置 --- */
+    function removeStagedFile(index) {
+        stagedFiles.splice(index, 1);
+        renderStagedList();
+    }
+
     function renderStagedList() { 
         const list = document.getElementById('stagedList'); 
         if (stagedFiles.length === 0) { list.style.display = 'none'; document.getElementById('file-count-badge').style.display = 'none'; AIEngine.renderTags([]); } 
         else {
             list.style.display = 'block'; const badge = document.getElementById('file-count-badge'); badge.style.display = 'block'; badge.innerText = `${stagedFiles.length} File${stagedFiles.length > 1 ? 's' : ''}`;
-            list.innerHTML = stagedFiles.map((f, i) => `<div class="staged-item"><span>${getFileIcon(f.name)} ${f.name.length > 15 ? f.name.substring(0,12)+'...' : f.name}</span><span style="color:var(--danger); cursor:pointer; font-weight:bold; padding:0 5px;" onclick="stagedFiles.splice(${i},1);renderStagedList()">✕</span></div>`).join('');
+            /* [修改] 使用单独的 removeStagedFile 函数 */
+            list.innerHTML = stagedFiles.map((f, i) => `<div class="staged-item"><span>${getFileIcon(f.name)} ${f.name.length > 15 ? f.name.substring(0,12)+'...' : f.name}</span><span style="color:var(--danger); cursor:pointer; font-weight:bold; padding:0 5px;" onclick="removeStagedFile(${i})">✕</span></div>`).join('');
             const aiTags = AIEngine.analyze(stagedFiles); AIEngine.renderTags(aiTags);
         }
     }
