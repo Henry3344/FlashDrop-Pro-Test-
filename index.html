@@ -832,7 +832,8 @@
     function toggleSearchDropdown() { SearchWidget.toggleDropdown(); }
     function cycleSearchScope() { SearchWidget.cycleScope(); }
 
-    /* --- [I18N 完整多语言配置] --- */
+<script>
+    /* --- [1. 完整语言包配置] --- */
     const I18N = {
         en: { 
             tag: "EN", on: "Online", off: "Offline",
@@ -864,34 +865,98 @@
             heroTitle: "FlashDrop — 安全的 P2P 文件传输", heroSub: "无服务器存储。端到端加密。文件永不上云。<br>支持 AES-256 加密保护与自毁机制。",
             sig1: "无限制", sig2: "仅P2P", sig3: "自动销毁", modalTitle: "设置密码", btnEnable: "启用保护", btnCancel: "取消", aesOff: "AES-256 关闭", aesOn: "AES-256 开启", btnRuthless: "狠心拒绝（仅这次）", strengthLevels: ["极弱", "弱", "中等", "稍强", "强", "极强", "特别强"], faqTitle: "常见问题", aiInsight: "✨ AI 智能分析", aiLocal: "本地处理", aiTags: { img: "🖼️ 图像", vid: "🎬 视频", doc: "📄 文档", code: "💻 代码", zip: "📦 压缩包", big: "🐘 大文件" },
             faqQ1: "文件会经过你们的服务器吗？", faqA1: "不会。FlashDrop Pro 采用 WebRTC 无服务器 P2P 架构。数据直连传输。", faqQ2: "你们会保留日志吗？", faqA2: "绝不。我们零知识运营，不存 IP 或日志。", faqQ3: "使用什么加密？", faqA3: "WebRTC 强制 DTLS/SRTP。密码保护增加 AES-256-GCM。", faqQ4: "对方能看到我IP吗？", faqA4: "P2P 需要 IP 直连。介意请用 VPN。", faqQ5: "传机密文件安全吗？", faqA5: "安全。数据不经过第三方服务器。", faqQ6: "关掉页面能恢复吗？", faqA6: "不能。数据只在内存里，关掉即焚。", faqQ7: "员工能看文件吗？", faqA7: "不能。我们没密钥也没存储。", faqQ8: "必须设密码吗？", faqA8: "可选。但建议局域网内使用时设置。", faqQ9: "能重置密码吗？", faqA9: "不能。忘了就真没了。"
-        },
-        ja: { 
-            tag: "JP", on: "オンライン", off: "オフライン", adWait: "開発者を支援するため、広告を閉じないでください。", ocrDone: "✅ 完了!", ocrAdTitle: "OCR処理中...お待ちください", ocrScanTip: "スキャン / 貼付", ocrUploadTip: "画像アップロード", textPrivWarn: "🛡️ セキュリティ警告：パスワード、鍵、パスポート、またはカード番号が検出されました。AES-256を推奨！", badges: ["🔒 P2P暗号化", "🕵️ ログなし", "⚡ 高速転送", "📂 自動消去"], drop: "ここにドロップ", fileLab: "クリックして選択", shareF: "ファイルを共有", shareT: "テキストを共有", connect: "ダウンロード", save: "📥 保存する", recv: "👀 テキスト表示", decryptRecv: "🔓 復号して表示", decryptSave: "🔓 復号して保存", saveNow: "💾 保存をクリック", exp: "有効期限: ", copyLink: "📋 リンクをコピー", stop: "停止", guide: "QRコードをスキャンするか、コードを入力してください。", coffee: "コーヒーを奢る", hPriv: "プライバシー", hSite: "サイトについて", hUs: "私たちについて", inputErr: "6桁のコードを入力してください。", orScan: "QRスキャン 📷", doneRemind: "完了！上のボタンで保存してください。", histTitle: "最近の履歴", fileErr: "ファイルを選択してください。", textErr: "テキストを入力してください。", passTitle: "🔐 パスワード入力", passPlaceholder: "ここに入力...", passUnlock: "解除", passCancel: "キャンセル", passWrong: "❌ パスワードが違います！", passRemaining: "回試行可能。", passWeak: "安全のため：8文字以上、大文字・小文字・数字・記号を含めてください。", hashHintSend: "AES-256キー設定後、受信側の絵文字と一致していればキーは正しいです！", hashHintRecv: "入力したAES-256キーが一致すれば、絵文字も一致します！", aiNote: "(選択されたファイル形式)", privWarn: "⚠️ プライバシー警告：ファイル名に機密情報が含まれています。AES-256暗号化を強く推奨します！", step1: "ファイル選択<br><span style='font-size:9px; opacity:0.7'>(テキスト可)</span>", step2: "暗号化設定<br><span style='font-size:9px; opacity:0.7'>(任意)</span>", step3: "コード取得", step4: "ダウンロード", heroTitle: "安全なファイル共有。私たちも見えません。", heroSub: "P2P直接転送。AES-256暗号化オプション。サーバーなし。", sig1: "無制限", sig2: "P2Pのみ", sig3: "自動消去", modalTitle: "パスワード設定", btnEnable: "有効にする", btnCancel: "キャンセル", aesOff: "AES-256 オフ", aesOn: "AES-256 オン", btnRuthless: "拒否する（今回のみ）", strengthLevels: ["極弱", "弱", "普通", "やや強", "強", "極強", "最強"], faqTitle: "よくある質問", aiInsight: "✨ AI 分析", aiLocal: "ローカル処理", aiTags: { img: "🖼️ 画像", vid: "🎬 動画", doc: "📄 文書", code: "💻 コード", zip: "📦 圧縮", big: "🐘 大容量" }, faqQ1: "サーバーを経由しますか？", faqA1: "いいえ。WebRTCによるP2P直接転送です。", faqQ2: "ログは保存されますか？", faqA2: "いいえ。ゼロ知識ベースで、ログは一切保存しません。", faqQ3: "暗号化方式は？", faqA3: "WebRTCのDTLS/SRTPに加え、AES-256-GCMが利用可能です。", faqQ4: "IPは見えますか？", faqA4: "P2Pの性質上、接続にはIPが必要です。", faqQ5: "機密データは安全ですか？", faqA5: "はい。サーバーに保存されないため安全です。", faqQ6: "復元できますか？", faqA6: "いいえ。メモリ上のデータは消えます。", faqQ7: "運営は見れますか？", faqA7: "不可能です。鍵もデータも持ちません。", faqQ8: "パスワードは必須？", faqA8: "任意ですが、推奨します。", faqQ9: "リセットできますか？", faqA9: "いいえ。紛失すると復元できません。", secFpTitle: "🔐 セキュリティ指紋", secFpDesc: "視覚的検証で中間者攻撃を防ぎます。", secAiTitle: "🧠 AIプライバシーガード", secAiList: "<li>ID、カード、鍵を検出</li><li>送信前に警告</li><li>AES-256を自動提案</li>", secBurnTitle: "🔥 セキュリティバーン™", secBurnDesc: "パスワード3回ミス = 接続即時破棄。", secAccessTitle: "🎯 アクセス制御", secAccessDesc: "回数制限と自動期限切れ。" 
-        },
-        ko: { 
-            tag: "KR", on: "온라인", off: "오프라인", adWait: "개발자를 지원하기 위해 광고 창을 닫지 마세요.", ocrDone: "✅ 완료!", ocrAdTitle: "로컬 OCR 처리 중... 잠시만 기다려주세요", ocrScanTip: "스캔 / 붙여넣기", ocrUploadTip: "이미지 업로드", textPrivWarn: "🛡️ 보안 경고: 비밀번호, 키, 여권 또는 카드 번호가 감지되었습니다. AES-256을 권장합니다!", badges: ["🔒 P2P 암호화", "🕵️ 로그 없음", "⚡ 고속 전송", "📂 자동 삭제"], drop: "여기에 드롭", fileLab: "파일 선택 / 클릭", shareF: "파일 공유", shareT: "텍스트 공유", connect: "다운로드", save: "📥 저장", recv: "👀 텍스트 보기", decryptRecv: "🔓 복호화 및 보기", decryptSave: "🔓 복호화 및 저장", saveNow: "💾 저장하려면 클릭", exp: "만료: ", copyLink: "📋 링크 복사", stop: "중지", guide: "QR 코드를 스캔하거나 코드를 입력하세요.", coffee: "커피 한 잔 후원", hPriv: "개인정보", hSite: "사이트 정보", hUs: "회사 소개", inputErr: "6자리 코드를 입력하세요.", orScan: "스캔하기 📷", doneRemind: "완료! 위 버튼을 눌러 저장하세요.", histTitle: "최근 기록", fileErr: "파일을 먼저 선택하세요.", textErr: "텍스트를 먼저 입력하세요.", passTitle: "🔐 비밀번호 입력", passPlaceholder: "여기에 입력...", passUnlock: "잠금 해제", passCancel: "취소", passWrong: "❌ 비밀번호 오류!", passRemaining: "회 시도 가능.", passWeak: "보안을 위해: 8자 이상, 대문자, 소문자, 숫자, 특수문자 포함.", hashHintSend: "AES-256 키 설정 후 수신자의 이모티콘과 일치하면 키가 올바른 것입니다!", hashHintRecv: "입력한 AES-256 키가 일치하면 이모티콘도 일치합니다!", aiNote: "(선택된 파일 유형)", privWarn: "⚠️ 개인정보 경고: 파일명에 민감한 정보가 포함되어 있습니다. AES-256 암호화를 강력히 권장합니다!", step1: "파일 선택<br><span style='font-size:9px; opacity:0.7'>(텍스트 가능)</span>", step2: "비번 설정<br><span style='font-size:9px; opacity:0.7'>(선택 사항)</span>", step3: "코드 받기", step4: "다운로드", heroTitle: "안전한 파일 공유. 서버 저장 없음.", heroSub: "직접 P2P 전송. 선택적 AES-256 암호화.", sig1: "무제한", sig2: "P2P 전용", sig3: "자동 삭제", modalTitle: "비밀번호 설정", btnEnable: "활성화", btnCancel: "취소", aesOff: "AES-256 끄기", aesOn: "AES-256 켜기", btnRuthless: "거절하기 (이번만)", strengthLevels: ["매우 약함", "약함", "보통", "약간 강함", "강함", "매우 강함", "최강"], faqTitle: "자주 묻는 질문", aiInsight: "✨ AI 인사이트", aiLocal: "로컬 처리", aiTags: { img: "🖼️ 이미지", vid: "🎬 동영상", doc: "📄 문서", code: "💻 코드", zip: "📦 압축", big: "🐘 대용량" }, faqQ1: "서버를 통과하나요?", faqA1: "아니요. WebRTC P2P로 직접 전송됩니다.", faqQ2: "로그를 보관하나요?", faqA2: "아니요. 제로 지식 원칙을 따릅니다.", faqQ3: "암호화 방식은?", faqA3: "WebRTC 암호화 + 선택적 AES-256-GCM.", faqQ4: "IP가 보이나요?", faqA4: "P2P 연결을 위해 필요합니다.", faqQ5: "기밀 문서에 안전한가요?", faqA5: "네. 제3자 서버에 저장되지 않습니다.", faqQ6: "복구할 수 있나요?", faqA6: "아니요. 탭을 닫으면 사라집니다.", faqQ7: "운영자가 볼 수 있나요?", faqA7: "불가능합니다. 키가 없습니다.", faqQ8: "비번은 필수인가요?", faqA8: "선택입니다.", faqQ9: "비번 리셋 가능?", faqA9: "불가능합니다.", secFpTitle: "🔐 보안 지문", secFpDesc: "중간자 공격 방지. 이모티콘 일치 시 안전.", secAiTitle: "🧠 AI 프라이버시 가드", secAiList: "<li>ID, 카드, 키 감지</li><li>전송 전 경고</li><li>AES-256 자동 제안</li>", secBurnTitle: "🔥 보안 소각™", secBurnDesc: "비번 3회 오류 = 연결 즉시 파기.", secAccessTitle: "🎯 접근 제어", secAccessDesc: "다운로드 횟수 제한 및 자동 만료." 
-        },
-        es: { 
-            tag: "ES", on: "En línea", off: "Desconectado", adWait: "Para apoyar al desarrollador, no cierre este anuncio.", ocrDone: "✅ ¡Listo!", ocrAdTitle: "Procesando OCR local... Espere", ocrScanTip: "Escanear / Pegar", ocrUploadTip: "Subir Imagen", textPrivWarn: "🛡️ Alerta de seguridad: Se detectaron claves, contraseñas, pasaportes o números de tarjeta. ¡Se recomienda AES-256!", badges: ["🔒 Cifrado P2P", "🕵️ Sin Registros", "⚡ Alta Velocidad", "📂 Auto-Borrado"], drop: "SOLTAR AQUÍ", fileLab: "Soltar / Clic", shareF: "COMPARTIR ARCHIVOS", shareT: "COMPARTIR TEXTO", connect: "DESCARGAR", save: "📥 GUARDAR", recv: "👀 VER TEXTO", decryptRecv: "🔓 DESCIFRAR Y VER", decryptSave: "🔓 DESCIFRAR Y GUARDAR", saveNow: "💾 CLIC PARA GUARDAR", exp: "Expira: ", copyLink: "📋 COPIAR ENLACE", stop: "DETENER", guide: "Escanea el QR o introduce el código.", coffee: "invítame un café", hPriv: "Privacidad", hSite: "Sobre el sitio", hUs: "Sobre nosotros", inputErr: "Introduce el código de 6 dígitos.", orScan: "o escanear 📷", doneRemind: "¡HECHO! Clic arriba para guardar.", histTitle: "Historial Reciente", fileErr: "Selecciona archivos primero.", textErr: "Introduce texto primero.", passTitle: "🔐 Contraseña", passPlaceholder: "Escribe aquí...", passUnlock: "DESBLOQUEAR", passCancel: "CANCELAR", passWrong: "❌ Contraseña incorrecta", passRemaining: "intentos restantes.", passWeak: "Seguridad: 8+ caracteres, 1 Mayúscula, 1 Minúscula, 1 Número, 1 Símbolo.", hashHintSend: "Una vez configurada la clave AES-256, si los emojis coinciden, ¡la clave es correcta!", hashHintRecv: "¡Si la clave AES-256 coincide, los emojis también coincidirán!", aiNote: "(Tipos seleccionados)", privWarn: "⚠️ Alerta de privacidad: Los nombres de archivo indican información confidencial. ¡Se recomienda encarecidamente el cifrado AES-256!", step1: "Elegir Archivos<br><span style='font-size:9px; opacity:0.7'>(o Texto)</span>", step2: "Cifrado AES<br><span style='font-size:9px; opacity:0.7'>(Opcional)</span>", step3: "Obtener Código", step4: "Descargar", heroTitle: "Intercambio seguro. Nadie nos ve.", heroSub: "Transferencia P2P directa. Cifrado AES-256 opcional.", sig1: "Sin Límites", sig2: "Solo P2P", sig3: "Auto-Borrado", modalTitle: "Contraseña", btnEnable: "ACTIVAR", btnCancel: "CANCELAR", aesOff: "AES-256 OFF", aesOn: "AES-256 ON", btnRuthless: "Rechazar (Solo esta vez)", strengthLevels: ["Muy débil", "Débil", "Media", "Moderada", "Fuerte", "Muy fuerte", "Imbatible"], faqTitle: "Preguntas Frecuentes", aiInsight: "✨ Análisis IA", aiLocal: "Procesamiento Local", aiTags: { img: "🖼️ Imagen", vid: "🎬 Video", doc: "📄 Documento", code: "💻 Código", zip: "📦 Archivo", big: "🐘 Grande" }, faqQ1: "¿Pasan por servidores?", faqA1: "No. Usa arquitectura P2P sin servidor.", faqQ2: "¿Guardan registros?", faqA2: "No. Operamos con 'Conocimiento Cero'.", faqQ3: "¿Qué cifrado usan?", faqA3: "DTLS/SRTP de WebRTC + AES-256 opcional.", faqQ4: "¿Es visible mi IP?", faqA4: "Sí, necesario para conexión directa.", faqQ5: "¿Es seguro?", faqA5: "Sí, mínima superficie de ataque.", faqQ6: "¿Se puede recuperar?", faqA6: "No. Se borra al cerrar.", faqQ7: "¿El personal lo ve?", faqA7: "Imposible. No tenemos claves.", faqQ8: "¿Contraseña obligatoria?", faqA8: "Opcional.", faqQ9: "¿Restablecer contraseña?", faqA9: "No. No la guardamos.", secFpTitle: "🔐 Huella de seguridad", secFpDesc: "Verificación visual anti-ataques. Emojis iguales = seguro.", secAiTitle: "🧠 Guardián IA", secAiList: "<li>Detecta ID, Tarjetas, Claves</li><li>Advierte ANTES de enviar</li><li>Sugiere AES-256</li>", secBurnTitle: "🔥 Security Burn™", secBurnDesc: "3 intentos fallidos = Conexión DESTRUIDA.", secAccessTitle: "🎯 Acceso Controlado", secAccessDesc: "Límite de descargas y auto-expiración." 
-        },
-        hi: { 
-            tag: "HI", on: "ऑनलाइन", off: "ऑफलाइन", adWait: "डेवलपर का समर्थन करने के लिए, कृपया विज्ञापन बंद न करें।", ocrDone: "✅ हो गया!", ocrAdTitle: "स्थानीय OCR प्रसंस्करण... कृपया प्रतीक्षा करें", ocrScanTip: "स्कैन / पेस्ट", ocrUploadTip: "छवि अपलोड करें", textPrivWarn: "🛡️ सुरक्षा चेतावनी: पासवर्ड, कुंजी, पासपोर्ट या कार्ड नंबर का पता चला। AES-256 की अनुशंसा की जाती है!", badges: ["🔒 P2P एन्क्रिप्शन", "🕵️ कोई लॉग नहीं", "⚡ तीव्र गति", "📂 ऑटो-वाइप"], drop: "यहाँ छोड़ें", fileLab: "चुनें / क्लिक करें", shareF: "फ़ाइलें साझा करें", shareT: "텍스트 साझा करें", connect: "डाउनलोड", save: "📥 सहेजें", recv: "👀 टेक्स्ट देखें", decryptRecv: "🔓 डिक्रिप्ट करें और देखें", decryptSave: "🔓 डिक्रिप्ट करें और सहेजें", saveNow: "💾 सहेजने के लिए क्लिक करें", exp: "समाप्त: ", copyLink: "📋 लिंक कॉपी करें", stop: "रोकें", guide: "QR स्कैन करें या कोड दर्ज करें।", coffee: "मुझे कॉफी पिलाएं", hPriv: "गोपनीयता", hSite: "साइट के बारे में", hUs: "हमारे बारे में", inputErr: "6-अंकीय कोड दर्ज करें।", orScan: "स्कैन करें 📷", doneRemind: "पूर्ण! सहेजें पर क्लिक करें।", histTitle: "हाल का इतिहास", fileErr: "कृपया पहले फ़ाइलें चुनें।", textErr: "कृपया पहले टेक्स्ट दर्ज करें।", passTitle: "🔐 पासवर्ड दर्ज करें", passPlaceholder: "यहाँ टाइप करें...", passUnlock: "अनलॉक", passCancel: "रद्द करें", passWrong: "❌ गलत पासवर्ड!", passRemaining: "प्रयास शेष।", passWeak: "सुरक्षा के लिए: 8+ वर्ण, 1 अपरकेस, 1 लोअरकेस, 1 नंबर, 1 प्रतीक।", hashHintSend: "AES-256 कुंजी सेट करने के बाद, यदि इमोजी मेल खाते हैं, तो कुंजी सही है!", hashHintRecv: "यदि दर्ज की गई AES-256 कुंजी मेल खाती है, तो इमोजी भी मेल खाएंगे!", aiNote: "(चयनित प्रकार)", privWarn: "⚠️ गोपनीयता चेतावनी: फ़ाइल नाम में संवेदनशील जानकारी (आईडी/पासपोर्ट/पता) है। AES-256 एन्क्रिप्शन की अत्यधिक अनुशंसा की जाती है!", step1: "फ़ाइलें चुनें<br><span style='font-size:9px; opacity:0.7'>(टेक्स्ट लिखें)</span>", step2: "पासवर्ड सेट करें<br><span style='font-size:9px; opacity:0.7'>(वैकल्पिक)</span>", step3: "कोड प्राप्त करें", step4: "डाउनलोड", heroTitle: "सुरक्षित फ़ाइल शेयरिंग, हम भी नहीं देख सकते।", heroSub: "सीधा P2P स्थानांतरण। वैकल्पिक AES-256 एन्क्रिप्शन।", sig1: "कोई सीमा नहीं", sig2: "केवल P2P", sig3: "ऑटो-वाइप", modalTitle: "पासवर्ड सेट करें", btnEnable: "सक्षम करें", btnCancel: "रद्द करें", aesOff: "AES-256 बंद", aesOn: "AES-256 चालू", btnRuthless: "अस्वीकार करें (केवल इस बार)", strengthLevels: ["बहुत कमजोर", "कमजोर", "मध्यम", "थोड़ा मजबूत", "मजबूत", "बहुत मजबूत", "अटूट"], faqTitle: "सामान्य प्रश्न", aiInsight: "✨ AI अंतर्दृष्टि", aiLocal: "स्थानीय प्रसंस्करण", aiTags: { img: "🖼️ चित्र", vid: "🎬 वीडियो", doc: "📄 दस्तावेज़", code: "💻 कोड", zip: "📦 संग्रह", big: "🐘 बड़ी फ़ाइल" }, faqQ1: "क्या सर्वर से गुजरता है?", faqA1: "नहीं। P2P सीधा स्थानांतरण।", faqQ2: "क्या लॉग रखते हैं?", faqA2: "नहीं। जीरो-नॉलेज।", faqQ3: "एन्क्रिप्शन क्या है?", faqA3: "WebRTC + AES-256-GCM।", faqQ4: "क्या आईपी दिखता है?", faqA4: "हाँ, कनेक्शन के लिए।", faqQ5: "क्या यह सुरक्षित है?", faqA5: "हाँ। सर्वर पर नहीं रहता।", faqQ6: "क्या पुनर्प्राप्त कर सकते हैं?", faqA6: "नहीं। बंद करने पर खो जाता है।", faqQ7: "क्या आप देख सकते हैं?", faqA7: "नहीं। हमारे पास चाबी नहीं है।", faqQ8: "क्या पासवर्ड जरूरी है?", faqA8: "वैकल्पिक।", faqQ9: "पासवर्ड रीसेट?", faqA9: "नहीं। हम स्टोर नहीं करते।", secFpTitle: "🔐 सुरक्षा फिंगरप्रिंट", secFpDesc: "विजुअल वेरिफिकेशन मैन-इन-द-मिडल हमलों को रोकता है।", secAiTitle: "🧠 AI गोपनीयता गार्ड", secAiList: "<li>ID, कार्ड, कुंजी का पता लगाता है</li><li>भेजने से पहले चेतावनी</li><li>AES-256 का सुझाव</li>", secBurnTitle: "🔥 सुरक्षा बर्न™", secBurnDesc: "3 गलत पासवर्ड = कनेक्शन नष्ट।", secAccessTitle: "🎯 नियंत्रित पहुंच", secAccessDesc: "डाउनलोड सीमा और ऑटो-समाप्ति।" 
         }
     };
-    
+
     let currLang = "en", peer = null, stagedFiles = [], currentDownloads = 0, videoTrack = null, torchOn = false, activeConn = null, expiryTimerIdx = null;
     let isAdBlockIgnored = false; 
     let downloadDotsIdx = null; 
     const PREFIX = "fd-pro-";
     const CHUNK_SIZE = 64 * 1024; 
 
-    /* --- [AI 引擎 & 核心功能] --- */
+    /* --- [2. 修复后的 applyI18N 函数] --- */
+    function applyI18N() {
+        const userLang = navigator.language.split('-')[0];
+        currLang = I18N[userLang] ? userLang : "en";
+        const d = I18N[currLang] || I18N.en;
+
+        // 基础文本映射
+        const idMap = {
+            'currentLangTag': d.tag, 'hero-title': d.heroTitle, 'hero-subtitle': d.heroSub,
+            'drop-text': d.drop, 'label-files': d.fileLab, 
+            'btn-share-files': d.shareF, 'btn-share-text': d.shareT, 'btn-connect': d.connect,
+            'btn-copy-link': d.copyLink, 'btn-stop': d.stop, 'guideText': d.guide, 
+            'foot-coffee': d.coffee, 'link-priv': d.hPriv, 'link-site': d.hSite, 'link-us': d.hUs,
+            'btn-scan': d.orScan, 'history-title-text': d.histTitle,
+            'sec-fp-title': d.secFpTitle, 'sec-fp-desc': d.secFpDesc,
+            'sec-ai-title': d.secAiTitle, 'sec-ai-list': d.secAiList, 
+            'sec-burn-title': d.secBurnTitle, 'sec-burn-desc': d.secBurnDesc,
+            'sec-access-title': d.secAccessTitle, 'sec-access-desc': d.secAccessDesc,
+            'ad-wait-title': d.adWait, 'modal-pass-title': d.modalTitle,
+            'btn-enable-pass': d.btnEnable, 'btn-cancel-pass': d.btnCancel,
+            'aes-off-txt': d.aesOff, 'aes-on-txt': d.aesOn, 'btn-ruthless-text': d.btnRuthless,
+            'faq-title': d.faqTitle, 'pass-input-title': d.passTitle, 
+            'btn-pass-confirm': d.passUnlock, 'btn-pass-cancel': d.passCancel,
+            'ai-insight-note': d.aiNote, 'signal-1': d.sig1, 'signal-2': d.sig2, 'signal-3': d.sig3,
+            'step-1': d.step1, 'step-2': d.step2, 'step-3': d.step3, 'step-4': d.step4
+        };
+
+        for (const [id, txt] of Object.entries(idMap)) {
+            const el = document.getElementById(id);
+            if(el) {
+                // 列表和副标题使用 innerHTML 以支持 HTML 标签
+                if (['hero-subtitle', 'step-1', 'step-2', 'sec-ai-list'].includes(id)) {
+                    el.innerHTML = txt;
+                } else {
+                    el.innerText = txt;
+                }
+            }
+        }
+
+        // 特殊属性设置
+        document.getElementById('tip-scan').setAttribute('data-tip', d.ocrScanTip);
+        document.getElementById('tip-upload').setAttribute('data-tip', d.ocrUploadTip);
+        document.getElementById('alert-password-input').placeholder = d.passPlaceholder;
+        document.getElementById('crypto-password').placeholder = d.passPlaceholder;
+        document.getElementById('send-hash-hint').innerText = d.hashHintSend || "";
+        document.getElementById('recv-hash-hint').innerText = d.hashHintRecv || "";
+
+        // ★★★ 修复点：FAQ 循环填充 ★★★
+        for(let i=1; i<=9; i++) {
+            const q = document.getElementById(`faq-q${i}`);
+            const a = document.getElementById(`faq-a${i}`);
+            if(q && d[`faqQ${i}`]) q.innerText = d[`faqQ${i}`];
+            if(a && d[`faqA${i}`]) a.innerText = d[`faqA${i}`];
+        }
+        
+        updateNetworkStatus();
+    }
+
+    function updateNetworkStatus() {
+        const isOnline = navigator.onLine; 
+        const dot = document.getElementById('status-dot'); 
+        const text = document.getElementById('status-text');
+        const d = I18N[currLang] || I18N.en;
+        if (isOnline) { 
+            dot.className = 'status-dot online'; 
+            text.className = 'status-text online'; 
+            text.innerText = d.on; 
+        } else { 
+            dot.className = 'status-dot offline'; 
+            text.className = 'status-text offline'; 
+            text.innerText = d.off; 
+        }
+    }
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+
+    /* --- [AI & OCR 逻辑] --- */
     const AIEngine = {
         analyze(files) {
             const tags = new Set(); let risk = false;
             if (!files || files.length === 0) return { tags: [], risk: false };
-            const exts = { img: ['jpg','png','webp'], vid: ['mp4','mov'], doc: ['pdf','docx','txt'], code: ['js','py','html'], zip: ['zip','rar'] };
-            const sensitive = ['id', 'passport', 'secret', 'key', '身份证', '护照', '私钥', '密码'];
+            const exts = { img: ['jpg','png','webp','jpeg'], vid: ['mp4','mov','avi'], doc: ['pdf','docx','txt','xlsx'], code: ['js','py','html','css'], zip: ['zip','rar','7z'] };
+            const sensitive = ['id', 'passport', 'secret', 'key', '身份证', '护照', '私钥', '密码', 'ssn'];
             Array.from(files).forEach(f => {
                 const ext = f.name.split('.').pop().toLowerCase();
                 for(let k in exts) if(exts[k].includes(ext)) tags.add(k);
@@ -904,7 +969,7 @@
             const c = document.getElementById('ai-tag-container');
             const alert = document.getElementById('ai-privacy-alert');
             const wrap = document.getElementById('ai-suggestions');
-            if(!data.tags.length) { wrap.style.display='none'; return; }
+            if(!data.tags.length) { wrap.style.display='none'; alert.style.display='none'; return; }
             wrap.style.display='block';
             alert.style.display = data.risk ? 'block' : 'none';
             if(data.risk) alert.innerText = (I18N[currLang]||I18N.en).privWarn;
@@ -925,14 +990,13 @@
         } else { wrap.style.display='none'; }
     }
 
-    /* --- [OCR & Ad Logic] --- */
     function runOCRWithAd(blob) {
         if(detectAdBlock()) return;
         const modal = document.getElementById('ocrAdModal');
         const bar = document.getElementById('ocr-pg-bar');
         const txt = document.getElementById('ocr-timer-text');
-        // 真诚提示
-        document.getElementById('ocr-ad-title').innerText = (I18N[currLang]||I18N.en).adWait;
+        const title = document.getElementById('ocr-ad-title');
+        title.innerText = (I18N[currLang]||I18N.en).adWait;
         
         modal.style.display = 'flex'; bar.style.width = '0%';
         let t = 0; const dur = 5000;
@@ -954,7 +1018,7 @@
             box.value += (box.value ? "\n" : "") + text.trim();
             updateTextCount(box); checkTextPrivacy(box.value);
             showCustomAlert((I18N[currLang]||I18N.en).ocrDone);
-        } catch(e) { showCustomAlert("OCR Failed"); }
+        } catch(e) { showCustomAlert("OCR Failed: " + e.message); }
         finally { document.getElementById('ocrLoadingModal').style.display='none'; }
     }
 
@@ -976,7 +1040,7 @@
         }).catch(() => {});
     }
 
-    /* --- [P2P & Crypto Logic] --- */
+    /* --- [Core P2P & Crypto] --- */
     let isEncrypted = false, aesKey = "";
     const FlashDropCrypto = {
         async derive(p, s) { const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(p), "PBKDF2", false, ["deriveKey"]); return crypto.subtle.deriveKey({ name: "PBKDF2", salt: s, iterations: 600000, hash: "SHA-256"}, k, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]); },
@@ -986,29 +1050,56 @@
 
     function confirmEncryption() {
         const p = document.getElementById('crypto-password').value;
-        if(p.length < 8) { showCustomAlert((I18N[currLang]||I18N.en).passWeak); return; }
+        const hasUpper = /[A-Z]/.test(p); const hasLower = /[a-z]/.test(p); const hasNum = /[0-9]/.test(p);
+        if(p.length < 8 || !hasUpper || !hasLower || !hasNum) { showCustomAlert((I18N[currLang]||I18N.en).passWeak); return; }
         aesKey = p; isEncrypted = true;
         document.getElementById('protection-toggle-input').checked = true;
         document.getElementById('crypto-modal').style.display='none';
     }
     
     function showCryptoModal() {
-        if(isEncrypted) { isEncrypted=false; aesKey=""; document.getElementById('protection-toggle-input').checked=false; return; }
+        if(isEncrypted) { isEncrypted=false; aesKey=""; document.getElementById('protection-toggle-input').checked=false; document.getElementById('crypto-password').value=""; checkStrength(""); return; }
         document.getElementById('crypto-modal').style.display='flex';
     }
 
-    /* --- [Main Flow] --- */
+    function checkStrength(p) { 
+        const bar = document.getElementById('strength-bar-fill'); 
+        const txt = document.getElementById('strength-text'); 
+        let score = 0; if(!p) { bar.style.width='0%'; bar.style.backgroundColor='#ef4444'; txt.innerText='Empty'; return; }
+        score += p.length * 3; if(/[A-Z]/.test(p)) score+=10; if(/[a-z]/.test(p)) score+=10; if(/[0-9]/.test(p)) score+=10; if(/[^A-Za-z0-9]/.test(p)) score+=10;
+        if(score>100) score=100; const hue=Math.floor((score/100)*120); 
+        bar.style.width=`${score}%`; bar.style.backgroundColor=`hsl(${hue}, 90%, 45%)`;
+        const levels = (I18N[currLang]||I18N.en).strengthLevels;
+        let idx = Math.floor(score/14.5); if(idx>=levels.length) idx=levels.length-1;
+        txt.innerText = levels[idx]; txt.style.color=`hsl(${hue}, 80%, 40%)`;
+    }
+
+    function togglePwd(id, btn) { const el = document.getElementById(id); if(el.type==='password'){ el.type='text'; btn.innerText='🙉'; } else { el.type='password'; btn.innerText='🙈'; } }
+    async function updateFingerprint(val, elId, hintId) {
+        const el = document.getElementById(elId); const hint = document.getElementById(hintId);
+        if (!val) { el.style.display='none'; if(hint) hint.style.display='none'; return; }
+        el.style.display='block'; if(hint) hint.style.display='block';
+        const msgBuffer = new TextEncoder().encode(val);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const emojis = ["⚡","🛡️","🚀","🤖","💎","🔥","🌟","🌊","🐯","🐵","🍎","🍀","🎲","🧩","🔮","🎵","🎩","👻","🌵","🍕","🌙","☀️","🌈","❄️"];
+        let res = ""; for(let i=0; i<4; i++) res += emojis[hashArray[i] % emojis.length];
+        el.innerText = res;
+    }
+
+    /* --- [Main Logic] --- */
     function triggerAd(mode) {
         if(mode==='receive' && document.getElementById('targetCode').value.length<6) { showCustomAlert((I18N[currLang]||I18N.en).inputErr); return; }
         if(mode==='send-file' && !stagedFiles.length) { showCustomAlert((I18N[currLang]||I18N.en).fileErr); return; }
+        if(mode==='send-text' && !document.getElementById('quickText').value.trim()) { showCustomAlert((I18N[currLang]||I18N.en).textErr); return; }
         if(isAdBlockIgnored) { mode.startsWith('send')?initSender():startReceiving(); return; }
         if(detectAdBlock()) return;
 
         const modal = document.getElementById('adModal');
         const bar = document.getElementById('ad-pg-bar');
         const txt = document.getElementById('ad-timer-text');
-        // 真诚提示
-        document.getElementById('ad-wait-title').innerText = (I18N[currLang]||I18N.en).adWait;
+        const title = document.getElementById('ad-wait-title');
+        title.innerText = (I18N[currLang]||I18N.en).adWait;
 
         modal.style.display='flex'; bar.style.width='0%';
         let t=0; const dur=5000;
@@ -1028,13 +1119,16 @@
         peer = new Peer(PREFIX + code);
         peer.on('open', () => {
             document.getElementById('senderCodeArea').style.display='block';
+            document.getElementById('senderCodeArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
             document.getElementById('myCode').innerText = code;
             document.getElementById('qrcode').innerHTML = "";
             new QRCode(document.getElementById('qrcode'), { text: window.location.href.split('?')[0] + "?c=" + code, width: 140, height: 140 });
+            document.getElementById('btn-copy-link').onclick = () => { navigator.clipboard.writeText(window.location.href.split('?')[0]+"?c="+code); showCustomAlert("Link Copied!"); };
             startExpiryTimer();
         });
         peer.on('connection', c => {
             c.on('data', d => {
+                if (d.type === 'security_burn') { showCustomAlert("⚠️ SECURITY ALERT: Connection burned."); resetSender(); return; }
                 if(d.type==='confirm_save') { currentDownloads++; if(currentDownloads >= document.getElementById('downloadLimit').value) resetSender(); }
             });
             c.on('open', async () => {
@@ -1044,6 +1138,7 @@
                         const enc = await FlashDropCrypto.encrypt(new Blob([txt]), aesKey);
                         const r = new FileReader(); r.onload=()=>c.send({type:'text', data:r.result, encrypted:true}); r.readAsDataURL(enc);
                     } else c.send({type:'text', data:txt, encrypted:false});
+                    addHistory("Sent Text", "text");
                 }
                 if(stagedFiles.length) {
                     let b; const n = stagedFiles.length===1 ? stagedFiles[0].name : "Bundle.zip";
@@ -1057,6 +1152,7 @@
                         c.send({type:'chunk', data:buf.slice(i, i+CHUNK_SIZE)});
                     }
                     c.send({type:'done'});
+                    addHistory("Sent: " + n, "file");
                 }
             });
         });
@@ -1070,74 +1166,127 @@
         
         rPeer.on('open', () => {
             const conn = rPeer.connect(PREFIX + code, {reliable:true});
+            activeConn = conn;
             let meta=null, chunks=[], rec=0;
             conn.on('data', async d => {
                 if(d.type==='text') {
                     btn.innerText = d.encrypted ? (I18N[currLang]||I18N.en).decryptRecv : (I18N[currLang]||I18N.en).recv;
-                    btn.disabled=false; btn.style.background=d.encrypted?"#f59e0b":"#10b981";
+                    btn.disabled=false; btn.style.background=d.encrypted?"#f59e0b":"#10b981"; btn.style.opacity="1";
                     btn.onclick = async () => {
                         let txt = d.data;
                         if(d.encrypted) {
-                            const p = await requestPassword(); if(!p) return;
-                            try {
-                                const b = await (await fetch(txt)).blob();
-                                txt = await (await FlashDropCrypto.decrypt(b, p)).text();
-                            } catch { showCustomAlert("Wrong Password"); return; }
+                            let attempts = 0;
+                            while(true) {
+                                const p = await requestPassword(attempts > 0 ? 3-attempts : undefined); if(!p) return;
+                                try {
+                                    const b = await (await fetch(txt)).blob();
+                                    txt = await (await FlashDropCrypto.decrypt(b, p)).text();
+                                    break; 
+                                } catch { attempts++; if(attempts>=3) { conn.send({type:'security_burn'}); showCustomAlert("Data Wiped."); resetReceiver(); return; } }
+                            }
                         }
-                        const box = document.getElementById('receivedText');
+                        document.getElementById('receivedText').innerText = txt;
                         document.getElementById('receivedText-container').style.display='block';
-                        box.innerText = txt; conn.send({type:'confirm_save'});
+                        conn.send({type:'confirm_save'});
+                        addHistory("Recv Text", "text");
                     };
                 } else if(d.type==='meta') {
                     meta=d; document.getElementById('receive-pg-container').style.display='block';
+                    document.getElementById('receiveNerdStats').style.display='flex';
                 } else if(d.type==='chunk') {
                     chunks.push(d.data); rec+=d.data.byteLength;
                     document.getElementById('receive-pg-bar').style.width = (rec/meta.size*100)+'%';
                 } else if(d.type==='done') {
                     btn.innerText = meta.encrypted ? (I18N[currLang]||I18N.en).decryptSave : (I18N[currLang]||I18N.en).save;
-                    btn.disabled=false; btn.style.background=meta.encrypted?"#f59e0b":"#10b981";
+                    btn.disabled=false; btn.style.background=meta.encrypted?"#f59e0b":"#10b981"; btn.style.opacity="1";
                     const blob = new Blob(chunks);
                     btn.onclick = async () => {
                         let finalB = blob;
                         if(meta.encrypted) {
-                            const p = await requestPassword(); if(!p) return;
-                            try { finalB = await FlashDropCrypto.decrypt(blob, p); }
-                            catch { showCustomAlert("Wrong Password"); return; }
+                            let attempts = 0;
+                            while(true) {
+                                const p = await requestPassword(attempts > 0 ? 3-attempts : undefined); if(!p) return;
+                                try { finalB = await FlashDropCrypto.decrypt(blob, p); break; }
+                                catch { attempts++; if(attempts>=3) { conn.send({type:'security_burn'}); showCustomAlert("Data Wiped."); resetReceiver(); return; } }
+                            }
                         }
                         const u = URL.createObjectURL(finalB);
                         const a = document.createElement('a'); a.href=u; a.download=meta.name.replace('.enc',''); a.click();
                         conn.send({type:'confirm_save'});
+                        addHistory("Recv: " + meta.name, "file");
                     };
                 }
             });
         });
     }
 
+    /* --- [Search Widget Logic] --- */
+    const SearchWidget = {
+        trending: [
+            "How to transfer 10GB file fast?", "Is FlashDrop safer than AirDrop?", "AES-256 encryption details", 
+            "Send photos without quality loss", "P2P vs Cloud storage", "Offline file sharing tips",
+            "Generate strong passwords", "Prevent Man-in-the-Middle attacks"
+        ],
+        history: JSON.parse(localStorage.getItem('fd_search_history') || "[]"),
+        scope: "Global",
+        tickerIdx: 0,
+        interval: null,
+        
+        init() { this.renderTicker(); this.startRotation(); this.renderDropdown(); },
+        startRotation() {
+            if(this.interval) clearInterval(this.interval);
+            this.interval = setInterval(() => { this.tickerIdx = (this.tickerIdx+1)%this.trending.length; this.renderTicker(); }, 4000);
+        },
+        renderTicker() {
+            const el = document.getElementById('searchTickerText');
+            el.style.animation='none'; el.offsetHeight; el.style.animation='slideUp 0.5s ease-out';
+            el.innerText = "🔥 " + this.trending[this.tickerIdx];
+        },
+        toggleDropdown() {
+            const dd = document.getElementById('searchDropdown');
+            const wrap = document.getElementById('searchWidget');
+            if (dd.style.display==='flex') { dd.style.display='none'; wrap.classList.remove('active'); this.startRotation(); } 
+            else { dd.style.display='flex'; wrap.classList.add('active'); clearInterval(this.interval); document.getElementById('searchTickerText').innerText = "🔍 Search: " + this.trending[this.tickerIdx]; }
+        },
+        selectItem(text) { showCustomAlert("Searching for: " + text); this.addToHistory(text); this.toggleDropdown(); },
+        addToHistory(text) {
+            this.history = this.history.filter(i=>i!==text); this.history.unshift(text);
+            if(this.history.length>5) this.history.pop();
+            localStorage.setItem('fd_search_history', JSON.stringify(this.history));
+            this.renderDropdown();
+        },
+        renderDropdown() {
+            const tList = document.getElementById('trendingList');
+            const hList = document.getElementById('searchHistoryTags');
+            tList.innerHTML = this.trending.slice(0,5).map((t,i)=>`<div class="sd-item" onclick="SearchWidget.selectItem('${t}')"><span class="sd-rank rank-${i+1}">${i+1}</span><span>${t}</span></div>`).join('');
+            hList.innerHTML = this.history.length ? this.history.map(h=>`<span class="history-tag" onclick="SearchWidget.selectItem('${h}')">${h}</span>`).join('') : '<span style="font-size:11px;color:#64748b;">No recent history</span>';
+        },
+        cycleScope() { const s = ["Global", "Local", "Friends", "Saved"]; this.scope = s[(s.indexOf(this.scope)+1)%s.length]; document.getElementById('searchScope').innerText = this.scope; }
+    };
+    function toggleSearchDropdown() { SearchWidget.toggleDropdown(); }
+    function cycleSearchScope() { SearchWidget.cycleScope(); }
+
     /* --- [Helpers & Init] --- */
-    function requestPassword() {
+    function requestPassword(attempts) {
         return new Promise(r => {
             const m = document.getElementById('pass-input-modal');
             const i = document.getElementById('alert-password-input');
-            const ok = document.getElementById('btn-pass-confirm');
+            const err = document.getElementById('pass-error-msg');
             m.style.display='flex'; i.value=""; i.focus();
-            ok.onclick = () => { m.style.display='none'; r(i.value); };
+            if(attempts) err.innerText = `Wrong password! ${attempts} attempts left.`; else err.innerText="";
+            document.getElementById('btn-pass-confirm').onclick = () => { m.style.display='none'; r(i.value); };
             document.getElementById('btn-pass-cancel').onclick = () => { m.style.display='none'; r(null); };
         });
     }
-
     function handleFiles(files) { stagedFiles = Array.from(files); renderStagedList(); }
     function renderStagedList() {
         const l = document.getElementById('stagedList');
-        if(!stagedFiles.length) { l.style.display='none'; AIEngine.renderTags({tags:[],risk:false}); return; }
-        l.style.display='block';
-        l.innerHTML = stagedFiles.map(f=>`<div class="staged-item">${f.name}</div>`).join('');
+        if(!stagedFiles.length) { l.style.display='none'; document.getElementById('file-count-badge').style.display='none'; AIEngine.renderTags({tags:[],risk:false}); return; }
+        l.style.display='block'; document.getElementById('file-count-badge').style.display='block'; document.getElementById('file-count-badge').innerText=`${stagedFiles.length} Files`;
+        l.innerHTML = stagedFiles.map((f,i)=>`<div class="staged-item"><span>${f.name}</span><span style="color:var(--danger);cursor:pointer;" onclick="stagedFiles.splice(${i},1);renderStagedList()">✕</span></div>`).join('');
         AIEngine.renderTags(AIEngine.analyze(stagedFiles));
     }
-    function updateTextCount(el) { 
-        const b = document.getElementById('text-count-badge');
-        b.style.display = el.value.length ? 'block' : 'none';
-        b.innerText = el.value.length + " Chars";
-    }
+    function updateTextCount(el) { const b=document.getElementById('text-count-badge'); b.style.display=el.value.length?'block':'none'; b.innerText=el.value.length+" Chars"; }
     function detectAdBlock() {
         if(isAdBlockIgnored) return false;
         const ad = document.getElementById('top-ad-zone');
@@ -1156,115 +1305,67 @@
         stagedFiles=[]; renderStagedList(); document.getElementById('quickText').value="";
         clearInterval(expiryTimerIdx);
     }
-    function applyI18N() {
-        const userLang = navigator.language.split('-')[0];
-        currLang = I18N[userLang] ? userLang : "en";
-        const d = I18N[currLang] || I18N.en;
-        document.getElementById('currentLangTag').innerText = d.tag;
-        document.getElementById('hero-title').innerText = d.heroTitle;
-        // 其他基础文本替换略，因为搜索框是动态的
+    function resetReceiver() {
+        document.getElementById('targetCode').value=""; document.getElementById('receive-pg-container').style.display='none';
+        document.getElementById('receiveNerdStats').style.display='none'; document.getElementById('receivedText-container').style.display='none';
+        const btn=document.getElementById('btn-connect'); btn.disabled=false; btn.innerText=(I18N[currLang]||I18N.en).connect; btn.style.background="var(--primary)";
     }
-
-    /* --- [Search Widget Logic] --- */
-    const SearchWidget = {
-        trending: [
-            "How to transfer 10GB file fast?", "Is FlashDrop safer than AirDrop?", "AES-256 encryption details", 
-            "Send photos without quality loss", "P2P vs Cloud storage", "Offline file sharing tips",
-            "Generate strong passwords", "Prevent Man-in-the-Middle attacks"
-        ],
-        history: JSON.parse(localStorage.getItem('fd_search_history') || "[]"),
-        scope: "Global",
-        tickerIdx: 0,
-        interval: null,
-        
-        init() { this.renderTicker(); this.startRotation(); this.renderDropdown(); },
-        
-        startRotation() {
-            if(this.interval) clearInterval(this.interval);
-            this.interval = setInterval(() => { this.tickerIdx = (this.tickerIdx+1)%this.trending.length; this.renderTicker(); }, 4000);
-        },
-        
-        renderTicker() {
-            const el = document.getElementById('searchTickerText');
-            el.style.animation='none'; el.offsetHeight; el.style.animation='slideUp 0.5s ease-out';
-            el.innerText = "🔥 " + this.trending[this.tickerIdx];
-        },
-        
-        toggleDropdown() {
-            const dd = document.getElementById('searchDropdown');
-            const wrap = document.getElementById('searchWidget');
-            if (dd.style.display==='flex') {
-                dd.style.display='none'; wrap.classList.remove('active'); this.startRotation();
-            } else {
-                dd.style.display='flex'; wrap.classList.add('active'); clearInterval(this.interval);
-                document.getElementById('searchTickerText').innerText = "🔍 Search: " + this.trending[this.tickerIdx];
-            }
-        },
-        
-        selectItem(text) {
-            showCustomAlert("Searching for: " + text);
-            this.addToHistory(text); this.toggleDropdown();
-        },
-        
-        addToHistory(text) {
-            this.history = this.history.filter(i=>i!==text); this.history.unshift(text);
-            if(this.history.length>5) this.history.pop();
-            localStorage.setItem('fd_search_history', JSON.stringify(this.history));
-            this.renderDropdown();
-        },
-        
-        renderDropdown() {
-            const tList = document.getElementById('trendingList');
-            const hList = document.getElementById('searchHistoryTags');
-            tList.innerHTML = this.trending.slice(0,5).map((t,i)=>`<div class="sd-item" onclick="SearchWidget.selectItem('${t}')"><span class="sd-rank rank-${i+1}">${i+1}</span><span>${t}</span></div>`).join('');
-            hList.innerHTML = this.history.length ? this.history.map(h=>`<span class="history-tag" onclick="SearchWidget.selectItem('${h}')">${h}</span>`).join('') : '<span style="font-size:11px;color:#64748b;">No recent history</span>';
-        },
-        
-        cycleScope() {
-            const s = ["Global", "Local", "Friends", "Saved"];
-            this.scope = s[(s.indexOf(this.scope)+1)%s.length];
-            document.getElementById('searchScope').innerText = this.scope;
-        }
-    };
-
-    function toggleSearchDropdown() { SearchWidget.toggleDropdown(); }
-    function cycleSearchScope() { SearchWidget.cycleScope(); }
-
-    /* --- [MAIN INIT] --- */
+    function showCustomAlert(msg) { document.getElementById('alert-msg').innerText = msg; document.getElementById('alert-modal').style.display = 'flex'; }
+    function closePolicy() { document.getElementById('policyModal').style.display='none'; }
+    function closeScanner() { document.getElementById('scanner-modal').style.display='none'; if(videoTrack) videoTrack.stop(); }
+    function dismissAdBlock() { isAdBlockIgnored=true; document.getElementById('safety-notice-view').style.display='none'; document.querySelectorAll('.ad-space, .ad-side').forEach(e=>e.style.display='none'); }
+    function addHistory(n,t) { 
+        let h = JSON.parse(localStorage.getItem('fd_history')||"[]"); h.unshift({name:n, time:new Date().toLocaleTimeString(), type:t}); 
+        h=h.slice(0,5); localStorage.setItem('fd_history', JSON.stringify(h)); renderHistory(); 
+    }
+    function renderHistory() {
+        const l = document.getElementById('history-list');
+        const h = JSON.parse(localStorage.getItem('fd_history')||"[]");
+        l.innerHTML = h.map(i=>`<div class="history-item"><span>${i.type==='file'?'📄':'🔤'} ${i.name}</span><span style="opacity:0.5">${i.time}</span></div>`).join('');
+    }
+    function copyReceivedText() { navigator.clipboard.writeText(document.getElementById('receivedText').innerText); showCustomAlert("Copied!"); }
+    
     window.onload = () => {
         applyI18N();
         SearchWidget.init();
-        
         const c = document.getElementById('stars');
         for(let i=0; i<60; i++) {
-            const s = document.createElement('div');
-            s.className='star';
-            s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%';
-            s.style.animationDuration=(Math.random()*20+10)+'s';
-            c.appendChild(s);
+            const s = document.createElement('div'); s.className='star'; s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%'; s.style.animationDuration=(Math.random()*20+10)+'s'; c.appendChild(s);
         }
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('c');
-        if (code) { switchTab('receive'); document.getElementById('targetCode').value = code; }
-
         const dz = document.getElementById('drop-zone');
         document.body.addEventListener('dragenter', e => { if(e.dataTransfer.types.includes('Files')) dz.style.display='flex'; });
         dz.addEventListener('drop', e => { e.preventDefault(); dz.style.display='none'; handleFiles(e.dataTransfer.files); switchTab('send'); });
         dz.addEventListener('dragleave', e => { if(e.target===dz) dz.style.display='none'; });
         window.addEventListener('dragover', e => e.preventDefault());
-        
+        renderHistory();
         setTimeout(detectAdBlock, 2000);
     };
-
-    function switchTab(t) {
+    function switchTab(t, e) {
         document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
         document.querySelectorAll('.panel').forEach(e=>e.classList.remove('active'));
         document.getElementById('tab-'+t).classList.add('active');
         document.getElementById('panel-'+t).classList.add('active');
+        if(e) e.target.classList.add('active'); else document.getElementById('tab-'+t).classList.add('active');
     }
-    function closePolicy() { document.getElementById('policyModal').style.display='none'; }
-    function closeScanner() { document.getElementById('scanner-modal').style.display='none'; if(videoTrack) videoTrack.stop(); }
+    async function toggleTorch() { if(videoTrack) { torchOn=!torchOn; await videoTrack.applyConstraints({advanced:[{torch:torchOn}]}); } }
+    async function openScanner() {
+        document.getElementById('scanner-modal').style.display='flex';
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            const v = document.getElementById('video-preview'); v.srcObject = stream; videoTrack = stream.getVideoTracks()[0]; v.play();
+            requestAnimationFrame(tickScanner);
+        } catch { showCustomAlert("Camera Error"); closeScanner(); }
+    }
+    function tickScanner() {
+        const v = document.getElementById('video-preview');
+        if(v.readyState===v.HAVE_ENOUGH_DATA) {
+            const cvs=document.createElement("canvas"); cvs.width=v.videoWidth; cvs.height=v.videoHeight;
+            const ctx=cvs.getContext("2d"); ctx.drawImage(v,0,0);
+            const d = jsQR(ctx.getImageData(0,0,cvs.width,cvs.height).data, cvs.width, cvs.height);
+            if(d && d.data.includes('?c=')) { document.getElementById('targetCode').value = new URL(d.data).searchParams.get("c"); closeScanner(); triggerAd('receive'); return; }
+        }
+        if(document.getElementById('scanner-modal').style.display==='flex') requestAnimationFrame(tickScanner);
+    }
 </script>
 </body>
 </html>
