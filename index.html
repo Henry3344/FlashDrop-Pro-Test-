@@ -378,6 +378,41 @@
     }
 }
 /* --- Henry的原生推荐块专用样式 (结束) --- */
+        /* --- 侧边栏“目录式”链接样式 --- */
+.link-block {
+    width: 100%;
+    text-align: left; /* 强制左对齐，像文档目录 */
+    padding: 0 5px;   /* 稍微留点边距 */
+    margin-bottom: 15px; /* 模块之间的间距 */
+}
+
+.link-block h4 {
+    color: #6366f1; /* 使用你的主色调，显眼但专业 */
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin: 0 0 10px 0;
+    opacity: 0.9;
+    letter-spacing: 0.5px;
+    border-bottom: 1px dashed rgba(255,255,255,0.1); /* 加个虚线底边，更有目录感 */
+    padding-bottom: 5px;
+}
+
+.link-block a {
+    display: block;
+    color: #94a3b8; /* 也就是 var(--text-muted)，低调的灰色 */
+    font-size: 11px; /* 字号要小！ */
+    text-decoration: none;
+    margin-bottom: 6px;
+    transition: all 0.2s;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.link-block a:hover {
+    color: white; /* 悬停变亮 */
+    transform: translateX(3px); /* 悬停微微右移，增加交互感 */
+}
     </style>
 </head>
 <body>
@@ -416,8 +451,34 @@
 
     <div class="main-wrapper">
         <div class="ad-side" id="left-ad-zone">
+    <div class="link-block">
+        <h4>VPN Guides</h4>
+        <a href="#">Best VPN for Your Country</a>
+        <a href="#">VPN vs Proxy: Difference?</a>
+        <a href="#">Is VPN Legal in My Country?</a>
+        <a href="#">When Do You Need a VPN?</a>
+        <a href="#">VPN for Secure Transfer</a>
+        <a href="#">Public Wi-Fi Safety Tips</a>
+    </div>
 
-        </div>
+    <div class="link-block">
+        <h4>Privacy Basics</h4>
+        <a href="#">End-to-End Encryption</a>
+        <a href="#">How AES-256 Works</a>
+        <a href="#">No-Logs Policy Explained</a>
+        <a href="#">Risks of Cloud Sharing</a>
+        <a href="#">Self-Destruct Files</a>
+    </div>
+
+    <div class="link-block">
+        <h4>Use Cases</h4>
+        <a href="#">Secure Remote Work</a>
+        <a href="#">Safe Text Sharing</a>
+        <a href="#">P2P Without Cloud</a>
+        <a href="#">Protect Data in Hotels</a>
+        <a href="#">Traveling with Data</a>
+    </div>
+</div>
 
         <div class="content-area">
             <div style="text-align: center; margin-bottom: 25px;">
@@ -595,9 +656,34 @@
             </div>
         </div>
 
-        <div class="ad-side" id="right-ad-zone">
+<div class="ad-side" id="right-ad-zone">
+    <div class="link-block">
+        <h4>Popular Regions</h4>
+        <a href="#">VPN for United States</a>
+        <a href="#">VPN for United Kingdom</a>
+        <a href="#">VPN for Japan</a>
+        <a href="#">VPN for Germany</a>
+        <a href="#">VPN for Singapore</a>
+        <a href="#">VPN for Europe</a>
+    </div>
 
-        </div>
+    <div class="link-block">
+        <h4>Regional Tips</h4>
+        <a href="#">Japan Public Wi-Fi</a>
+        <a href="#">US Remote Workers</a>
+        <a href="#">UK Privacy Laws</a>
+        <a href="#">Asia Travelers Guide</a>
+        <a href="#">Intl. File Transfers</a>
+    </div>
+
+    <div class="link-block">
+        <h4>Quick Start</h4>
+        <a href="#">Do I Need a VPN?</a>
+        <a href="#">Which VPN Fits Me?</a>
+        <a href="#">Fastest Transfer VPN</a>
+        <a href="#">Private Text Tools</a>
+    </div>
+</div>
     </div>
     <div style="width: 100%; max-width: 900px; margin: 0 auto; padding: 0 15px;">
         <div class="security-grid">
