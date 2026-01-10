@@ -376,59 +376,46 @@
 }
 /* --- Henry的原生推荐块专用样式 (结束) --- */
         
-        .sidebar-guide {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid #3f3f5a;
-    border-radius: 10px;
-    padding: 15px;
-    font-family: sans-serif;
+/* Notion 風格目錄 - 全站統一樣式 */
+.sidebar-section {
+    margin-bottom: 25px;
+    padding: 0 10px;
+    text-align: left; /* 確保文字靠左，顯得專業 */
 }
-.sidebar-guide h4 {
-    color: #818cf8;
-    font-size: 14px;
-    margin: 0 0 12px 0;
+
+.sidebar-section h4 {
+    color: #6366f1; /* 使用你站點的紫色系 */
+    font-size: 11px;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
+    margin-bottom: 12px;
+    opacity: 0.8;
 }
-.sidebar-guide ul {
+
+.sidebar-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
-.sidebar-guide li {
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+
+.sidebar-list li {
+    margin-bottom: 8px;
 }
-.sidebar-guide li:last-child { border: none; }
-.sidebar-guide a {
-    color: #a0a0b0;
+
+.sidebar-list a {
+    color: #a0a0b0; 
     text-decoration: none;
-    font-size: 13px;
-    transition: color 0.2s;
+    font-size: 12.5px;
+    line-height: 1.4;
+    transition: all 0.2s ease;
+    display: block;
 }
-.sidebar-guide a:hover { color: #ffffff; }
-        /* 復用上面的樣式，保持統一感 */
-.sidebar-regions {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid #3f3f5a;
-    border-radius: 10px;
-    padding: 15px;
+
+.sidebar-list a:hover {
+    color: #ffffff;
+    padding-left: 5px; /* 滑過時有個小位移，像目錄跳轉 */
 }
-.sidebar-regions h4 {
-    color: #818cf8;
-    font-size: 14px;
-    margin: 0 0 12px 0;
-    text-transform: uppercase;
-}
-.sidebar-regions ul { list-style: none; padding: 0; margin: 0; }
-.sidebar-regions li { margin-bottom: 10px; }
-.sidebar-regions a {
-    color: #a0a0b0;
-    text-decoration: none;
-    font-size: 13px;
-}
-.sidebar-regions a:hover { color: #ffffff; }
     </style>
 </head>
 <body>
@@ -467,13 +454,33 @@
 
     <div class="main-wrapper">
         <div class="ad-side" id="left-ad-zone">
-<div class="sidebar-guide">
+<div class="sidebar-section">
     <h4>🔍 VPN Guides</h4>
-    <ul>
+    <ul class="sidebar-list">
         <li><a href="guide-best-vpn.html">Best VPN for Your Country</a></li>
         <li><a href="guide-vpn-vs-proxy.html">VPN vs Proxy: Key Differences</a></li>
         <li><a href="guide-legality.html">Is VPN Legal in My Country?</a></li>
+        <li><a href="guide-speed.html">Does VPN Affect Download Speed?</a></li>
+        <li><a href="guide-myths.html">VPN Myths You Should Ignore</a></li>
     </ul>
+</div>
+<div class="sidebar-section">
+    <h4>🛡️ Security Basics</h4>
+    <ul class="sidebar-list">
+        <li><a href="guide-encryption.html">What Is End-to-End Encryption?</a></li>
+        <li><a href="guide-aes256.html">How AES-256 Encryption Works</a></li>
+        <li><a href="guide-no-logs.html">No-Logs Policy Explained</a></li>
+        <li><a href="guide-risks.html">Risks of Cloud File Sharing</a></li>
+    </ul>
+</div>
+<div class="sidebar-section">
+    <h4>💼 Usage Scenarios</h4>
+    <ul class="sidebar-list">
+        <li><a href="guide-remote-work.html">Secure Sharing for Remote Work</a></li>
+        <li><a href="guide-public-wifi.html">Protect Data on Public Wi-Fi</a></li>
+        <li><a href="guide-travel.html">File Transfer While Traveling</a></li>
+    </ul>
+</div>
 </div>
         </div>
 
@@ -654,13 +661,31 @@
         </div>
 
         <div class="ad-side" id="right-ad-zone">
-<div class="sidebar-regions">
+<div class="sidebar-section">
     <h4>🌍 Popular Regions</h4>
-    <ul>
+    <ul class="sidebar-list">
         <li><a href="#top-ad-zone">VPN for United States</a></li>
         <li><a href="#top-ad-zone">VPN for United Kingdom</a></li>
         <li><a href="#top-ad-zone">VPN for Japan & Asia</a></li>
+        <li><a href="#top-ad-zone">VPN for Germany & EU</a></li>
     </ul>
+</div>
+<div class="sidebar-section">
+    <h4>🎯 Regional Use Cases</h4>
+    <ul class="sidebar-list">
+        <li><a href="#top-ad-zone">VPN for US Remote Workers</a></li>
+        <li><a href="#top-ad-zone">VPN for UK Privacy Laws</a></li>
+        <li><a href="#top-ad-zone">VPN for Asia Travelers</a></li>
+        <li><a href="#top-ad-zone">VPN for International Transfers</a></li>
+    </ul>
+</div>
+<div class="sidebar-section">
+    <h4>⚡ Quick Decisions</h4>
+    <ul class="sidebar-list">
+        <li><a href="#top-ad-zone">Do I Need a VPN Right Now?</a></li>
+        <li><a href="#top-ad-zone">Which VPN Fits My Country?</a></li>
+    </ul>
+</div>
 </div>
         </div>
     </div>
