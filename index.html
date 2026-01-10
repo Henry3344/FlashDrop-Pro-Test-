@@ -299,70 +299,79 @@
         .step-item:first-child span { color: white; }
         
         /* --- Henry的原生推荐块专用样式 (开始) --- */
-.native-ad-container {
+.native-promo-container {
     background: linear-gradient(135deg, #1a1a2a 0%, #2d2d44 100%);
     border: 1px solid #3f3f5a;
     border-radius: 12px;
-    padding: 20px;
+    padding: 15px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    margin: 20px auto;
-    max-width: 1200px;
+    margin: 15px auto;
+    max-width: 1100px;
+    gap: 15px;
 }
 
-.ad-content-wrapper {
+.promo-content {
     display: flex;
-    align-items: center;
+    align-items: center; /* 確保盾牌與文字中線對齊 */
+    gap: 15px;
 }
 
-.ad-icon {
+.promo-icon {
     background: rgba(99, 102, 241, 0.2);
     color: #818cf8;
-    width: 50px;
-    height: 50px;
+    min-width: 40px; /* 固定寬度防止縮小 */
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    margin-right: 15px;
-    flex-shrink: 0; /* 防止图标被挤压 */
+    font-size: 20px;
 }
 
-.ad-button {
+.promo-text h3 {
+    color: #ffffff;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.promo-text p {
+    color: #a0a0b0;
+    margin: 2px 0 0 0;
+    font-size: 13px;
+}
+
+.promo-btn {
     background: #6366f1;
     color: white;
     text-decoration: none;
-    padding: 12px 24px;
+    padding: 10px 25px; /* 縮窄了水平內邊距 */
     border-radius: 8px;
     font-weight: 700;
-    font-size: 14px;
-    transition: background 0.2s;
+    font-size: 13px;
     white-space: nowrap;
-    display: inline-block;
+    transition: all 0.2s;
 }
-.ad-button:hover { background: #4f46e5; }
 
-/* === 关键：移动端适配 === */
+.promo-btn:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+}
+
+/* 移動端適配：盾牌依然在頭部，但按鈕換行以保證文字寬度 */
 @media (max-width: 768px) {
-    .native-ad-container {
-        flex-direction: column; /* 变成垂直排列 */
-        text-align: center; /* 文字居中 */
-        padding: 15px; /* 稍微减小内边距 */
+    .native-promo-container {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 15px;
     }
-    .ad-content-wrapper {
-        flex-direction: column; /* 图标和文字也垂直 */
-        margin-bottom: 15px; /* 让文字和按钮之间有空隙 */
-    }
-    .ad-icon {
-        margin-right: 0;
-        margin-bottom: 10px; /* 图标在文字上方 */
-    }
-    .ad-button {
-        width: 100%; /* 按钮占满整行，方便点击 */
-        box-sizing: border-box;
+    
+    .promo-btn {
+        width: 100%; /* 移動端按鈕撐滿更方便點擊 */
+        text-align: center;
+        margin-top: 5px;
     }
 }
 /* --- Henry的原生推荐块专用样式 (结束) --- */
@@ -389,15 +398,15 @@
 
     <div id="drop-zone"><h2 style="font-size:36px; color:white; font-weight:900;" id="drop-text">DROP TO STAGE</h2></div>
 
-<div class="native-ad-container">
-    <div class="ad-content-wrapper">
-        <div class="ad-icon">🛡️</div>
-        <div>
-            <h3 style="color: #ffffff; margin: 0 0 5px 0; font-size: 18px; font-weight: 700;">Boost Transfer Speed & Encrypt Your Data</h3>
-            <p style="color: #a0a0b0; margin: 0; font-size: 14px;">Recommended tool for secure P2P sharing in US, UK & JP.</p>
+<div class="native-promo-container">
+    <div class="promo-content">
+        <div class="promo-icon">🛡️</div>
+        <div class="promo-text">
+            <h3>Boost Transfer Speed & Encrypt Your Data</h3>
+            <p>Recommended tool for secure P2P sharing in US, UK & JP.</p>
         </div>
     </div>
-    <a href="https://www.anrdoezrs.net/click-101629766-15554637" target="_blank" class="ad-button">
+    <a href="https://www.anrdoezrs.net/click-101629766-15554637" target="_blank" class="promo-btn">
         Activate Secure Mode →
     </a>
 </div>
