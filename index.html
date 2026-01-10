@@ -54,21 +54,45 @@
         .ai-badge { border-color: var(--ai) !important; color: #d8b4fe !important; background: rgba(139, 92, 246, 0.15) !important; box-shadow: 0 0 10px rgba(139, 92, 246, 0.3); }
 
         /* --- 布局容器 --- */
-        .main-wrapper { display: flex; width: 100%; margin: 0 auto; justify-content: center; align-items: flex-start; gap: 20px; padding: 0 15px; }
-        .content-area { flex: 1; min-width: 300px; max-width: 600px; display: flex; flex-direction: column; align-items: center; z-index: 50; }
+/* 1. 確保大容器橫向排列，且所有東西都「靠頂」 */
+.main-wrapper {
+    display: flex !important;
+    justify-content: center;
+    align-items: flex-start; /* 關鍵：強制所有側邊欄從頂部開始，不再錯位 */
+    gap: 30px;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+/* 3. 讓中間區域自適應，但不准擠掉兩邊 */
+.content-area {
+    flex: 1; /* 佔據剩餘的所有空間 */
+    min-width: 0; /* 防止中間內容爆開擠走側欄 */
+    max-width: 800px; /* 保持高手建議的「聚焦感」 */
+}
         
         /* [修改] 侧边广告栏增加间距，因为现在有两个广告了 */
-        .ad-side { 
-            width: 160px; min-width: 160px; position: sticky; top: 130px; 
-            display: flex; flex-direction: column; align-items: center; 
-            border-radius: 12px; background: transparent; overflow: hidden; 
-            transition: 0.3s; gap: 20px; /* 两个广告之间的间距 */
-        }
+/* 2. 限制側邊欄寬度，防止它把中間擠走 */
+.ad-side {
+    width: 200px; /* 根據你目前的標題長度，200px 最專業 */
+    flex-shrink: 0; /* 關鍵：不允許側邊欄被壓縮，保持形狀 */
+    margin-top: 20px; /* 讓它跟主標題對齊得更好看 */
+}
         .ad-space { background: transparent; display: flex; justify-content: center; align-items: center; border-radius: 12px; overflow: hidden; width: 100%; transition: 0.3s; }
         .ad-top { min-height: 0; margin-bottom: 15px; }
         .ad-bottom { min-height: 0; margin-top: 20px; margin-bottom: 25px; }
-        @media (max-width: 880px) { .ad-side { display: none !important; } }
-        
+/* 手機端自動變回單列，不影響移動端體驗 */
+@media (max-width: 1100px) {
+    .main-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+    .ad-side {
+        width: 100%;
+        display: none; /* 手機端按建議隱藏側欄，保持清爽 */
+    }
+}
         /* --- Hero 区域样式 --- */
         .hero-bullets { display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
         .hero-bullets span { background: rgba(99, 102, 241, 0.15); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; color: #c7d2fe; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap; box-shadow: 0 0 10px rgba(99, 102, 241, 0.1); }
