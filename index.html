@@ -375,6 +375,60 @@
     }
 }
 /* --- Henry的原生推荐块专用样式 (结束) --- */
+        
+        .sidebar-guide {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid #3f3f5a;
+    border-radius: 10px;
+    padding: 15px;
+    font-family: sans-serif;
+}
+.sidebar-guide h4 {
+    color: #818cf8;
+    font-size: 14px;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.sidebar-guide ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.sidebar-guide li {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.sidebar-guide li:last-child { border: none; }
+.sidebar-guide a {
+    color: #a0a0b0;
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.2s;
+}
+.sidebar-guide a:hover { color: #ffffff; }
+        /* 復用上面的樣式，保持統一感 */
+.sidebar-regions {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid #3f3f5a;
+    border-radius: 10px;
+    padding: 15px;
+}
+.sidebar-regions h4 {
+    color: #818cf8;
+    font-size: 14px;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+}
+.sidebar-regions ul { list-style: none; padding: 0; margin: 0; }
+.sidebar-regions li { margin-bottom: 10px; }
+.sidebar-regions a {
+    color: #a0a0b0;
+    text-decoration: none;
+    font-size: 13px;
+}
+.sidebar-regions a:hover { color: #ffffff; }
     </style>
 </head>
 <body>
@@ -413,7 +467,14 @@
 
     <div class="main-wrapper">
         <div class="ad-side" id="left-ad-zone">
-
+<div class="sidebar-guide">
+    <h4>🔍 VPN Guides</h4>
+    <ul>
+        <li><a href="guide-best-vpn.html">Best VPN for Your Country</a></li>
+        <li><a href="guide-vpn-vs-proxy.html">VPN vs Proxy: Key Differences</a></li>
+        <li><a href="guide-legality.html">Is VPN Legal in My Country?</a></li>
+    </ul>
+</div>
         </div>
 
         <div class="content-area">
@@ -593,7 +654,14 @@
         </div>
 
         <div class="ad-side" id="right-ad-zone">
-
+<div class="sidebar-regions">
+    <h4>🌍 Popular Regions</h4>
+    <ul>
+        <li><a href="#top-ad-zone">VPN for United States</a></li>
+        <li><a href="#top-ad-zone">VPN for United Kingdom</a></li>
+        <li><a href="#top-ad-zone">VPN for Japan & Asia</a></li>
+    </ul>
+</div>
         </div>
     </div>
     <div style="width: 100%; max-width: 900px; margin: 0 auto; padding: 0 15px;">
